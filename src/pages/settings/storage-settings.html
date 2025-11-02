@@ -1,0 +1,320 @@
+<!-- EECOL Wire Tools Suite - Storage Settings -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" id="csp-meta" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:;">
+    <title>Storage Settings - EECOL Wire Tools Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/eecol-theme.css">
+    <style>
+        /* Settings page-specific styles */
+        .mode-card {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .mode-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 88, 179, 0.3);
+        }
+        .mode-card.selected {
+            border-color: #0058B3;
+            background: linear-gradient(135deg, #e0f0ff 0%, #f8f9fa 100%);
+            box-shadow: 0 8px 25px rgba(0, 88, 179, 0.4);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0058B3, #004a99);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status-online {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-offline {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status-connecting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+    <link rel="manifest" href="../../assets/manifest.json">
+    <meta name="theme-color" content="#0058B3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EECOL Tools">
+    <link rel="apple-touch-icon" href="../../assets/icons/icon-192x192.png">
+    <script src="../../utils/mobile-menu.js"></script>
+    <script src="../../utils/modals.js"></script>
+    <script src="../../core/database/indexeddb.js"></script>
+    <script src="../../core/database/storage-adapter.js"></script>
+</head>
+<body class="p-3 sm:p-6 h-screen flex flex-col eecol-blue-bg">
+
+    <!-- Main Container -->
+    <div class="flex-1 w-full max-w-md md:max-w-xl lg:max-w-7xl xl:max-w-9xl bg-[#F0F8FF] p-4 sm:p-6 rounded-xl shadow-2xl mx-auto border-2 border-solid border-[#0058B3] overflow-hidden flex flex-col relative">
+
+        <!-- Header -->
+        <div class="flex justify-center mb-1 relative">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#0058B3] drop-shadow-lg eecol-logo-tilt">
+                <circle cx="12" cy="12" r="11.35" fill="white" stroke="currentColor" stroke-width="2"/>
+                <rect x="4" y="4" width="4" height="16" rx="1" fill="currentColor"/>
+                <path d="M 8,6.5 C 12,5.5 16,7.5 20,6.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M 8,12 C 12,11 16,13 20,12" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M 8,17.5 C 12,16.5 16,18.5 20,17.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-black mb-3 text-center header-gradient">
+            Storage Settings
+        </h1>
+        <p class="mb-6 text-center text-sm font-medium text-[#0058B3]">
+            Configure how your data is stored and synchronized
+        </p>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto">
+
+        <!-- Current Status Section -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue mb-6">
+            <h2 class="text-xl font-bold text-[#0058B3] mb-4 flex items-center">
+                <span class="text-2xl mr-2">📊</span>
+                Current Status
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-[#0058B3]" id="currentMode">Loading...</div>
+                    <div class="text-sm text-gray-600">Storage Mode</div>
+                </div>
+                <div class="text-center">
+                    <div class="status-indicator status-connecting" id="supabaseStatus">
+                        <div class="w-2 h-2 bg-current rounded-full animate-pulse"></div>
+                        <span>Checking...</span>
+                    </div>
+                    <div class="text-sm text-gray-600 mt-1">Supabase Connection</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-[#0058B3]" id="localRecords">0</div>
+                    <div class="text-sm text-gray-600">Local Records</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-[#0058B3]" id="pendingSync">0</div>
+                    <div class="text-sm text-gray-600">Pending Sync</div>
+                </div>
+            </div>
+
+            <button id="refreshStatus" class="btn-eecol text-sm">
+                🔄 Refresh Status
+            </button>
+        </div>
+
+        <!-- Storage Mode Selection -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue mb-6">
+            <h2 class="text-xl font-bold text-[#0058B3] mb-4 flex items-center">
+                <span class="text-2xl mr-2">⚙️</span>
+                Storage Mode Selection
+            </h2>
+            <p class="text-gray-700 mb-6">
+                Choose how your data is stored and synchronized. Each mode has different benefits and requirements.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- IndexedDB Mode -->
+                <div class="mode-card bg-white border-2 border-gray-200 rounded-lg p-6 text-center" data-mode="indexeddb">
+                    <input type="radio" name="storageMode" value="indexeddb" class="mb-4 w-5 h-5 text-[#0058B3] focus:ring-[#0058B3]">
+                    <div class="text-4xl mb-3">💾</div>
+                    <h3 class="text-lg font-bold text-[#0058B3] mb-2">Local Storage (IndexedDB)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Store all data locally on your device. Works completely offline.</p>
+                    <ul class="text-left text-sm space-y-1">
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> No internet required</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Fast performance</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Always available</li>
+                        <li class="flex items-center"><span class="text-red-600 mr-2">❌</span> No cross-device sync</li>
+                        <li class="flex items-center"><span class="text-red-600 mr-2">❌</span> Data stays on device</li>
+                    </ul>
+                </div>
+
+                <!-- Supabase Mode -->
+                <div class="mode-card bg-white border-2 border-gray-200 rounded-lg p-6 text-center" data-mode="supabase">
+                    <input type="radio" name="storageMode" value="supabase" class="mb-4 w-5 h-5 text-[#0058B3] focus:ring-[#0058B3]">
+                    <div class="text-4xl mb-3">☁️</div>
+                    <h3 class="text-lg font-bold text-[#0058B3] mb-2">Cloud Storage (Supabase)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Sync data across devices with automatic cloud backup.</p>
+                    <ul class="text-left text-sm space-y-1">
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Cross-device sync</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Automatic backups</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Real-time collaboration</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">⚠️</span> Requires internet</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">⚠️</span> May have latency</li>
+                    </ul>
+                </div>
+
+                <!-- Hybrid Mode -->
+                <div class="mode-card bg-white border-2 border-gray-200 rounded-lg p-6 text-center" data-mode="hybrid">
+                    <input type="radio" name="storageMode" value="hybrid" class="mb-4 w-5 h-5 text-[#0058B3] focus:ring-[#0058B3]">
+                    <div class="text-4xl mb-3">🔄</div>
+                    <h3 class="text-lg font-bold text-[#0058B3] mb-2">Hybrid Storage</h3>
+                    <p class="text-sm text-gray-600 mb-4">Local storage with automatic cloud sync when online.</p>
+                    <ul class="text-left text-sm space-y-1">
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Works offline</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Cloud sync when available</li>
+                        <li class="flex items-center"><span class="text-green-600 mr-2">✅</span> Best of both worlds</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">⚠️</span> May have sync delays</li>
+                        <li class="flex items-center"><span class="text-amber-600 mr-2">⚠️</span> More complex</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <button id="saveModeSelection" class="btn-eecol">
+                    💾 Save Storage Mode Selection
+                </button>
+            </div>
+        </div>
+
+        <!-- Supabase Configuration -->
+        <div id="supabaseConfig" class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue mb-6" style="display: none;">
+            <h2 class="text-xl font-bold text-[#0058B3] mb-4 flex items-center">
+                <span class="text-2xl mr-2">🔧</span>
+                Supabase Configuration
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Supabase URL</label>
+                    <input type="url" id="supabaseUrl" placeholder="https://your-project.supabase.co" class="input-eecol w-full">
+                    <p class="text-xs text-gray-500 mt-1">Found in your Supabase project settings</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Supabase Anon Key</label>
+                    <input type="password" id="supabaseKey" placeholder="your-anon-key" class="input-eecol w-full">
+                    <p class="text-xs text-gray-500 mt-1">Found in your Supabase project API settings</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                <button id="testConnection" class="btn-eecol flex-1">
+                    🔍 Test Connection
+                </button>
+                <button id="saveConfig" class="btn-eecol flex-1">
+                    💾 Save Configuration
+                </button>
+            </div>
+
+            <div id="connectionResult" class="mt-4 p-4 rounded-lg" style="display: none;"></div>
+        </div>
+
+        <!-- Advanced Options -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue mb-6">
+            <h2 class="text-xl font-bold text-[#0058B3] mb-4 flex items-center">
+                <span class="text-2xl mr-2">⚡</span>
+                Advanced Options
+            </h2>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Enable Offline Fallback</label>
+                        <p class="text-xs text-gray-500">Automatically switch to local storage when Supabase is unavailable</p>
+                    </div>
+                    <input type="checkbox" id="offlineFallback" class="w-5 h-5 text-[#0058B3] focus:ring-[#0058B3] rounded">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Auto-sync When Online</label>
+                        <p class="text-xs text-gray-500">Automatically sync pending changes when connection is restored</p>
+                    </div>
+                    <input type="checkbox" id="autoSync" checked class="w-5 h-5 text-[#0058B3] focus:ring-[#0058B3] rounded">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700 mb-2 block">Sync Frequency</label>
+                    <input type="range" id="syncFrequency" min="30" max="300" value="60" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>30s</span>
+                        <span id="syncFrequencyValue">60s</span>
+                        <span>5m</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-200">
+                    <button id="clearCache" class="btn-eecol bg-red-500 border-red-500 hover:bg-red-600">
+                        🗑️ Clear Local Cache
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2">This will clear all local data. Make sure your data is backed up first.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Migration Tools -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue mb-6">
+            <h2 class="text-xl font-bold text-[#0058B3] mb-4 flex items-center">
+                <span class="text-2xl mr-2">🔄</span>
+                Data Migration Tools
+            </h2>
+            <p class="text-gray-700 mb-6">
+                Safely migrate your data between storage modes. These operations are reversible and include progress tracking.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <button id="migrateToSupabase" class="btn-eecol h-16 flex flex-col items-center justify-center">
+                    <span class="text-lg">☁️</span>
+                    <span class="text-sm font-medium">Migrate to Cloud</span>
+                </button>
+                <button id="syncFromSupabase" class="btn-eecol h-16 flex flex-col items-center justify-center">
+                    <span class="text-lg">📥</span>
+                    <span class="text-sm font-medium">Sync from Cloud</span>
+                </button>
+                <button id="clearLocalData" class="btn-eecol bg-red-500 border-red-500 hover:bg-red-600 h-16 flex flex-col items-center justify-center">
+                    <span class="text-lg">🗑️</span>
+                    <span class="text-sm font-medium">Clear Local Data</span>
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar mb-4" id="migrationProgress" style="display: none;">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="migrationStatus" class="text-center text-sm text-gray-600">
+                Ready to migrate data
+            </div>
+        </div>
+
+        </div>
+
+        <!-- Footer inside main box -->
+        <div class="mt-auto pt-4 border-t border-blue-200 hidden sm:block">
+            <div class="flex justify-center">
+                <a href="../index/index.html" class="btn-eecol">
+                    ← Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../assets/js/storage-settings.js"></script>
+</body>
+</html>

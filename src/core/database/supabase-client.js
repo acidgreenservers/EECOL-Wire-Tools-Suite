@@ -42,17 +42,29 @@ class SupabaseClient {
    */
   async initialize() {
     try {
-      // Get Supabase configuration from environment variables
-      // Use hardcoded values for now - in production these would come from environment
-      const supabaseUrl = 'https://nywkaaqumyxpqecbenyw.supabase.co';
-      const supabaseKey = 'sb_publishable_ICiwfRDDsh3AKvi8iSKs3Q_ccRraE0i';
+      // Get Supabase configuration from localStorage or use defaults
+      let supabaseUrl = localStorage.getItem('eecol-supabase-url');
+      let supabaseKey = localStorage.getItem('eecol-supabase-key');
 
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error('Supabase configuration missing. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+      // Fallback to hardcoded values if not configured
+      if (!supabaseUrl) {
+        supabaseUrl = 'https://nywkaaqumyxpqecbenyw.supabase.co';
+      }
+      if (!supabaseKey) {
+        supabaseKey = 'sb_publishable_ICiwfRDDsh3AKvi8iSKs3Q_ccRraE0i';
       }
 
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Supabase configuration missing. Please configure Supabase URL and key in settings.');
+      }
+
+      // Dynamically import Supabase client
+      console.log('Importing Supabase client...');
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+      console.log('Supabase client imported successfully');
+
       // Initialize Supabase client
-      this.client = supabase.createClient(supabaseUrl, supabaseKey, {
+      this.client = createClient(supabaseUrl, supabaseKey, {
         auth: {
           persistSession: true,
           autoRefreshToken: true,

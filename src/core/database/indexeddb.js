@@ -492,7 +492,9 @@ class EECOLIndexedDB {
 
 // Make it available globally
 if (typeof window !== 'undefined') {
+  console.log('Exporting EECOLIndexedDB to window...');
   window.EECOLIndexedDB = EECOLIndexedDB;
+  console.log('EECOLIndexedDB exported successfully');
 }
 
 // Make promise available globally (needed for unit tests)

@@ -36,8 +36,11 @@ class StorageAdapter {
 
     try {
       // Always initialize IndexedDB as fallback
+      console.log('Initializing EECOLIndexedDB...');
       this.indexedDB = new EECOLIndexedDB();
+      console.log('Waiting for IndexedDB ready...');
       await this.indexedDB.ready;
+      console.log('IndexedDB ready');
 
       // Load existing offline queue
       await this.loadOfflineQueue();
@@ -53,7 +56,7 @@ class StorageAdapter {
       this.setupRealtimeSync();
 
       this.initialized = true;
-      console.error('StorageAdapter initialized successfully in', this.mode, 'mode');
+      console.log('StorageAdapter initialized successfully in', this.mode, 'mode');
     } catch (error) {
       console.error('StorageAdapter initialization failed:', error);
       throw error;

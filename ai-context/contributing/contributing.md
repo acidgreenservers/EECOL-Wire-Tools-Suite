@@ -142,4 +142,5 @@ Improvements_Identified_For_Consolidation:
 
 ## Phase 4: Completion
 
-Only after all previous phases, especially the documentation in Phase 3, are complete, can I signal task completion to the user.
+Only after all previous phases, especially the documentation in Phase 3, are complete,
+and i have output to the file "contributing.md" in the "memory-bank" folder can I signal task completion to the user. i need to search for where the "memory-bank" folder is if i dont already know, so i dont create a new file, if one already exsists in the "memory-bank" folder.
