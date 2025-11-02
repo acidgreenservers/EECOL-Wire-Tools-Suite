@@ -308,4 +308,55 @@ Improvements_Identified_For_Consolidation:
 
 ---
 
+---
+Date: 2025-11-02
+TaskRef: "SupabaseClient UUID and CRUD Operation Issues - SUCCESSFUL RESOLUTION"
+
+Learnings:
+- Database expects UUID format IDs, not custom string IDs like "test-1762120401576"
+- Supabase add() method correctly returns database-generated UUIDs, but tests were using original string IDs for subsequent operations
+- Test logic must capture and reuse returned UUIDs from add() operations for get(), update(), and delete() calls
+- Browser console logs provided critical debugging information showing exact error messages and successful operations
+- Pattern of test failures due to incorrect ID usage is common when database auto-generates primary keys
+- UUID validation regex pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+Difficulties:
+- Initial diagnosis was challenging - error messages showed "invalid input syntax for type uuid" but root cause wasn't immediately clear
+- Required analyzing browser console logs to understand that add() operations were succeeding but get() operations were failing
+- Had to trace through test logic to identify that returned UUIDs weren't being captured and reused
+- Multiple test files (HTML and Node.js) had the same issue requiring coordinated fixes
+- Understanding that database auto-generates UUIDs while tests were providing custom string IDs
+
+Successes:
+- Successfully identified root cause: test logic using wrong IDs for database operations
+- Fixed testCRUD() function in test-supabase-client.html to capture and reuse returned UUIDs
+- Fixed testStorageAdapter() function to use proper UUIDs from StorageAdapter operations
+- Fixed Node.js test file with same UUID handling issues
+- Verified UUID format validation and proper database-generated ID usage
+- All CRUD operations now work correctly with proper UUID handling
+- Contributing factors: Systematic console log analysis, understanding of database auto-generation, coordinated multi-file fixes
+
+Failures/False Assumptions:
+- Initially assumed the issue was with SupabaseClient implementation rather than test logic
+- Believed the problem was in the database schema or client code rather than test design
+- Failed to recognize that successful add() operations with returned UUIDs meant the client was working correctly
+- Assumed test failures indicated implementation bugs rather than test design issues
+
+Key Technical Details:
+- Supabase tables use UUID primary keys with DEFAULT gen_random_uuid()
+- add() method correctly removes id field from input data to allow auto-generation
+- Returned UUIDs from add() must be captured and used for all subsequent operations
+- Test data should not include id field when calling add(), but must include it for update() operations
+- UUID format validation confirms proper database-generated IDs
+
+Improvements_Identified_For_Consolidation:
+- Test Design: When testing database operations with auto-generated keys, always capture and reuse returned IDs
+- Error Analysis: Browser console logs are critical for understanding database operation failures
+- UUID Handling: Database auto-generation requires different test patterns than manual ID assignment
+- Multi-File Coordination: When fixing test issues, check all test files for similar problems
+- Validation Strategy: Use UUID regex validation to confirm proper ID format generation
+- Debugging Pattern: When add() succeeds but get() fails, investigate ID usage consistency
+
+---
+
 <!-- Future raw reflection entries will be added above this comment -->

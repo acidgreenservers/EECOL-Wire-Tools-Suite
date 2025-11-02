@@ -1,4 +1,11 @@
-# EECOL Wire Tools Suite v0.8.0.1
+<div align="center">
+  <h1 align="center">EECOL Wire Tools Suite</h1>
+  <p align="center"><strong>Production-Ready Wire Processing Application</strong></p>
+</div>
+
+> ℹ️ **You are on the `supabase` branch.** This branch is production-ready with **IndexedDB** storage. The planned migration will introduce **user-configurable storage backends** (IndexedDB/Supabase/Hybrid) with a simple toggle switch, evolving into a full database configuration page.
+
+**Current Version**: `v0.8.0.1`
 
 ## 🎯 **Overview**
 
@@ -11,11 +18,29 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 - **Mobile Responsive**: Optimized for all screen sizes and devices
 - **PWA Installable**: Can be installed as a native app on desktop and mobile
 
-### **Architecture**
-- **IndexedDB Backend**: High-performance local database for all data persistence
+### **Current Architecture (v0.8.0.1)**
+- **IndexedDB Storage**: Fast, offline-first local database with 12 object stores
 - **PWA Features**: Offline functionality, installable app, service workers
 - **Professional UI**: EECOL-branded modal dialogs, responsive design
-- **Storage Strategy**: IndexedDB-first with localStorage fallback for UI state
+
+### **Planned Architecture: User-Configurable Storage**
+The application is migrating to a flexible storage system where users can choose their preferred backend:
+
+**Phase 1: Simple Toggle Switch**
+- Quick settings toggle between IndexedDB and Supabase
+- Seamless switching with data migration support
+- Hybrid mode for automatic synchronization
+
+**Phase 2: Full Configuration Page**
+- Dedicated database configuration interface
+- Advanced settings for each storage backend
+- Connection testing and health monitoring
+- Migration tools and data management
+
+**Storage Modes:**
+- **IndexedDB**: Local-only, offline-first (current default)
+- **Supabase**: Cloud sync with real-time collaboration
+- **Hybrid**: Best of both - local storage with cloud backup
 
 ---
 
@@ -36,10 +61,10 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 ### **Reports & Analytics**
 - **Cutting Reports**: Analytics and reporting for cutting operations
 - **Inventory Reports**: Inventory analytics and usage tracking
-- **Live Statistics Dashboard**: Real-time metrics and combined data views
+- **Live Statistics Dashboard**: Real-time metrics and combined data views for inventory and cutting
 
 ### **Additional Tools**
-- **Shipping Manifest**: Generate shipping documentation
+- **Shipping Manifest**: Generate professional shipping documentation
 - **Reel Labels**: Print professional wire reel labels
 - **Multi-Cut Planner**: Plan complex multi-reel cutting operations *(currently non-functional)*
 - **Education Center**: Learning resources and reference materials
@@ -48,23 +73,47 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 
 ## 🔧 **Technical Details**
 
-### **Storage Layer (IndexedDB)**
+### **Storage Architecture**
+
+#### **Current Implementation (IndexedDB)**
 ```javascript
-const db = new EECOLIndexedDB({
-  stores: ['cuttingRecords', 'inventoryRecords', 'maintenanceLogs', 'settings']
-});
+// IndexedDB for local storage
+const eecolDB = new EECOLIndexedDB();
+await eecolDB.add('cuttingRecords', record);
 ```
 
-**Database Stores:**
+**IndexedDB Object Stores (12 total):**
 - `cuttingRecords` - Wire cutting operations and history
 - `inventoryRecords` - Material inventory tracking
 - `maintenanceLogs` - Equipment maintenance records
+- `markConverter`, `stopmarkConverter`, `reelcapacityEstimator`, `reelsizeEstimator`, `muticutPlanner` - Calculator history
 - `settings` - App configuration and preferences
+- `users`, `notifications`, `sessions` - User management
 
-### **P2P Synchronization (Gun.js)**
-**Status**: Implemented but non-functional - does not sync any tables
+#### **Planned: Configurable Storage Adapter**
+```javascript
+// Future: Unified storage API with user-selectable backend
+const storage = new StorageAdapter({
+  mode: 'indexeddb' // or 'supabase' or 'hybrid'
+});
+await storage.add('cuttingRecords', record);
 
-The application includes Gun.js P2P infrastructure but it is currently not operational and does not synchronize any data between devices.
+// Automatic sync in hybrid mode
+// Real-time subscriptions when using Supabase
+// Offline queue for disconnected operations
+```
+
+**Migration Path:**
+1. **Storage Abstraction Layer**: Unified API for all backends
+2. **Simple Toggle**: Quick switch between IndexedDB/Supabase in settings
+3. **Supabase Integration**: Cloud PostgreSQL with real-time subscriptions
+4. **Full Config Page**: Advanced database configuration interface
+
+**Benefits:**
+- User choice between local-only and cloud sync
+- Seamless migration with zero data loss
+- Hybrid mode for offline resilience with cloud backup
+- Future-proof architecture for additional backends
 
 ### **PWA Features**
 - **Service Workers**: Background caching and offline functionality
@@ -108,15 +157,23 @@ npx http-server
 - ✅ Mobile responsive design
 
 ### **Known Issues**
-- ❌ **Multi-Cut Planner**: Currently non-functional - complex tool with integration issues
-- ⚠️ **P2P Sync**: Implemented but non-functional - does not sync any data between devices
-- ⚠️ **Live Statistics**: Has localStorage fallback crash in some scenarios
+- ❌ **Multi-Cut Planner**: Currently non-functional - requires ground-up rebuild
+- ⚠️ **Live Statistics Dashboard**: localStorage fallback has crash issue
+- ⚠️ **Reel Size Estimator**: User-reported bugs under investigation
 
 ### **Recent Updates**
-- **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite
-- **Console Cleanup**: Removed 400+ debug statements for production readiness
-- **Modal System**: Replaced all browser alerts with EECOL-branded dialogs
-- **Mobile Navigation**: Consistent menus across all pages
+- **November 2, 2025**: Comprehensive Supabase migration roadmap created (`ai-context/memory-bank/roadmap.md`)
+- **November 2, 2025**: All documentation unified and corrected to reflect accurate current state
+- **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite ✅
+- **Console Cleanup**: Removed 400+ debug `console.log` statements for production readiness ✅
+- **Modal System**: Replaced all browser alerts with EECOL-branded dialogs ✅
+- **Mobile Navigation**: Consistent menus across all pages ✅
+
+### **Current Status**
+- ✅ **Production Ready**: IndexedDB storage fully functional
+- 📋 **Migration In Progress**: Configurable storage architecture planned
+- 🎯 **Next Priority**: Storage abstraction layer + user toggle switch
+- 🔮 **Future**: Full database configuration page
 
 ---
 
@@ -125,19 +182,40 @@ npx http-server
 ### **Project Structure**
 ```
 src/
-├── core/database/          # IndexedDB and Gun.js sync
-├── pages/                  # HTML pages and JavaScript
-├── assets/                 # CSS, icons, shared resources
-├── utils/                  # Helper utilities
-└── core/modules/           # Industry standards and data
+├── core/
+│   ├── database/
+│   │   ├── indexeddb.js         # Current: IndexedDB implementation ✅
+│   │   ├── gun-sync.js          # ⚠️ DEPRECATED: Being removed
+│   │   ├── storage-adapter.js   # 🔄 IN DEVELOPMENT: Unified storage API
+│   │   └── supabase-client.js   # 📋 PLANNED: Supabase integration
+│   └── modules/                 # Industry standards and product data
+├── pages/
+│   ├── settings/
+│   │   └── storage-settings.html  # 📋 PLANNED: Database config UI
+│   └── [other pages]/           # Feature pages
+├── assets/                      # CSS, JS, icons, shared resources
+└── utils/                       # Helper utilities
 ```
 
 ### **Key Technologies**
-- **Frontend**: Vanilla JavaScript, HTML5, TailwindCSS
-- **Storage**: IndexedDB (primary), localStorage (fallback)
+**Current Stack:**
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3
+- **Storage**: IndexedDB (EECOLTools_v2 database)
 - **PWA**: Service Workers, Web App Manifest
-- **Charts**: Chart.js for data visualization
-- **Sync**: Gun.js (infrastructure present but non-functional)
+- **Security**: Client-side data security, transaction-safe operations
+
+**Planned: Configurable Storage Backend**
+- **Storage Adapter**: Unified API supporting multiple backends
+- **IndexedDB**: Local-only mode (offline-first)
+- **Supabase**: Cloud PostgreSQL with real-time sync
+- **Hybrid Mode**: Local + cloud automatic synchronization
+- **User Toggle**: Simple settings switch (Phase 1)
+- **Config Page**: Full database configuration UI (Phase 2)
+
+**Future Enhancements:**
+- **Supabase Auth**: Enterprise authentication with RBAC
+- **Real-time Subscriptions**: Collaborative features via Supabase
+- **Cloud Backups**: Automatic data backup and recovery
 
 ### **Contributing**
 - Follow the established patterns in existing tools

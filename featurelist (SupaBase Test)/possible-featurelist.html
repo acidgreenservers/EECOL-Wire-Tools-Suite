@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EECOL Wire Tools - Interactive Dynamic Feature Voting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script>
+        // Feature voting system data
+        let votes = {};
+        let totalVotes = 0;
+        let weeklyWinner = null;
+        let currentWeek = null;
+
+        // ================================================
+        // SUPABASE CONFIGURATION - ADD YOUR API DETAILS HERE
+        // ================================================
+        const supabaseUrl = 'https://nywkaaqumyxpqecbenyw.supabase.co';
+        const supabaseKey = 'sb_publishable_ICiwfRDDsh3AKvi8iSKs3Q_ccRraE0i';
+        // Wait for Supabase to be available
+        function getSupabaseClient() {
+            if (window.supabase && window.supabase.createClient) {
+                return window.supabase.createClient(supabaseUrl, supabaseKey);
+            }
+            return null;
+        }
+
+        // Initialize supabase later
+        let supabase = null;
+
+        // ================================================
+        // FEATURE REQUESTS CONFIGURATION - EASY TO MODIFY
+        // ================================================
+        // Add, remove, or modify features here WITHOUT touching HTML or Supabase
+        const featureRequests = {
+            "Wire Mark Calculator": {
+                icon: "📊",
+                borderColor: "border-green-400",
+                badgeColor: "bg-green-100 border border-green-300 text-green-800",
+                highPriority: [
+                    {
+                        name: "Preset Mark Ranges",
+                        icon: "🎯",
+                        description: "Quick buttons for common cut lengths (e.g., <code class=\"bg-gray-100 px-1 rounded\">2m cut</code>, <code class=\"bg-gray-100 px-1 rounded\">5m cut</code>, <code class=\"bg-gray-100 px-1 rounded\">10m cut</code>)"
+                    },
+                    {
+                        name: "Mark Sequence Generator",
+                        icon: "🔢",
+                        description: "Generate multiple marks with equal spacing (e.g., \"Start at 100m, make 5 cuts of 3m each\")"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Unit Conversion Presets",
+                        icon: "🔄",
+                        description: "Quick switching between meters/feet with automatic conversion"
+                    },
+                    {
+                        name: "Mark History",
+                        icon: "📚",
+                        description: "Keep last 10 calculations for quick reference"
+                    }
+                ],
+                lowPriority: [
+                    {
+                        name: "CSV Export",
+                        icon: "📄",
+                        description: "Export mark calculations for inventory tracking"
+                    }
+                ]
+            },
+            "Reel Size Estimator": {
+                icon: "🧵",
+                borderColor: "border-blue-400",
+                badgeColor: "bg-blue-100 border border-blue-300 text-blue-800",
+                highPriority: [
+                    {
+                        name: "Saved Reel Templates",
+                        icon: "💾",
+                        description: "Store frequently used reel configurations"
+                    },
+                    {
+                        name: "Cost Estimation",
+                        icon: "💰",
+                        description: "Calculate cable cost based on weight and unit pricing"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Material Comparison",
+                        icon: "⚖️",
+                        description: "Compare capacity with different safety standards"
+                    },
+                    {
+                        name: "Visualization Improvements",
+                        icon: "🎨",
+                        description: "~~Animated winding simulation showing actual towerknot spacing~~ *ADDED TO TOOLS*"
+                    }
+                ],
+                lowPriority: [
+                    {
+                        name: "Mobile Camera Integration",
+                        icon: "📱",
+                        description: "Scan reel specifications using device camera"
+                    }
+                ]
+            },
+            "Wire Stop Mark Calculator": {
+                icon: "🔚",
+                borderColor: "border-red-400",
+                badgeColor: "bg-red-100 border border-red-300 text-red-800",
+                highPriority: [
+                    {
+                        name: "Directional Cutting Algorithms",
+                        icon: "🧭",
+                        description: "Smart suggestion for whether to cut forward or backward"
+                    },
+                    {
+                        name: "Preset Stop Mark Offsets",
+                        icon: "📏",
+                        description: "Common \"add 2m\" or \"subtract 0.5m\" for different cable types"
+                    },
+                    {
+                        name: "Mark Validation",
+                        icon: "⚠️",
+                        description: "Warning if stop mark exceeds reel capacity"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Cutting Sequence Planner",
+                        icon: "📋",
+                        description: "Plan multiple cuts with optimized order"
+                    }
+                ],
+                lowPriority: []
+            },
+            "Wire Weight Calculator": {
+                icon: "⚖️",
+                borderColor: "border-purple-400",
+                badgeColor: "bg-purple-100 border border-purple-300 text-purple-800",
+                highPriority: [
+                    {
+                        name: "Custom Cable Library",
+                        icon: "📚",
+                        description: "User-defined cables with conductivity and insulation properties"
+                    },
+                    {
+                        name: "Bulk Shipping Calculator",
+                        icon: "📦",
+                        description: "Enter multiple cable types for total shipment weight"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Density Calculator",
+                        icon: "🧮",
+                        description: "Estimate conductor density from AWG gauge and material"
+                    }
+                ],
+                lowPriority: [
+                    {
+                        name: "Loading Dock Limits",
+                        icon: "🚛",
+                        description: "Check against weight limits for loading equipment"
+                    }
+                ]
+            },
+            "Cutting Records": {
+                icon: "✂️",
+                borderColor: "border-indigo-400",
+                badgeColor: "bg-indigo-100 border border-indigo-300 text-indigo-800",
+                highPriority: [
+                    {
+                        name: "Advanced Filtering",
+                        icon: "🎛️",
+                        description: "Filter by multiple criteria simultaneously (date range + cutter + customer)"
+                    },
+                    {
+                        name: "Cutting Analytics Dashboard",
+                        icon: "📊",
+                        description: "Charts showing productivity trends over time"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Waste Minimization Planner",
+                        icon: "♻️",
+                        description: "Suggest optimal cut patterns to minimize scrap"
+                    },
+                    {
+                        name: "Integration APIs",
+                        icon: "🔗",
+                        description: "Export to inventory systems or ERP software"
+                    }
+                ],
+                lowPriority: [
+                    {
+                        name: "Barcode Scanning",
+                        icon: "📷",
+                        description: "Mobile camera integration for quick wire ID entry"
+                    }
+                ]
+            },
+            "System-Level": {
+                icon: "⚙️",
+                borderColor: "border-pink-400",
+                badgeColor: "bg-pink-100 border border-pink-300 text-pink-800",
+                highPriority: [
+                    {
+                        name: "Audit Trails",
+                        icon: "📝",
+                        description: "Track all calculation inputs and outputs for quality control"
+                    },
+                    {
+                        name: "Customization Options",
+                        icon: "🎛️",
+                        description: "User preferences for preferred units, default settings"
+                    },
+                    {
+                        name: "Accessibility Compliance",
+                        icon: "♿",
+                        description: "Enhanced screen reader support and high contrast modes"
+                    }
+                ],
+                mediumPriority: [
+                    {
+                        name: "Performance Analytics",
+                        icon: "📈",
+                        description: "Usage statistics to understand which tools are most valuable"
+                    },
+                    {
+                        name: "Keyboard Shortcuts",
+                        icon: "⌨️",
+                        description: "Power user features for faster navigation"
+                    }
+                ],
+                lowPriority: []
+            }
+        };
+
+        // Real-time subscription
+        let realtimeChannel;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Dynamic page loaded, starting initialization...');
+
+            // Initialize Supabase first
+            supabase = getSupabaseClient();
+            console.log('Supabase client:', supabase);
+
+            // Now generate features
+            console.log('Generating feature sections...');
+            const featuresGenerated = generateFeatureSections();
+            console.log('Feature sections generated:', featuresGenerated);
+
+            // Initialize the voting system
+            loadVotingData().then(() => {
+                updateVoteCounters();
+                setupCheckboxes();
+                updateWeeklyWinner();
+                setupRealtimeSubscription();
+                console.log('✅ Dynamic initialization complete');
+            });
+        });
+
+        // Generate HTML sections from the configuration
+        function generateFeatureSections() {
+            const container = document.getElementById('features-container');
+
+            try {
+                for (const [toolName, config] of Object.entries(featureRequests)) {
+                    const section = document.createElement('div');
+                    section.className = `bg-white p-6 rounded-xl shadow-lg border-l-4 ${config.borderColor} tool-section`;
+                    section.setAttribute('data-tool', toolName);
+
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'flex items-center justify-between mb-4';
+
+                    const headerContent = document.createElement('div');
+                    headerContent.className = 'flex items-center';
+
+                    const iconSpan = document.createElement('div');
+                    iconSpan.className = 'text-2xl mr-3';
+                    iconSpan.textContent = config.icon;
+
+                    const titleH2 = document.createElement('h2');
+                    titleH2.className = 'text-xl font-bold text-[#0058B3]';
+                    titleH2.textContent = toolName + ' Enhancements';
+
+                    headerContent.appendChild(iconSpan);
+                    headerContent.appendChild(titleH2);
+
+                    const badgeDiv = document.createElement('div');
+                    badgeDiv.className = `px-3 py-1 rounded-full border ${config.badgeColor}`;
+                    badgeDiv.innerHTML = `<span class="text-sm font-bold">Votes: <span class="tool-vote-count">0</span></span>`;
+
+                    headerDiv.appendChild(headerContent);
+                    headerDiv.appendChild(badgeDiv);
+
+                    const sectionsWrapper = document.createElement('div');
+                    sectionsWrapper.className = 'space-y-4';
+
+                    // High Priority
+                    if (config.highPriority && config.highPriority.length > 0) {
+                        const highPrioritySection = createPrioritySection('High Priority Features', '🔴', 'bg-green-50 p-4 rounded-lg border border-green-200', config.highPriority);
+                        sectionsWrapper.appendChild(highPrioritySection);
+                    }
+
+                    // Medium Priority
+                    if (config.mediumPriority && config.mediumPriority.length > 0) {
+                        const mediumPrioritySection = createPrioritySection('Medium Priority Features', '🟡', 'bg-yellow-50 p-4 rounded-lg border border-yellow-200', config.mediumPriority);
+                        sectionsWrapper.appendChild(mediumPrioritySection);
+                    }
+
+                    // Low Priority
+                    if (config.lowPriority && config.lowPriority.length > 0) {
+                        const lowPrioritySection = createPrioritySection('Low Priority Features', '🟢', 'bg-blue-50 p-4 rounded-lg border border-blue-200', config.lowPriority);
+                        sectionsWrapper.appendChild(lowPrioritySection);
+                    }
+
+                    section.appendChild(headerDiv);
+                    section.appendChild(sectionsWrapper);
+                    container.appendChild(section);
+                }
+
+                return featureRequests;
+            } catch (error) {
+                console.error('Error generating feature sections:', error);
+                return null;
+            }
+        }
+
+        function createPrioritySection(title, icon, sectionClass, features) {
+            const section = document.createElement('div');
+            section.className = sectionClass;
+
+            const header = document.createElement('h3');
+            header.className = 'text-lg font-bold text-green-800 mb-3 flex items-center';
+            header.innerHTML = `<span class="mr-2">${icon}</span> ${title}`;
+
+            const featuresWrapper = document.createElement('div');
+            featuresWrapper.className = 'space-y-3';
+
+            features.forEach(feature => {
+                const featureDiv = document.createElement('div');
+                featureDiv.className = 'bg-white p-3 rounded border';
+
+                const featureContent = document.createElement('div');
+                featureContent.className = 'flex items-start';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'feature-checkbox mr-3 mt-1';
+                checkbox.setAttribute('data-feature', feature.name);
+                // Disable checkbox for completed features marked with strikethrough
+                if (feature.description.includes('~~') && feature.name === 'Visualization Improvements') {
+                    checkbox.disabled = true;
+                    checkbox.style.opacity = '0.5';
+                    checkbox.style.cursor = 'not-allowed';
+                }
+
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'text-xl mr-3 mt-1';
+                emojiSpan.textContent = feature.icon;
+
+                const textDiv = document.createElement('div');
+                textDiv.className = 'flex-1';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'font-bold text-green-700';
+                titleDiv.textContent = feature.name;
+
+                const descriptionDiv = document.createElement('div');
+                descriptionDiv.className = 'text-sm text-gray-600';
+                descriptionDiv.textContent = feature.description;
+
+                textDiv.appendChild(titleDiv);
+                textDiv.appendChild(descriptionDiv);
+
+                featureContent.appendChild(checkbox);
+                featureContent.appendChild(emojiSpan);
+                featureContent.appendChild(textDiv);
+
+                featureDiv.appendChild(featureContent);
+                featuresWrapper.appendChild(featureDiv);
+            });
+
+            section.appendChild(header);
+            section.appendChild(featuresWrapper);
+
+            return section;
+        }
+
+        // Setup real-time subscription to Supabase
+        function setupRealtimeSubscription() {
+            realtimeChannel = supabase
+                .channel('feature-votes-changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'feature_votes'
+                    },
+                    async () => {
+                        // Refresh data when changes occur
+                        await loadVotingData();
+                        updateVoteCounters();
+                        updateWeeklyWinner();
+                    }
+                )
+                .subscribe();
+        }
+
+        async function loadVotingData() {
+            // Try to load from Supabase first
+            if (supabase && supabaseUrl !== 'YOUR_SUPABASE_PROJECT_URL_HERE') {
+                try {
+                    const { data, error } = await supabase
+                        .from('feature_votes')
+                        .select('feature_name, user_id');
+
+                    if (!error && data) {
+                        // Convert Supabase data to our format
+                        votes = {};
+                        const currentUser = 'anonymous'; // Could be made dynamic later
+
+                        data.forEach(vote => {
+                            if (!votes[vote.feature_name]) {
+                                votes[vote.feature_name] = [];
+                            }
+                            if (!votes[vote.feature_name].includes(currentUser)) {
+                                votes[vote.feature_name].push(currentUser);
+                            }
+                        });
+
+                        totalVotes = Object.values(votes).reduce((sum, arr) => sum + arr.length, 0);
+                        console.log('Loaded votes from Supabase:', votes);
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error loading from Supabase, falling back to localStorage:', error);
+                }
+            }
+
+            // Fallback to localStorage
+            const savedVotes = localStorage.getItem('eecolFeatureVotes');
+            const lastWeekReset = localStorage.getItem('eecolWeekReset');
+
+            // Check if we need to reset for new week
+            const now = new Date();
+            const currentWeekNum = getWeekNumber(now);
+
+            if (lastWeekReset !== currentWeekNum.toString()) {
+                // Reset weekly data
+                localStorage.setItem('eecolWeekReset', currentWeekNum.toString());
+                localStorage.removeItem('eecolWeeklyVotes');
+                localStorage.removeItem('eecolWeeklyWinner');
+                votes = {};
+            } else {
+                votes = savedVotes ? JSON.parse(savedVotes) : {};
+            }
+
+            currentWeek = currentWeekNum;
+            totalVotes = Object.values(votes).reduce((sum, arr) => sum + arr.length, 0);
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function setupCheckboxes() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const featureName = checkbox.getAttribute('data-feature');
+                const toolName = checkbox.closest('.tool-section').getAttribute('data-tool');
+
+                // Check if this feature is already voted for
+                if (votes[toolName] && votes[toolName].includes(featureName)) {
+                    checkbox.checked = true;
+                }
+
+                checkbox.addEventListener('change', function() {
+                    updateVote(featureName, toolName, checkbox.checked);
+                });
+            });
+        }
+
+        async function updateVote(featureName, toolName, isChecked) {
+            // Update local state
+            if (!votes[toolName]) {
+                votes[toolName] = [];
+            }
+
+            let changed = false;
+            if (isChecked && !votes[toolName].includes(featureName)) {
+                votes[toolName].push(featureName);
+                totalVotes++;
+                changed = true;
+            } else if (!isChecked && votes[toolName].includes(featureName)) {
+                votes[toolName] = votes[toolName].filter(f => f !== featureName);
+                totalVotes--;
+                changed = true;
+            }
+
+            if (changed) {
+                // Update Supabase if configured
+                if (supabase && supabaseUrl !== 'YOUR_SUPABASE_PROJECT_URL_HERE') {
+                    try {
+                        if (isChecked) {
+                            await supabase
+                                .from('feature_votes')
+                                .insert([{ feature_name: featureName, user_id: 'anonymous' }]);
+                        } else {
+                            await supabase
+                                .from('feature_votes')
+                                .delete()
+                                .eq('feature_name', featureName)
+                                .eq('user_id', 'anonymous');
+                        }
+                        console.log('Vote updated in Supabase');
+                    } catch (error) {
+                        console.error('Error updating Supabase:', error);
+                        // Fallback to localStorage
+                        saveVotingData();
+                    }
+                } else {
+                    // Use localStorage if Supabase not configured
+                    saveVotingData();
+                }
+
+                updateVoteCounters();
+                updateWeeklyWinner();
+            }
+        }
+
+        function saveVotingData() {
+            localStorage.setItem('eecolFeatureVotes', JSON.stringify(votes));
+        }
+
+        function updateVoteCounters() {
+            document.getElementById('totalVotes').textContent = totalVotes;
+
+            // Update individual tool counters
+            const toolSections = document.querySelectorAll('.tool-section');
+            toolSections.forEach(section => {
+                const toolName = section.getAttribute('data-tool');
+                const toolVotes = votes[toolName] ? votes[toolName].length : 0;
+                const counter = section.querySelector('.tool-vote-count');
+                if (counter) {
+                    counter.textContent = toolVotes;
+                }
+            });
+        }
+
+        function updateWeeklyWinner() {
+            // Create a map of all features and their total vote counts across all tools
+            const allFeatureVotes = {};
+
+            // Count votes for every feature across all tools
+            Object.entries(votes).forEach(([tool, features]) => {
+                features.forEach(feature => {
+                    allFeatureVotes[feature] = (allFeatureVotes[feature] || 0) + 1;
+                });
+            });
+
+            // Sort features by vote count (highest first)
+            const sortedFeatures = Object.entries(allFeatureVotes)
+                .sort(([,a], [,b]) => b - a)
+                .map(([feature, votes]) => ({ feature, votes }));
+
+            // Winner is the top feature (most votes overall)
+            const winner = sortedFeatures[0];
+            // Runner-up is the second-highest feature
+            const runnerUp = sortedFeatures[1];
+
+            // Update winner display
+            const winnerElement = document.getElementById('weeklyWinner');
+            const winnerBadge = document.getElementById('winnerBadge');
+            const runnerUpElement = document.getElementById('weeklyRunnerUp');
+            const runnerUpBadge = document.getElementById('runnerUpBadge');
+
+            if (winner && winner.votes > 0) {
+                winnerElement.textContent = `"${winner.feature}" (${winner.votes} votes)`;
+                winnerBadge.classList.remove('hidden');
+            } else {
+                winnerElement.textContent = 'No votes yet';
+                winnerBadge.classList.add('hidden');
+            }
+
+            if (runnerUp && runnerUp.votes > 0) {
+                runnerUpElement.textContent = `"${runnerUp.feature}" (${runnerUp.votes} votes)`;
+                runnerUpBadge.classList.remove('hidden');
+            } else {
+                runnerUpElement.textContent = 'No votes yet';
+                runnerUpBadge.classList.add('hidden');
+            }
+        }
+
+        async function clearAllVotes() {
+            if (confirm('Are you sure you want to clear all votes? This cannot be undone.')) {
+                try {
+                    // Clear all records from Supabase
+                    if (supabase && supabaseUrl !== 'YOUR_SUPABASE_PROJECT_URL_HERE') {
+                        const { error } = await supabase
+                            .from('feature_votes')
+                            .delete()
+                            .neq('id', 0); // This will delete all records
+
+                        if (error) {
+                            console.error('Error clearing votes from Supabase:', error);
+                            alert('Failed to clear votes from database. Please try again.');
+                            return;
+                        }
+
+                        console.log('All votes cleared from Supabase successfully');
+                    }
+
+                    // Clear local state
+                    votes = {};
+                    totalVotes = 0;
+
+                    // Clear localStorage
+                    saveVotingData();
+
+                    // Update UI
+                    updateVoteCounters();
+                    updateWeeklyWinner();
+
+                    // Uncheck all checkboxes
+                    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = false);
+
+                    alert('All votes have been cleared successfully!');
+
+                } catch (error) {
+                    console.error('Error clearing votes:', error);
+                    alert('Failed to clear votes. Please check the console for details.');
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Load Roboto Font */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            --eecol-blue: #0058B3;
+        }
+
+        /* Defined EECOL Blue */
+        .eecol-blue-bg {
+            background-image: linear-gradient(to bottom, var(--eecol-blue) 20%, white 80%);
+        }
+
+        /* Custom gradient for the header text */
+        .header-gradient {
+            background-image: linear-gradient(90deg, var(--eecol-blue), #004a99);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Custom blue for the card border */
+        .card-border-blue {
+            border-left-color: var(--eecol-blue);
+        }
+
+        /* New custom class for logo rotation */
+        .eecol-logo-tilt {
+            transform: rotate(-20deg);
+            transform-origin: center;
+        }
+
+        /* Custom checkbox styling */
+        .feature-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--eecol-blue);
+        }
+
+        /* Winner badge animation */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 88, 179, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 88, 179, 0.8); }
+        }
+
+        .winner-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 h-screen flex flex-col eecol-blue-bg relative">
+
+
+
+    <div class="flex-1 w-full max-w-md md:max-w-xl lg:max-w-7xl xl:max-w-9xl bg-[#F0F8FF] p-4 sm:p-6 rounded-xl shadow-2xl mx-auto border-2 border-solid border-[#0058B3] overflow-hidden flex flex-col mb-16">
+
+        <!-- EECOL 'E' Logo (SVG) -->
+        <div class="flex justify-center mb-1">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-[#0058B3] drop-shadow-lg eecol-logo-tilt">
+                <circle cx="12" cy="12" r="11.35" fill="white" stroke="currentColor" stroke-width="2"/>
+                <rect x="4" y="4" width="4" height="16" rx="1" fill="currentColor"/>
+                <path d="M 8,6.5 C 12,5.5 16,7.5 20,6.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M 8,12 C 12,11 16,13 20,12" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M 8,17.5 C 12,16.5 16,18.5 20,17.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- Tool Title Area -->
+        <h1 class="text-3xl font-black mb-3 text-center header-gradient" id="toolTitle">
+            Interactive Feature Voting
+        </h1>
+        <p class="mb-5 text-center text-sm font-medium text-[#0058B3]" id="toolSubtitle">
+            Shape the future of wire management!</strong> Vote for the features that matter most to you. Votes reset weekly, with the most popular feature earning a special "Winner" badge to celebrate community priorities.
+        </p>
+
+                        <!-- Voting Status Bar -->
+        <div class="bg-white p-4 rounded-lg shadow-lg mb-6 border-l-4 card-border-blue">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-2">🗳️</span>
+                        <div>
+                            <div class="text-lg font-bold text-[#0058B3]">Total Votes This Week</div>
+                            <div class="text-3xl font-black text-[#0058B3]" id="totalVotes">0</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-2">🏆</span>
+                        <div>
+                            <div class="text-lg font-bold text-[#0058B3]">Weekly Winner</div>
+                            <div class="text-lg font-semibold text-[#0058B3]" id="weeklyWinner">No votes yet</div>
+                        </div>
+                    </div>
+                    <div id="winnerBadge" class="hidden winner-glow bg-gradient-to-r from-yellow-400 to-orange-500 px-3 py-1 rounded-full border-2 border-yellow-600 mr-4">
+                        <span class="text-sm font-bold text-yellow-900">⭐ FEATURE WINNER</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-2">🥈</span>
+                        <div>
+                            <div class="text-lg font-bold text-[#0058B3]">Runner Up</div>
+                            <div class="text-lg font-semibold text-[#0058B3]" id="weeklyRunnerUp">No votes yet</div>
+                        </div>
+                    </div>
+                    <div id="runnerUpBadge" class="hidden bg-gradient-to-r from-gray-400 to-gray-600 px-3 py-1 rounded-full border-2 border-gray-700">
+                        <span class="text-sm font-bold text-gray-100">🏅 RUNNER UP</span>
+                    </div>
+                </div>
+                <button onclick="clearAllVotes()" class="px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition duration-200 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
+                    Clear All Votes
+                </button>
+            </div>
+        </div>
+
+        <!-- Tool Layout Container: SCROLL FIX: flex-1 ensures it takes all remaining space. overflow-y-auto ensures it scrolls internally. -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="space-y-6">
+
+                <!-- Introduction Overview -->
+                <div class="space-y-6">
+
+                    <!-- Introduction Overview -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 card-border-blue">
+                        <div class="flex items-center mb-4">
+                            <div class="text-3xl mr-3">🚀</div>
+                            <h2 class="text-xl font-bold text-[#0058B3]">EECOL Tools Suite: Maintainable Feature Voting</h2>
+                        </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-700 mb-3"><strong>✨ Dynamic Configuration System</strong> - Add or remove features without touching HTML! Everything is generated from a JavaScript object that you can edit safely.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-4">
+                            <p class="text-sm text-yellow-800 mb-2"><strong>How to modify features:</strong></p>
+                            <ul class="text-sm text-yellow-700 space-y-1 ml-4">
+                                <li>• <strong>Add new features:</strong> Add entries to the featureRequests object</li>
+                                <li>• <strong>Mark as completed:</strong> Add completed: ["Feature Name"] to any priority</li>
+                                <li>• <strong>Remove features:</strong> Delete entries from the configuration</li>
+                                <li>• <strong>No Supabase changes needed!</strong></li>
+                            </ul>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                            <div class="bg-[#F0F8FF] p-3 rounded-lg">
+                                <div class="text-2xl mb-1">🗳️</div>
+                                <div class="text-sm font-semibold text-[#0058B3]">Weekly Voting</div>
+                                <div class="text-xs text-gray-600">Vote resets every Monday</div>
+                            </div>
+                            <div class="bg-[#F0F8FF] p-3 rounded-lg">
+                                <div class="text-2xl mb-1">🔧</div>
+                                <div class="text-sm font-semibold text-[#0058B3]">Easy Maintenance</div>
+                                <div class="text-xs text-gray-600">Edit JavaScript only</div>
+                            </div>
+                            <div class="bg-[#F0F8FF] p-3 rounded-lg">
+                                <div class="text-2xl mb-1">📊</div>
+                                <div class="text-sm font-semibold text-[#0058B3]">Real-time Updates</div>
+                                <div class="text-xs text-gray-600">Watch vote counts update instantly</div>
+                            </div>
+                            <div class="bg-[#F0F8FF] p-3 rounded-lg">
+                                <div class="text-2xl mb-1">💾</div>
+                                <div class="text-sm font-semibold text-[#0058B3]">Saved Locally</div>
+                                <div class="text-xs text-gray-600">Votes persist in your browser</div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <!-- Dynamic Features Container -->
+                        <div id="features-container" class="space-y-6">
+                            <!-- Features will be generated here by JavaScript -->
+                        </div>
+
+                        <!-- Features Added to Tools -->
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+                            <div class="flex items-center mb-3">
+                                <div class="text-2xl mr-2">✅</div>
+                                <h3 class="text-lg font-semibold text-blue-800">Features Added to Tools</h3>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <div class="text-lg font-bold text-blue-700 mb-2">Recently Implemented</div>
+                                <div class="text-sm grid grid-cols-1 gap-1">
+                                    <div>• <strong>Visualization Improvements</strong> - <s>Animated winding simulation showing actual towerknot spacing</s> *ADDED TO TOOLS*</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legend Section -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-gray-400 text-center">
+                        <div class="flex justify-center items-center mb-4">
+                            <div class="text-3xl mr-3">📋</div>
+                            <h2 class="text-xl font-bold text-[#0058B3]">Priority Legend</h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                                <div class="flex items-center justify-center">
+                                    <span class="text-2xl mr-3">🔴</span>
+                                    <div>
+                                        <div class="font-bold text-red-800">High Priority</div>
+                                        <div class="text-sm text-gray-600">Critical features for immediate development</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <div class="flex items-center justify-center">
+                                    <span class="text-2xl mr-3">🟡</span>
+                                    <div>
+                                        <div class="font-bold text-yellow-800">Medium Priority</div>
+                                        <div class="text-sm text-gray-600">Important enhancements for future releases</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <div class="flex items-center justify-center">
+                                    <span class="text-2xl mr-3">🟢</span>
+                                    <div>
+                                        <div class="font-bold text-blue-800">Low Priority</div>
+                                        <div class="text-sm text-gray-600">Nice-to-have features for later consideration</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="font-medium text-[#0058B3] text-center select-none">
+                            This dynamic system makes it easy to maintain features without database changes or HTML editing.
+                        </p>
+                    </div>
+
+                </section>
+
+            </div>
+        </div>
+
+        <!-- Footer inside main box -->
+        <div class="mt-auto pt-4 border-t border-blue-200">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex space-x-3">
+                    <a href="./index.html" class="px-3 py-1.5 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 text-xs no-underline">🏠 Home</a>
+                    <a
+                        id="usefulBtnInside"
+                        href="./useful-tool.html"
+                                                class="px-3 py-1.5 bg-sky-500 border-2 border-sky-500 text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-sky-600 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-sky-500 focus:ring-opacity-50 text-xs no-underline"
+                    >
+                        Is This Tool Useful?
+                    </a>
+                    <a href="./featurelist-changelog.html" class="px-3 py-1.5 bg-amber-500 border-2 border-amber-500 text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-amber-600 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-opacity-50 text-xs no-underline">📋 Voting Changelog</a>
+                </div>
+                <p class="text-xs text-gray-500 font-mono select-none">v0.7.12</p>
+            </div>
+            <p class="font-medium text-[#0058B3] text-center select-none mb-1">
+                Made With ❤️ By: Lucas and Cline 🤖
+            </p>
+            <p class="text-xs font-semibold header-gradient text-center select-none">
+                EECOL Wire Tools 2025
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

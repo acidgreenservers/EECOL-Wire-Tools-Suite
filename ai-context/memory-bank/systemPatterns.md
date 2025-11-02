@@ -2,7 +2,7 @@
 
 ## System Architecture
 
-### High-Level Architecture
+### High-Level Architecture (CURRENT - v0.8.0.1 + Phase 2 Complete)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      Browser Layer (PWA)                     │
@@ -19,32 +19,86 @@
 │  └─ Shared utilities and helpers                            │
 ├─────────────────────────────────────────────────────────────┤
 │  Core Services Layer                                        │
-│  ├─ Database: src/core/database/indexeddb.js               │
-│  ├─ P2P Sync: src/core/database/gun-sync.js                │
+│  ├─ Storage Adapter: src/core/database/storage-adapter.js  │
+│  │   ├─ IndexedDB Client (v0.8.0.1)                        │
+│  │   ├─ Supabase Client (Phase 3 - TODO)                   │
+│  │   ├─ Offline Queue System (Phase 2 ✅)                  │
+│  │   └─ Migration Utilities (Phase 2 ✅)                   │
 │  ├─ PWA Core: src/assets/js/pwa-core.js                    │
-│  └─ Modules: industry-standards.js, product-data.js        │
+│  └─ Modules: industry-standards.js, wesco-eecol-products.js│
 ├─────────────────────────────────────────────────────────────┤
-│  Storage & Sync Layer                                       │
-│  ├─ IndexedDB (primary persistent storage)                 │
-│  ├─ Gun.js (P2P synchronization)                           │
-│  └─ localStorage (UI state only)                            │
+│  Storage & Sync Layer (Configurable - Phase 2 ✅)           │
+│  ├─ Mode 1: IndexedDB (local-only, offline-first)          │
+│  ├─ Mode 2: Supabase (cloud sync - Phase 3 TODO)           │
+│  └─ Mode 3: Hybrid (IndexedDB + Supabase auto-sync)        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Target Architecture (Post-Migration Complete)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Browser Layer (PWA)                     │
+├─────────────────────────────────────────────────────────────┤
+│  Pages Layer                                                 │
+│  ├─ Index/Dashboard                                         │
+│  ├─ Cutting Records        ├─ Inventory Records            │
+│  ├─ Cutting Reports        ├─ Inventory Reports            │
+│  ├─ Calculator Tools       ├─ Maintenance Checklists       │
+│  └─ Education Hub          └─ Live Statistics              │
+├─────────────────────────────────────────────────────────────┤
+│  Application Layer (JavaScript Modules)                      │
+│  ├─ Page-specific logic (src/assets/js/*.js)               │
+│  └─ Shared utilities and helpers                            │
+├─────────────────────────────────────────────────────────────┤
+│  Core Services Layer                                        │
+│  ├─ Storage Adapter: src/core/database/storage-adapter.js  │
+│  │   ├─ IndexedDB Client (legacy support)                  │
+│  │   ├─ Supabase Client (real-time subscriptions)          │
+│  │   ├─ Offline Queue System (background sync)             │
+│  │   └─ Migration Utilities (data transfer)                │
+│  ├─ PWA Core: src/assets/js/pwa-core.js                    │
+│  └─ Modules: industry-standards.js, wesco-eecol-products.js│
+├─────────────────────────────────────────────────────────────┤
+│  Storage & Sync Layer (Cloud-Enabled)                       │
+│  ├─ Mode 1: IndexedDB (local-only, offline-first)          │
+│  ├─ Mode 2: Supabase (cloud sync with PostgreSQL)          │
+│  └─ Mode 3: Hybrid (IndexedDB + Supabase auto-sync)        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## Key Technical Decisions
 
-### 1. Storage Strategy: IndexedDB-First with Gun.js P2P
-**Decision**: Use IndexedDB as primary storage with Gun.js overlay for P2P sync
+### 1. Storage Strategy: IndexedDB with Planned Supabase Migration
+**Current Implementation (v0.8.0.1)**: IndexedDB
+**Status**: Production-ready, fully functional
 **Rationale**:
-- IndexedDB provides transaction-safe, high-performance local database
-- Gun.js enables real-time P2P synchronization with conflict-free replication
-- Hybrid approach combines reliability with collaboration features
-- Eliminates localStorage race conditions from earlier versions
+- IndexedDB provides reliable offline-first data persistence
+- No external dependencies required for core functionality
+- Fast, secure, local-first architecture
 
-**Implementation**:
-- Core database wrapper: `src/core/database/indexeddb.js`
-- P2P sync layer: `src/core/database/gun-sync.js`
-- All application data flows through these abstraction layers
+**Current Implementation**:
+- IndexedDB wrapper: `src/core/database/indexeddb.js`
+- 12 object stores in EECOLTools_v2 database
+- localStorage for UI state
+
+**Planned Migration Target**: Supabase Cloud Database
+**Migration Status**: Phase 2 ✅ COMPLETED - Storage Abstraction Layer implemented
+**Migration Strategy**:
+- Phase 1 ✅: Foundation & Setup (Supabase project, dependencies, schema)
+- Phase 2 ✅: Storage Abstraction Layer (unified API with three modes)
+- Phase 3 🔄: Supabase Client Implementation (real-time subscriptions)
+- Phase 4 ⏳: Remove Gun.js P2P module (replaced by Supabase real-time)
+- Phase 5 ⏳: Configuration UI with toggle switch (IndexedDB/Supabase/Hybrid)
+- Phase 6 ⏳: Integration & Testing (all modules updated)
+- Phase 7 ⏳: Documentation Unification
+- Phase 8 ⏳: Production Deployment
+
+**Supabase Benefits** (when implemented):
+- ACID-compliant PostgreSQL database with enterprise security
+- Real-time subscriptions for instant multi-user collaboration
+- Row Level Security (RLS) for fine-grained access control
+- Automatic API generation and cloud backups
+- Cross-device synchronization
 
 ### 2. Page-Centric Architecture
 **Decision**: Each major feature is a standalone HTML page with dedicated JavaScript module
@@ -69,7 +123,7 @@ src/pages/[feature-name]/
 - Smaller bundle size and faster load times
 - Better long-term maintainability
 - Easier debugging and troubleshooting
-- Core dependencies limited to Gun.js and utility libraries
+- Core dependencies limited to utility libraries
 
 ### 4. EECOL-Branded Modal System
 **Decision**: Custom modal dialog system replacing browser alerts
@@ -116,14 +170,17 @@ const CuttingRecordsModule = (function() {
 })();
 ```
 
-### 2. Observer Pattern (via Gun.js)
+### 2. Observer Pattern (via Supabase Real-time)
 Real-time data synchronization uses observer pattern:
 ```javascript
-// Gun.js reactive data binding
-gun.get('cuttingRecords').on(data => {
-  // UI automatically updates when data changes
-  updateUI(data);
-});
+// Supabase real-time subscriptions
+supabase
+  .channel('cuttingRecords')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'cutting_records' }, payload => {
+    // UI automatically updates when data changes
+    updateUI(payload.new);
+  })
+  .subscribe();
 ```
 
 ### 3. Repository Pattern
@@ -162,7 +219,6 @@ const db = DatabaseService.getInstance();
 
 **Dependencies**:
 - IndexedDB (data persistence)
-- Gun.js (P2P sync)
 - Inventory Records (material availability check)
 - Wire Mark Calculator (integrated calculations)
 
@@ -170,7 +226,6 @@ const db = DatabaseService.getInstance();
 - Create/edit/view cutting records
 - Validate against inventory levels
 - Calculate wire usage and waste
-- Real-time sync with other operators
 - Integration with calculator tools
 
 #### 2. Inventory Records System
@@ -180,7 +235,6 @@ const db = DatabaseService.getInstance();
 
 **Dependencies**:
 - IndexedDB (data persistence)
-- Gun.js (P2P sync)
 - Notification system (low-stock alerts)
 - Product data module (wire specifications)
 
@@ -217,7 +271,6 @@ const db = DatabaseService.getInstance();
 
 **Dependencies**:
 - IndexedDB (historical data)
-- Gun.js (real-time updates)
 - Chart/visualization libraries (future)
 
 **Responsibilities**:
@@ -261,15 +314,6 @@ const db = DatabaseService.getInstance();
 - `calculations`: Cached calculator results
 - `settings`: App configuration
 
-#### 2. Gun.js Sync Service
-**File**: `src/core/database/gun-sync.js`
-
-**Responsibilities**:
-- P2P peer discovery
-- Real-time data synchronization
-- Conflict-free replication (CRDTs)
-- Network security enforcement
-- VPN/shop network detection
 
 #### 3. PWA Core Service
 **File**: `src/assets/js/pwa-core.js`
@@ -308,9 +352,9 @@ const db = DatabaseService.getInstance();
 3. Check inventory availability (query IndexedDB)
 4. Calculate wire usage (use industry-standards module)
 5. Save to IndexedDB (via database service)
-6. Broadcast via Gun.js (P2P sync)
+6. Broadcast via Supabase real-time subscriptions
 7. Update inventory levels (trigger inventory module)
-8. All connected peers receive update instantly
+8. All connected clients receive update instantly
 ```
 
 ### Data Flow: Low-Stock Alert
@@ -322,20 +366,20 @@ const db = DatabaseService.getInstance();
    - Email via SMTP
    - Webhook to Gotify
    - In-app notification
-5. Gun.js broadcasts to all peers
-6. UI updates on all connected devices
+5. Supabase broadcasts to all subscribers
+6. UI updates on all connected clients
 ```
 
-### Sync Flow: Multi-Peer Collaboration
+### Sync Flow: Multi-Client Collaboration
 ```
-1. Peer A modifies cutting record
-2. Save to local IndexedDB (instant UI update)
-3. Gun.js broadcasts change to network
-4. Peer B receives update via Gun.js listener
-5. Gun.js CRDT resolves any conflicts automatically
-6. Peer B updates local IndexedDB
-7. Peer B UI updates reactively
-8. Process repeats for all connected peers
+1. Client A modifies cutting record
+2. Save to Supabase PostgreSQL (via API)
+3. Supabase broadcasts change via real-time subscriptions
+4. Client B receives update via Supabase subscription
+5. Supabase handles conflict resolution (last-write-wins)
+6. Client B updates local IndexedDB cache
+7. Client B UI updates reactively
+8. Process repeats for all connected clients
 ```
 
 ### Authentication Flow
@@ -385,7 +429,7 @@ const db = DatabaseService.getInstance();
 - Service worker: Network-first for dynamic data
 - IndexedDB for persistent application data
 - localStorage only for UI preferences
-- Gun.js provides automatic data caching
+- Supabase provides automatic data caching and offline sync
 
 ### Debouncing/Throttling
 - Search input debouncing (300ms)
@@ -396,7 +440,8 @@ const db = DatabaseService.getInstance();
 ## Security Patterns
 
 ### Data Encryption
-- Gun SEA for P2P encryption
+- Supabase TLS/SSL encryption for data in transit
+- PostgreSQL encryption at rest
 - Encrypted token storage
 - Secure password hashing
 - No plaintext sensitive data

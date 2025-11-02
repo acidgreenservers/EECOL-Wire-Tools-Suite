@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupabaseClient Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>SupabaseClient Test Suite</h1>
+
+    <div id="status" class="test-section info">
+        <h3>Status: <span id="status-text">Not initialized</span></h3>
+    </div>
+
+    <div class="test-section">
+        <h3>1. Initialize SupabaseClient</h3>
+        <button onclick="testInitialize()">Initialize Client</button>
+        <div id="init-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test Data Transformation</h3>
+        <button onclick="testTransformations()">Test Transformations</button>
+        <div id="transform-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test CRUD Operations</h3>
+        <button onclick="testCRUD()">Test CRUD</button>
+        <div id="crud-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Test Real-time Subscriptions</h3>
+        <button onclick="testRealtime()">Test Realtime</button>
+        <button onclick="stopRealtime()">Stop Realtime</button>
+        <div id="realtime-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. Integration with StorageAdapter</h3>
+        <button onclick="testStorageAdapter()">Test StorageAdapter</button>
+        <div id="adapter-result"></div>
+    </div>
+
+    <!-- Load required scripts -->
+    <script type="module">
+        // Import Supabase
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.78.0';
+        window.supabase = { createClient };
+    </script>
+    <script src="src/core/database/supabase-client.js"></script>
+    <script src="src/core/database/storage-adapter.js"></script>
+    <script src="src/core/database/indexeddb.js"></script>
+
+    <script>
+        let supabaseClient = null;
+        let storageAdapter = null;
+        let realtimeSubscription = null;
+
+        // Test data
+        const testRecord = {
+            id: 'test-' + Date.now(),
+            wireType: '14 AWG THHN',
+            operator: 'Test Operator',
+            quantity: 100,
+            date: new Date().toISOString().split('T')[0]
+        };
+
+        function updateStatus(text, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `test-section ${type}`;
+            document.getElementById('status-text').textContent = text;
+        }
+
+        function showResult(elementId, content, type = 'info') {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<pre>${content}</pre>`;
+            el.className = type;
+        }
+
+        async function testInitialize() {
+            try {
+                updateStatus('Initializing SupabaseClient...', 'info');
+                supabaseClient = new SupabaseClient();
+                await supabaseClient.initialize();
+                updateStatus('SupabaseClient initialized successfully', 'success');
+                showResult('init-result', '✓ Client initialized\n✓ Connection tested\n✓ Table mappings created\n✓ Auth listener setup', 'success');
+            } catch (error) {
+                updateStatus('Initialization failed', 'error');
+                showResult('init-result', `✗ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function testTransformations() {
+            if (!supabaseClient) {
+                showResult('transform-result', '✗ Initialize client first', 'error');
+                return;
+            }
+
+            try {
+                // Test transform to Supabase
+                const transformedTo = supabaseClient.transformToSupabase(testRecord, 'cuttingRecords');
+                console.log('Transformed to Supabase:', transformedTo);
+
+                // Test transform from Supabase
+                const transformedFrom = supabaseClient.transformFromSupabase(transformedTo, 'cuttingRecords');
+                console.log('Transformed from Supabase:', transformedFrom);
+
+                const result = `✓ To Supabase transformation:\n${JSON.stringify(transformedTo, null, 2)}\n\n✓ From Supabase transformation:\n${JSON.stringify(transformedFrom, null, 2)}`;
+                showResult('transform-result', result, 'success');
+            } catch (error) {
+                showResult('transform-result', `✗ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCRUD() {
+            if (!supabaseClient) {
+                showResult('crud-result', '✗ Initialize client first', 'error');
+                return;
+            }
+
+            try {
+                let result = 'Testing CRUD operations...\n\n';
+
+                // Test ADD
+                result += '1. Testing ADD operation...\n';
+                const recordId = await supabaseClient.add('cuttingRecords', testRecord);
+                result += `✓ Added record with ID: ${recordId}\n\n`;
+
+                // Test GET
+                result += '2. Testing GET operation...\n';
+                const getResult = await supabaseClient.get('cuttingRecords', recordId);
+                result += `✓ Retrieved record: ${getResult ? 'Found' : 'Not found'}\n\n`;
+
+                // Test UPDATE
+                result += '3. Testing UPDATE operation...\n';
+                const updatedRecord = { ...testRecord, id: recordId, quantity: 150 };
+                await supabaseClient.update('cuttingRecords', updatedRecord);
+                result += '✓ Updated record\n\n';
+
+                // Test GET ALL
+                result += '4. Testing GET ALL operation...\n';
+                const allRecords = await supabaseClient.getAll('cuttingRecords');
+                result += `✓ Retrieved ${allRecords.length} records\n\n`;
+
+                // Test DELETE (soft delete)
+                result += '5. Testing DELETE operation...\n';
+                await supabaseClient.delete('cuttingRecords', recordId);
+                result += '✓ Soft deleted record\n\n';
+
+                // Verify deletion
+                result += '6. Verifying deletion...\n';
+                const deletedRecord = await supabaseClient.get('cuttingRecords', recordId);
+                result += `✓ Record ${deletedRecord ? 'still exists' : 'properly deleted'}\n\n`;
+
+                showResult('crud-result', result, 'success');
+            } catch (error) {
+                showResult('crud-result', `✗ CRUD test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testRealtime() {
+            if (!supabaseClient) {
+                showResult('realtime-result', '✗ Initialize client first', 'error');
+                return;
+            }
+
+            try {
+                realtimeSubscription = supabaseClient.subscribe('cuttingRecords', (event) => {
+                    console.log('Realtime event:', event);
+                    const result = `Received ${event.eventType} event for ${event.store}:\n${JSON.stringify(event.data, null, 2)}`;
+                    showResult('realtime-result', result, 'success');
+                });
+
+                showResult('realtime-result', '✓ Subscribed to cuttingRecords real-time changes\nListening for events...', 'info');
+            } catch (error) {
+                showResult('realtime-result', `✗ Realtime subscription failed: ${error.message}`, 'error');
+            }
+        }
+
+        function stopRealtime() {
+            if (realtimeSubscription) {
+                realtimeSubscription.unsubscribe();
+                realtimeSubscription = null;
+                showResult('realtime-result', '✓ Unsubscribed from real-time changes', 'info');
+            }
+        }
+
+        async function testStorageAdapter() {
+            try {
+                showResult('adapter-result', 'Testing StorageAdapter integration...', 'info');
+
+                // Initialize StorageAdapter
+                storageAdapter = new StorageAdapter();
+                await storageAdapter.initialize();
+
+                let result = '✓ StorageAdapter initialized\n';
+
+                // Test setting to Supabase mode
+                await storageAdapter.setStorageMode('supabase');
+                result += '✓ Switched to Supabase mode\n';
+
+                // Test CRUD through StorageAdapter
+                const testData = {
+                    id: 'adapter-test-' + Date.now(),
+                    wireType: '12 AWG XHHW',
+                    operator: 'Adapter Test',
+                    quantity: 50,
+                    date: new Date().toISOString().split('T')[0]
+                };
+
+                // Add through adapter
+                const recordId = await storageAdapter.add('cuttingRecords', testData);
+                result += `✓ Added record through adapter: ${recordId}\n`;
+
+                // Get through adapter
+                const getResult = await storageAdapter.get('cuttingRecords', recordId);
+                result += `✓ Retrieved record through adapter: ${getResult ? 'Found' : 'Not found'}\n`;
+
+                // Update through adapter
+                const updatedData = { ...testData, id: recordId, quantity: 75 };
+                await storageAdapter.update('cuttingRecords', updatedData);
+                result += '✓ Updated record through adapter\n';
+
+                // Delete through adapter
+                await storageAdapter.delete('cuttingRecords', recordId);
+                result += '✓ Deleted record through adapter\n';
+
+                // Switch back to IndexedDB
+                await storageAdapter.setStorageMode('indexeddb');
+                result += '✓ Switched back to IndexedDB mode\n';
+
+                showResult('adapter-result', result, 'success');
+            } catch (error) {
+                showResult('adapter-result', `✗ StorageAdapter test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-initialize on page load for convenience
+        window.addEventListener('load', () => {
+            setTimeout(testInitialize, 1000);
+        });
+    </script>
+</body>
+</html>

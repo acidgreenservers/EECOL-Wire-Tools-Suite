@@ -16,26 +16,46 @@
   - Modern DOM APIs
 
 #### Data Storage
-- **IndexedDB**: Primary persistent storage
-  - Transaction-safe operations
-  - Indexed queries for performance
-  - Large storage capacity (unlimited quota)
-  - Browser-native, no external dependencies
+**Current Implementation (v0.8.0.1)**:
+- **IndexedDB**: Browser-based local database
+  - ACID-compliant transactions
+  - 12 object stores (cuttingRecords, inventoryRecords, etc.)
+  - Custom wrapper class: `src/core/database/indexeddb.js`
+  - Offline-first architecture
+  - Fast, reliable, no external dependencies
+
+**Planned Migration**:
+- **Supabase**: Cloud-based PostgreSQL database (NOT yet implemented)
+  - Will provide ACID-compliant cloud storage
+  - Real-time subscriptions
+  - Row Level Security (RLS)
+  - Automatic API generation
+  - Cross-device synchronization
 
 #### Synchronization
-- **Gun.js v0.2020.1240**: Peer-to-peer real-time sync
-  - Conflict-free replicated data types (CRDTs)
-  - Automatic peer discovery
-  - WebRTC for direct connections
-  - Gun SEA for encryption and authentication
+**Current Implementation**:
+- **IndexedDB Local Storage**: Local-only data persistence
+  - No real-time synchronization
+  - Offline-first architecture
+  - Fast local operations
+
+**Planned Migration**:
+- **Supabase Realtime**: Cloud-based synchronization
+  - WebSocket-based real-time updates
+  - Multi-client synchronization
+  - Offline queue management
+  - Real-time subscriptions for live collaboration
 
 #### Security
-- **Gun SEA**: Security, Encryption, Authorization
-  - End-to-end encryption
-  - Password hashing (PBKDF2)
-  - Digital signatures
-- **crypto-js v4.1.1**: Additional cryptographic utilities
+**Current Implementation**:
+- **crypto-js v4.1.1**: Cryptographic utilities
 - **uuid v9.0.0**: Unique identifier generation
+- **IndexedDB**: Client-side data security
+
+**Planned Migration**:
+- **Supabase Auth**: Enterprise authentication (future)
+- **Row Level Security**: Database-level access control (future)
+- **Supabase TLS/SSL**: Data encryption in transit
 
 ### Development Tools
 
@@ -168,12 +188,12 @@ npm run docker:run
 ## Project Structure
 
 ```
-EECOL-Wire-Tools-Suite-Edge/
+EECOL-Wire-Tools-Suite-Supabase/
 ├── src/                          # Source code
 │   ├── core/                     # Core services and modules
 │   │   ├── database/
-│   │   │   ├── indexeddb.js      # IndexedDB wrapper
-│   │   │   └── gun-sync.js       # Gun.js P2P sync
+│   │   │   ├── supabase.js       # Supabase client and configuration
+│   │   │   └── migrations.js     # Data migration utilities
 │   │   └── modules/
 │   │       ├── industry-standards.js
 │   │       └── wesco-eecol-products.js
@@ -240,28 +260,38 @@ EECOL-Wire-Tools-Suite-Edge/
 - **Service Worker Cache**: 50MB recommended limit
 
 ### Network Requirements
-- **P2P Sync**: Local network or VPN required
-- **Public Network**: P2P disabled for security
+- **Online Sync**: Internet connection required for cloud features (future)
 - **Offline**: Full functionality without network
+- **Local Network**: Optional for future collaborative features
 
 ### Performance Targets
 - **Page Load**: < 2 seconds on 3G
 - **Time to Interactive**: < 3 seconds
 - **First Contentful Paint**: < 1 second
-- **P2P Sync Latency**: < 1 second on LAN
+- **Database Operations**: < 100ms for local IndexedDB queries
 
 ## Dependencies
 
 ### Production Dependencies
+**Current (v0.8.0.1)**:
 ```json
 {
-  "gun": "^0.2020.1240",           // P2P sync
-  "gun/sea": "^0.2020.1240",       // Security layer
-  "@types/gun": "^0.9.3",          // TypeScript definitions
+  "gun": "^0.2020.1240",           // P2P sync (to be removed)
+  "gun/sea": "^0.2020.1240",       // P2P encryption (to be removed)
   "crypto-js": "^4.1.1",           // Cryptography
   "uuid": "^9.0.0"                 // Unique IDs
 }
 ```
+
+**Planned After Migration**:
+```json
+{
+  "@supabase/supabase-js": "^2.x.x", // Supabase client (to be added)
+  "crypto-js": "^4.1.1",             // Cryptography
+  "uuid": "^9.0.0"                   // Unique IDs
+}
+```
+Note: Gun.js will be removed; Supabase will be added
 
 ### Development Dependencies
 See package.json for complete list. Key tools:
@@ -321,8 +351,8 @@ refactor(cutting): modernize alert system to modals
 
 #### Development Environment
 - Browser DevTools for debugging
-- Network tab for P2P sync inspection
-- IndexedDB inspector for data verification
+- Network tab for Supabase API calls
+- Supabase dashboard for data verification
 - Service Worker inspector for PWA debugging
 
 ### Testing Strategy
@@ -336,7 +366,7 @@ refactor(cutting): modernize alert system to modals
 #### Integration Tests
 - Test module interactions
 - Database operations end-to-end
-- P2P synchronization scenarios
+- Real-time synchronization scenarios (future)
 - Authentication flows
 
 #### E2E Tests
@@ -362,9 +392,9 @@ refactor(cutting): modernize alert system to modals
 
 ### Network Security
 - HTTPS required in production
-- WebRTC encrypted connections
-- Shop network containment
-- VPN detection for P2P enablement
+- TLS/SSL encryption for data in transit
+- Secure API endpoints
+- Rate limiting and DDoS protection (via Supabase)
 
 ## Deployment
 
@@ -407,18 +437,27 @@ npm run docker:build
 
 ## Migration Notes
 
-### From v0.8.0.1 to v2.0.0
-- **Storage**: localStorage → IndexedDB migration
-- **Architecture**: Single-user → Multi-user with auth
-- **Sync**: Manual → Automatic P2P
-- **Security**: Basic → Enterprise RBAC
+### Supabase Migration Plan (November 2, 2025)
+**Status**: Planning phase - NOT yet started
+**Timeline**: 4-5 weeks (8 phases)
+**Detailed Roadmap**: See `ai-context/memory-bank/roadmap.md`
 
-### Data Migration Scripts
-Located in `src/core/database/migrations.js`:
-- Version detection
-- Automated data transfer
-- Integrity verification
-- Rollback capability
+**Migration Strategy**:
+- **Storage**: IndexedDB + Gun.js → Storage Abstraction Layer → Configurable backend
+- **Modes**: Three storage modes (IndexedDB only / Supabase only / Hybrid)
+- **Architecture**: Create abstraction layer, maintain backward compatibility
+- **Sync**: Gun.js P2P (to be removed) → Supabase Realtime subscriptions
+- **Security**: Current client-side → Supabase RLS + Auth (future)
+
+### Data Migration Utilities (To Be Implemented)
+**Planned location**: `src/core/database/storage-adapter.js`
+**Features**:
+- Automated transfer from IndexedDB to Supabase
+- Bidirectional sync (IndexedDB ↔ Supabase)
+- Integrity verification and conflict resolution
+- Rollback capability to IndexedDB
+- Offline queue for failed sync operations
+- User-controlled migration via settings UI
 
 ## Performance Optimization
 
@@ -444,17 +483,17 @@ Located in `src/core/database/migrations.js`:
 
 ### Common Issues
 
-#### IndexedDB Errors
-- Check browser quota limits
-- Verify database schema version
-- Inspect transactions for deadlocks
-- Clear database and re-initialize if corrupted
+#### IndexedDB Issues (Current)
+- Check browser compatibility (requires modern browser)
+- Verify browser storage quota not exceeded
+- Clear browser data if corruption suspected
+- Check browser console for IndexedDB errors
 
-#### P2P Sync Failures
-- Verify network connectivity
-- Check VPN/shop network status
-- Inspect WebRTC peer connections
-- Review Gun.js relay configuration
+
+#### Future Supabase Issues (After Migration)
+- Supabase connection errors: Check internet, verify URL/API key
+- Real-time sync issues: Check Realtime enabled, RLS policies
+- Authentication issues: Verify Supabase Auth configuration
 
 #### Service Worker Issues
 - Unregister and re-register worker
@@ -464,6 +503,6 @@ Located in `src/core/database/migrations.js`:
 
 ### Debug Tools
 - Chrome DevTools Application tab
-- Firefox Storage Inspector
-- Gun.js debug mode: `localStorage.setItem('debug', 'gun:*')`
-- Network tab for WebRTC connections
+- Supabase Dashboard for data inspection
+- Network tab for API calls and WebSocket connections
+- Browser console for real-time subscription logs

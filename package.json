@@ -1,7 +1,7 @@
 {
   "name": "new-eecol-wire-tools",
   "version": "2.0.0",
-  "description": "Enterprise-grade EECOL Wire Tools Suite with P2P synchronization and role-based authentication",
+  "description": "Enterprise-grade EECOL Wire Tools Suite with IndexedDB storage and Supabase cloud integration",
   "main": "src/pages/index/index.html",
   "scripts": {
     "dev": "http-server . -p 3000 -o -c-1",
@@ -17,9 +17,8 @@
     "docker:run": "docker run -p 3000:80 eecol-tools"
   },
   "dependencies": {
-    "gun": "^0.2020.1240",
-    "gun/sea": "^0.2020.1240",
-    "@types/gun": "^0.9.3",
+    "@supabase/auth-helpers-shared": "^0.7.0",
+    "@supabase/supabase-js": "^2.78.0",
     "crypto-js": "^4.1.1",
     "uuid": "^9.0.0"
   },
@@ -61,10 +60,9 @@
   "keywords": [
     "wire-cutting",
     "inventory",
-    "p2p",
     "collaboration",
     "indexeddb",
-    "gun.js",
+    "supabase",
     "manufacturing"
   ],
   "author": "EECOL Tools Team <tools@eecol.com>",
