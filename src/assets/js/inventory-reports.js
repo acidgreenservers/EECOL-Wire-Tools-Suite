@@ -47,25 +47,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('🔄 Inventory reports page initialization...');
 
     try {
-        // Initialize IndexedDB first
-        if (typeof EECOLIndexedDB !== 'undefined' && EECOLIndexedDB.isIndexedDBSupported()) {
-            console.log('📦 Initializing IndexedDB for inventory reports...');
-            window.eecolDB = new EECOLIndexedDB();
-            await window.eecolDB.ready;
-            console.log('✅ IndexedDB initialized successfully for inventory reports');
+        // Initialize StorageAdapter first
+        if (typeof StorageAdapter !== 'undefined') {
+            console.log('📦 Initializing StorageAdapter for inventory reports...');
+            window.eecolDB = new StorageAdapter();
+            await window.eecolDB.initialize();
+            console.log('✅ StorageAdapter initialized successfully for inventory reports');
 
-            // Run migration from localStorage if needed
-            const hasExistingData = localStorage.getItem('cutRecords') ||
-                                   localStorage.getItem('inventoryItems') ||
-                                   localStorage.getItem('machineMaintenanceChecklist');
+            // Run migration from localStorage if needed (only for IndexedDB mode)
+            const storageMode = window.eecolDB.getStorageMode();
+            if (storageMode === 'indexeddb') {
+                const hasExistingData = localStorage.getItem('cutRecords') ||
+                                       localStorage.getItem('inventoryItems') ||
+                                       localStorage.getItem('machineMaintenanceChecklist');
 
-            if (hasExistingData) {
-                console.log('🔄 Existing localStorage data detected. Starting migration...');
-                const migratedItems = await window.eecolDB.migrateFromLocalStorage();
-                console.log(`✅ Migration completed: ${migratedItems} items migrated for inventory reports`);
+                if (hasExistingData) {
+                    console.log('🔄 Existing localStorage data detected. Starting migration...');
+                    const migratedItems = await window.eecolDB.migrateFromLocalStorage();
+                    console.log(`✅ Migration completed: ${migratedItems} items migrated for inventory reports`);
+                }
             }
         } else {
-            console.warn('⚠️ IndexedDB is not supported. Falling back to localStorage for inventory reports.');
+            console.warn('⚠️ StorageAdapter is not available. Falling back to localStorage for inventory reports.');
         }
 
 

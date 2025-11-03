@@ -138,3 +138,20 @@ This document contains curated, summarized, and actionable insights derived from
 - **Pattern**: Regularly verify current state before assuming systems need rebuilding
 - **Implementation**: Check existing documentation and implementation status
 - **Benefits**: Prevents redundant work and respects existing systems
+
+## Navigation & User Experience Patterns
+
+### Navigation Updates for Feature Migration
+- **Pattern**: When replacing deprecated features, update navigation buttons to point to new equivalent functionality
+- **Implementation**: Change button text and links to reflect current capabilities (P2P Sync → Database Settings)
+- **Benefits**: Users maintain easy access to primary features through familiar navigation paths
+
+### Button Labeling for Feature Clarity
+- **Pattern**: Use clear, descriptive text that accurately reflects current functionality
+- **Implementation**: Update button labels when feature purposes change (P2P Sync → Database Settings)
+- **Benefits**: Users understand what features do without confusion from outdated terminology
+
+### User Experience Continuity
+- **Pattern**: Ensure primary features remain easily accessible through main navigation during feature transitions
+- **Implementation**: Provide clear migration paths when replacing old features with new comprehensive ones
+- **Benefits**: Maintains user productivity and reduces friction during feature evolution

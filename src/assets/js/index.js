@@ -208,34 +208,63 @@ if (typeof initMobileMenu === 'function') {
 
 
 
-// IndexedDB initialization
+// StorageAdapter initialization
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        // Initialize IndexedDB (new system)
-        if (typeof EECOLIndexedDB !== 'undefined' && EECOLIndexedDB.isIndexedDBSupported()) {
-            // Make DB available globally for other scripts
-            window.eecolDB = new EECOLIndexedDB();
-            await window.eecolDB.ready;
+        // Check if StorageAdapter is available
+        if (typeof StorageAdapter === 'undefined') {
+            console.warn('⚠️ StorageAdapter is not available. Falling back to localStorage.');
+            console.warn('Please ensure storage-adapter.js is loaded.');
+            return;
+        }
 
-            console.log('IndexedDB initialized successfully for EECOL Tools Suite');
+        // Initialize StorageAdapter (unified storage system)
+        console.log('🔧 Initializing storage system...');
+        window.eecolDB = new StorageAdapter();
+        await window.eecolDB.initialize();
 
-            // Run migration from localStorage if needed
+        const storageMode = window.eecolDB.getStorageMode();
+        console.log('✅ StorageAdapter initialized successfully for EECOL Tools Suite');
+        console.log(`📊 Current storage mode: ${storageMode.toUpperCase()}`);
+
+        // Log storage status
+        if (storageMode === 'indexeddb') {
+            console.log('💾 Using local storage only (no cloud sync)');
+        } else if (storageMode === 'supabase') {
+            console.log('☁️ Using cloud storage (Supabase)');
+        } else if (storageMode === 'hybrid') {
+            console.log('🔄 Using hybrid mode (local + cloud sync)');
+        }
+
+        // Run migration from localStorage if needed (only for IndexedDB mode)
+        if (storageMode === 'indexeddb' && window.eecolDB.indexedDB) {
             const hasExistingData = localStorage.getItem('cutRecords') ||
                                    localStorage.getItem('inventoryItems') ||
                                    localStorage.getItem('machineMaintenanceChecklist');
 
             if (hasExistingData) {
-                console.log('Existing localStorage data detected. Starting migration...');
-                const migratedItems = await window.eecolDB.migrateFromLocalStorage();
-                console.log(`Migration completed: ${migratedItems} items migrated`);
+                console.log('📦 Existing localStorage data detected. Starting migration...');
+                try {
+                    const migratedItems = await window.eecolDB.migrateFromLocalStorage();
+                    console.log(`✅ Migration completed: ${migratedItems} items migrated`);
+                } catch (migrationError) {
+                    console.error('❌ Migration failed:', migrationError);
+                    console.warn('Some data may not have been migrated. Please check the data manually.');
+                }
             }
-        } else {
-            console.warn('IndexedDB is not supported. Falling back to localStorage.');
         }
 
     } catch (error) {
-        console.error('Failed to initialize database:', error);
-        // Fall back to localStorage only mode
-        console.log('Running in localStorage-only mode');
+        console.error('❌ Failed to initialize storage system:', error);
+        console.warn('⚠️ Application running with limited functionality');
+        console.warn('💡 Tip: Check browser console for details and ensure all scripts are loaded correctly');
+
+        // Try to provide helpful debugging info
+        if (typeof EECOLIndexedDB === 'undefined') {
+            console.error('🔴 EECOLIndexedDB is not defined - indexeddb.js may not be loaded');
+        }
+        if (typeof StorageAdapter === 'undefined') {
+            console.error('🔴 StorageAdapter is not defined - storage-adapter.js may not be loaded');
+        }
     }
 });

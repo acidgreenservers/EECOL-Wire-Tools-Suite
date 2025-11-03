@@ -1271,9 +1271,12 @@ function initializeCollapsibleSections() {
 
 async function handleSaveReelSpecifications() {
     try {
-        // Check if IndexedDB is available
-        if (typeof EECOLIndexedDB === 'undefined') {
-            showAlert('Database not available. Please ensure the application is fully loaded.', 'Database Error');
+        console.log('🔄 Reel Capacity Estimator: Starting save operation...');
+
+        // Check if StorageAdapter is available
+        if (typeof StorageAdapter === 'undefined') {
+            console.error('❌ StorageAdapter is not available');
+            showAlert('Storage system not available. Please ensure the application is fully loaded.', 'Storage Error');
             return;
         }
 
@@ -1285,12 +1288,16 @@ async function handleSaveReelSpecifications() {
             return;
         }
 
-        // Initialize database connection
-        const db = new EECOLIndexedDB();
-        await db.ready;
+        console.log('✅ StorageAdapter is available, creating instance...');
+        const eecolDB = new StorageAdapter();
 
-        // Save to IndexedDB
-        const result = await db.saveReelCapacityEstimator(reelSpecs);
+        console.log('🔄 Initializing storage adapter...');
+        await eecolDB.initialize();
+        console.log('✅ Storage adapter initialized');
+
+        console.log('💾 Saving reel specifications to reelCapacityEstimator store...');
+        const result = await eecolDB.saveReelCapacityEstimator(reelSpecs);
+        console.log('✅ Data saved successfully');
 
         if (result) {
             // Refresh the configuration selector to show the new saved spec
@@ -1304,7 +1311,7 @@ async function handleSaveReelSpecifications() {
         }
 
     } catch (error) {
-        console.error('Failed to save reel specifications:', error);
+        console.error('❌ Failed to save reel specifications:', error);
         showAlert('Failed to save reel specifications. Please try again.', 'Save Error');
     }
 }

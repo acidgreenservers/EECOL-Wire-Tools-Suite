@@ -231,16 +231,23 @@ async function initializeIndexedDB() {
 
 async function loadReelConfigurations() {
     try {
-        if (typeof EECOLIndexedDB === 'undefined') {
-            console.log('⚠️ EECOLIndexedDB not available, skipping reel configuration loading');
+        console.log('🔄 Shipping Manifest: Loading reel configurations...');
+
+        if (typeof StorageAdapter === 'undefined') {
+            console.error('❌ StorageAdapter is not available');
+            reelConfigurations = [];
             return;
         }
 
-        const db = new EECOLIndexedDB();
-        await db.ready;
+        console.log('✅ StorageAdapter is available, creating instance...');
+        const eecolDB = new StorageAdapter();
 
-        // Get all reel capacity estimator configurations
-        reelConfigurations = await db.getAll('reelcapacityEstimator') || [];
+        console.log('🔄 Initializing storage adapter...');
+        await eecolDB.initialize();
+        console.log('✅ Storage adapter initialized');
+
+        console.log('💾 Loading reel configurations from reelCapacityEstimator store...');
+        reelConfigurations = await eecolDB.getAllReelCapacityEstimator() || [];
 
         // Sort by most recent timestamp
         reelConfigurations.sort((a, b) => b.timestamp - a.timestamp);

@@ -21,14 +21,14 @@ const StorageSettings = (function() {
     /**
      * Initialize the storage settings page
      */
-    function init() {
+    async function init() {
         console.log('Initializing Storage Settings...');
 
         // Cache DOM elements
         cacheElements();
 
         // Initialize storage adapter
-        initializeStorageAdapter();
+        await initializeStorageAdapter();
 
         // Set up event listeners
         setupEventListeners();
@@ -66,13 +66,15 @@ const StorageSettings = (function() {
             connectionResult: document.getElementById('connectionResult'),
 
             // Advanced options
+            syncOptions: document.getElementById('syncOptions'),
             offlineFallback: document.getElementById('offlineFallback'),
             autoSync: document.getElementById('autoSync'),
             syncFrequency: document.getElementById('syncFrequency'),
             syncFrequencyValue: document.getElementById('syncFrequencyValue'),
-            clearCache: document.getElementById('clearCache'),
 
             // Migration tools
+            exportDatabase: document.getElementById('exportDatabase'),
+            importDatabase: document.getElementById('importDatabase'),
             migrateToSupabase: document.getElementById('migrateToSupabase'),
             syncFromSupabase: document.getElementById('syncFromSupabase'),
             clearLocalData: document.getElementById('clearLocalData'),
@@ -128,10 +130,11 @@ const StorageSettings = (function() {
         elements.syncFrequency.addEventListener('input', updateSyncFrequencyDisplay);
 
         // Migration tools
+        elements.exportDatabase.addEventListener('click', exportDatabaseToJSON);
+        elements.importDatabase.addEventListener('click', importDatabaseFromJSON);
         elements.migrateToSupabase.addEventListener('click', migrateToSupabase);
         elements.syncFromSupabase.addEventListener('click', syncFromSupabase);
         elements.clearLocalData.addEventListener('click', clearLocalData);
-        elements.clearCache.addEventListener('click', clearCache);
     }
 
     /**
@@ -184,6 +187,10 @@ const StorageSettings = (function() {
         // Show/hide Supabase config based on mode
         const showSupabaseConfig = mode === 'supabase' || mode === 'hybrid';
         elements.supabaseConfig.style.display = showSupabaseConfig ? 'block' : 'none';
+
+        // Show/hide sync options based on mode (only show for supabase and hybrid)
+        const showSyncOptions = mode === 'supabase' || mode === 'hybrid';
+        elements.syncOptions.style.display = showSyncOptions ? 'block' : 'none';
     }
 
     /**
@@ -314,6 +321,10 @@ const StorageSettings = (function() {
         // Show/hide Supabase config
         const showSupabaseConfig = mode === 'supabase' || mode === 'hybrid';
         elements.supabaseConfig.style.display = showSupabaseConfig ? 'block' : 'none';
+
+        // Show/hide sync options based on mode (only show for supabase and hybrid)
+        const showSyncOptions = mode === 'supabase' || mode === 'hybrid';
+        elements.syncOptions.style.display = showSyncOptions ? 'block' : 'none';
     }
 
     /**
@@ -588,6 +599,142 @@ const StorageSettings = (function() {
         } catch (error) {
             console.error('Failed to clear cache:', error);
             showModal('Error', 'Failed to clear cache.');
+        }
+    }
+
+    /**
+     * Export entire database to JSON
+     */
+    async function exportDatabaseToJSON() {
+        try {
+            if (!storageAdapter) {
+                showModal('Error', 'Storage system not initialized.');
+                return;
+            }
+
+            showModal('Info', 'Preparing database export...');
+
+            const exportData = {
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    version: '1.0',
+                    app: 'EECOL Wire Tools Suite'
+                },
+                stores: {}
+            };
+
+            // Export all stores
+            const stores = ['cuttingRecords', 'inventoryRecords', 'maintenanceLogs', 'settings'];
+            let totalRecords = 0;
+
+            for (const store of stores) {
+                try {
+                    const records = await storageAdapter.getAll(store);
+                    exportData.stores[store] = records;
+                    totalRecords += records.length;
+                    console.log(`Exported ${records.length} records from ${store}`);
+                } catch (error) {
+                    console.warn(`Failed to export ${store}:`, error);
+                    exportData.stores[store] = [];
+                }
+            }
+
+            // Create and download JSON file
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `eecol-database-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
+
+            showModal('Success', `Database exported successfully! ${totalRecords} records exported.`);
+
+        } catch (error) {
+            console.error('Failed to export database:', error);
+            showModal('Error', 'Failed to export database. Please check the console for details.');
+        }
+    }
+
+    /**
+     * Import entire database from JSON
+     */
+    async function importDatabaseFromJSON() {
+        try {
+            const confirmed = await showConfirmModal(
+                'Import Database',
+                'This will replace all current data with the data from the selected file. Make sure you have backed up your current data. Continue?',
+                true // This is a dangerous operation
+            );
+
+            if (!confirmed) return;
+
+            if (!storageAdapter) {
+                showModal('Error', 'Storage system not initialized.');
+                return;
+            }
+
+            // Create file input
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+
+            input.onchange = async (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                try {
+                    showModal('Info', 'Reading import file...');
+
+                    const text = await file.text();
+                    const importData = JSON.parse(text);
+
+                    // Validate import data structure
+                    if (!importData.stores || typeof importData.stores !== 'object') {
+                        throw new Error('Invalid import file format. Missing stores object.');
+                    }
+
+                    showModal('Info', 'Importing data...');
+
+                    let totalImported = 0;
+                    const stores = ['cuttingRecords', 'inventoryRecords', 'maintenanceLogs', 'settings'];
+
+                    for (const store of stores) {
+                        if (importData.stores[store] && Array.isArray(importData.stores[store])) {
+                            // Clear existing data
+                            await storageAdapter.clear(store);
+
+                            // Import new data
+                            for (const record of importData.stores[store]) {
+                                await storageAdapter.add(store, record);
+                                totalImported++;
+                            }
+
+                            console.log(`Imported ${importData.stores[store].length} records to ${store}`);
+                        }
+                    }
+
+                    showModal('Success', `Database imported successfully! ${totalImported} records imported.`);
+
+                    // Refresh status to show updated counts
+                    loadCurrentStatus();
+
+                } catch (error) {
+                    console.error('Failed to import database:', error);
+                    showModal('Error', `Failed to import database: ${error.message}`);
+                }
+            };
+
+            input.click();
+
+        } catch (error) {
+            console.error('Failed to start import:', error);
+            showModal('Error', 'Failed to start import process.');
         }
     }
 

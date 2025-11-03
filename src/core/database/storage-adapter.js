@@ -35,31 +35,104 @@ class StorageAdapter {
     if (this.initialized) return;
 
     try {
+      // Check if EECOLIndexedDB is available
+      if (typeof EECOLIndexedDB === 'undefined') {
+        console.warn('⚠️ EECOLIndexedDB is not defined. Storage functionality will be limited.');
+        console.warn('Please ensure indexeddb.js is loaded before storage-adapter.js');
+        this.initialized = true; // Mark as initialized to prevent repeated attempts
+        this.mode = 'indexeddb'; // Force IndexedDB mode
+        return;
+      }
+
       // Always initialize IndexedDB as fallback
       console.log('Initializing EECOLIndexedDB...');
       this.indexedDB = new EECOLIndexedDB();
       console.log('Waiting for IndexedDB ready...');
       await this.indexedDB.ready;
-      console.log('IndexedDB ready');
+      console.log('✅ IndexedDB ready');
 
       // Load existing offline queue
       await this.loadOfflineQueue();
 
-      // Initialize Supabase if mode requires it
+      // Check if Supabase mode is requested and credentials are available
       if (this.mode !== 'indexeddb') {
-        this.supabase = new SupabaseClient();
-        await this.supabase.initialize();
+        const hasSupabaseCredentials = this.checkSupabaseCredentials();
+
+        if (!hasSupabaseCredentials) {
+          console.warn('⚠️ Supabase credentials not configured. Falling back to IndexedDB-only mode.');
+          this.mode = 'indexeddb';
+          localStorage.setItem('eecol-storage-mode', 'indexeddb');
+        } else {
+          // Check if SupabaseClient is available
+          if (typeof SupabaseClient === 'undefined') {
+            console.warn('⚠️ SupabaseClient is not defined. Falling back to IndexedDB-only mode.');
+            console.warn('Please ensure supabase-client.js is loaded before storage-adapter.js');
+            this.mode = 'indexeddb';
+            localStorage.setItem('eecol-storage-mode', 'indexeddb');
+          } else {
+            // Try to initialize Supabase
+            try {
+              this.supabase = new SupabaseClient();
+              await this.supabase.initialize();
+              console.log('✅ Supabase connection established');
+            } catch (supabaseError) {
+              console.error('❌ Supabase initialization failed:', supabaseError.message);
+              console.warn('⚠️ Falling back to IndexedDB-only mode');
+              this.mode = 'indexeddb';
+              localStorage.setItem('eecol-storage-mode', 'indexeddb');
+              this.supabase = null;
+            }
+          }
+        }
       }
 
-      // Setup connectivity monitoring and sync
+      // Setup connectivity monitoring and sync (only if not in IndexedDB-only mode)
       this.setupConnectivityMonitoring();
-      this.setupRealtimeSync();
+      if (this.mode !== 'indexeddb' && this.supabase) {
+        this.setupRealtimeSync();
+      }
 
       this.initialized = true;
-      console.log('StorageAdapter initialized successfully in', this.mode, 'mode');
+      console.log('✅ StorageAdapter initialized successfully in', this.mode, 'mode');
     } catch (error) {
-      console.error('StorageAdapter initialization failed:', error);
-      throw error;
+      console.error('❌ StorageAdapter initialization failed:', error);
+
+      // If we have IndexedDB, fall back to it gracefully
+      if (this.indexedDB) {
+        console.warn('⚠️ Falling back to IndexedDB-only mode due to initialization error');
+        this.mode = 'indexeddb';
+        this.initialized = true;
+        localStorage.setItem('eecol-storage-mode', 'indexeddb');
+      } else {
+        // Critical failure - no storage available
+        throw new Error('Critical: No storage backend available. Application cannot function.');
+      }
+    }
+  }
+
+  /**
+   * Check if Supabase credentials are configured
+   * @returns {boolean} True if credentials are available
+   */
+  checkSupabaseCredentials() {
+    try {
+      const supabaseUrl = localStorage.getItem('eecol-supabase-url');
+      const supabaseKey = localStorage.getItem('eecol-supabase-key');
+
+      // Check if credentials exist and are not empty
+      const hasUrl = supabaseUrl && supabaseUrl.trim() !== '';
+      const hasKey = supabaseKey && supabaseKey.trim() !== '';
+
+      if (!hasUrl || !hasKey) {
+        console.log('ℹ️ No Supabase credentials found in localStorage. Using IndexedDB only.');
+        return false;
+      }
+
+      console.log('✅ Supabase credentials found');
+      return true;
+    } catch (error) {
+      console.error('Error checking Supabase credentials:', error);
+      return false;
     }
   }
 
@@ -805,6 +878,34 @@ class StorageAdapter {
     if (!this.initialized) {
       throw new Error('StorageAdapter must be initialized before use. Call initialize() first.');
     }
+
+    // Check if we have any working storage backend
+    if (!this.indexedDB && !this.supabase) {
+      throw new Error('No storage backend available. StorageAdapter initialization may have failed.');
+    }
+  }
+
+  /**
+   * Check if the adapter is ready to use
+   * @returns {boolean} True if initialized and has a working backend
+   */
+  isReady() {
+    return this.initialized && (this.indexedDB !== null || this.supabase !== null);
+  }
+
+  /**
+   * Get detailed status information
+   * @returns {Object} Status information
+   */
+  getStatus() {
+    return {
+      initialized: this.initialized,
+      mode: this.mode,
+      hasIndexedDB: this.indexedDB !== null,
+      hasSupabase: this.supabase !== null,
+      isOnline: this.isOnline,
+      queuedOperations: this.syncQueue.length
+    };
   }
 }
 

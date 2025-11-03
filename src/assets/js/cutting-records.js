@@ -21,10 +21,10 @@ let batchRedoStack = [];
 async function testDatabaseConnection() {
 
     try {
-        // Check if EECOLIndexedDB is available
-        if (typeof EECOLIndexedDB === 'undefined') {
-            console.error('❌ EECOLIndexedDB class not found');
-            return { success: false, error: 'EECOLIndexedDB class not available' };
+        // Check if StorageAdapter is available
+        if (typeof StorageAdapter === 'undefined') {
+            console.error('❌ StorageAdapter class not found');
+            return { success: false, error: 'StorageAdapter class not available' };
         }
 
         // Check if database instance exists
@@ -33,11 +33,10 @@ async function testDatabaseConnection() {
             return { success: false, error: 'Database instance not initialized' };
         }
 
-        // Check if database is ready
-        const isReady = await window.eecolDB.isReady();
-        if (!isReady) {
-            console.error('❌ Database not ready');
-            return { success: false, error: 'Database not ready' };
+        // Check if StorageAdapter is initialized
+        if (!window.eecolDB.initialized) {
+            console.error('❌ StorageAdapter not initialized');
+            return { success: false, error: 'StorageAdapter not initialized' };
         }
 
         // Test basic operations

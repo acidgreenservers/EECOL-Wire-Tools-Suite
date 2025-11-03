@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" id="csp-meta" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" id="csp-meta" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://esm.sh; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:; connect-src 'self' https://nywkaaqumyxpqecbenyw.supabase.co wss://nywkaaqumyxpqecbenyw.supabase.co;">
     <title>Storage Settings - EECOL Wire Tools Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../../assets/css/eecol-theme.css">
@@ -232,7 +232,8 @@
                 Advanced Options
             </h2>
 
-            <div class="space-y-4">
+            <!-- Sync-related options (hidden for IndexedDB mode) -->
+            <div id="syncOptions" class="space-y-4" style="display: none;">
                 <div class="flex items-center justify-between">
                     <div>
                         <label class="text-sm font-medium text-gray-700">Enable Offline Fallback</label>
@@ -258,13 +259,19 @@
                         <span>5m</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="pt-4 border-t border-gray-200">
-                    <button id="clearCache" class="btn-eecol bg-red-500 border-red-500 hover:bg-red-600">
-                        🗑️ Clear Local Cache
+            <!-- Always visible options -->
+            <div class="pt-4 border-t border-gray-200 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button id="exportDatabase" class="btn-eecol">
+                        📤 Export to JSON
                     </button>
-                    <p class="text-xs text-gray-500 mt-2">This will clear all local data. Make sure your data is backed up first.</p>
+                    <button id="importDatabase" class="btn-eecol">
+                        📥 Import from JSON
+                    </button>
                 </div>
+                <p class="text-xs text-gray-500">Export your entire database to a JSON file or import data from a previously exported JSON file.</p>
             </div>
         </div>
 
@@ -284,7 +291,7 @@
                     <span class="text-sm font-medium">Migrate to Cloud</span>
                 </button>
                 <button id="syncFromSupabase" class="btn-eecol h-16 flex flex-col items-center justify-center">
-                    <span class="text-lg">📥</span>
+                    <span class="text-lg">🔄</span>
                     <span class="text-sm font-medium">Sync from Cloud</span>
                 </button>
                 <button id="clearLocalData" class="btn-eecol bg-red-500 border-red-500 hover:bg-red-600 h-16 flex flex-col items-center justify-center">

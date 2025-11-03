@@ -42,19 +42,12 @@ class SupabaseClient {
    */
   async initialize() {
     try {
-      // Get Supabase configuration from localStorage or use defaults
-      let supabaseUrl = localStorage.getItem('eecol-supabase-url');
-      let supabaseKey = localStorage.getItem('eecol-supabase-key');
+      // Get Supabase configuration from localStorage
+      const supabaseUrl = localStorage.getItem('eecol-supabase-url');
+      const supabaseKey = localStorage.getItem('eecol-supabase-key');
 
-      // Fallback to hardcoded values if not configured
-      if (!supabaseUrl) {
-        supabaseUrl = 'https://nywkaaqumyxpqecbenyw.supabase.co';
-      }
-      if (!supabaseKey) {
-        supabaseKey = 'sb_publishable_ICiwfRDDsh3AKvi8iSKs3Q_ccRraE0i';
-      }
-
-      if (!supabaseUrl || !supabaseKey) {
+      // Check if credentials are provided
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.trim() === '' || supabaseKey.trim() === '') {
         throw new Error('Supabase configuration missing. Please configure Supabase URL and key in settings.');
       }
 
@@ -108,19 +101,32 @@ class SupabaseClient {
     }
 
     try {
-      // Test connection by querying a table that definitely has an id column
-      const { data, error } = await this.client
-        .from('cutting_records')
-        .select('id')
-        .limit(1);
+      // Test basic connectivity by checking auth status
+      // This doesn't require any tables to exist
+      const { data: userData, error: userError } = await this.client.auth.getUser();
 
-      if (error) {
-        // If the table doesn't exist or other error, try a different approach
-        // Just check if we can connect by getting the current user (which may be null)
-        const { data: userData, error: userError } = await this.client.auth.getUser();
-        if (userError && userError.message !== 'Auth session missing!') {
-          throw userError;
+      // Auth session missing is OK - it just means no user is logged in
+      if (userError && userError.message !== 'Auth session missing!') {
+        throw userError;
+      }
+
+      // Try to get server health by making a simple RPC call or table query
+      // If cuttingRecords table exists, test it; otherwise just verify client works
+      try {
+        const { data, error } = await this.client
+          .from('cuttingRecords')
+          .select('id')
+          .limit(1);
+
+        if (error) {
+          // Table might not exist or have RLS issues, but client is working
+          console.log('Supabase client connected (table access may be restricted)');
+        } else {
+          console.log('Supabase connection and table access test successful');
         }
+      } catch (tableError) {
+        // Table doesn't exist or is inaccessible, but client connection works
+        console.log('Supabase client connected (tables may need to be created or RLS configured)');
       }
 
       console.log('Supabase connection test successful');
@@ -155,12 +161,18 @@ class SupabaseClient {
    */
   createTableMap() {
     this.tableMap = {
-      cuttingRecords: 'cutting_records',
-      inventoryRecords: 'inventory_records',
-      maintenanceLogs: 'maintenance_logs',
-      calculatorHistory: 'calculator_history',
-      settings: 'app_settings',
-      notifications: 'notifications'
+      cuttingRecords: 'cuttingRecords',
+      inventoryRecords: 'inventoryRecords',
+      users: 'users',
+      notifications: 'notifications',
+      maintenanceLogs: 'maintenanceLogs',
+      markConverter: 'markConverter',
+      stopmarkConverter: 'stopmarkConverter',
+      reelcapacityEstimator: 'reelcapacityEstimator',
+      reelsizeEstimator: 'reelsizeEstimator',
+      muticutPlanner: 'muticutPlanner',
+      settings: 'appSettings',
+      sessions: 'sessions'
     };
   }
 
@@ -336,11 +348,11 @@ class SupabaseClient {
 
       let selectField;
 
-      // Handle special case for app_settings table which uses 'name' as primary key
-      if (tableName === 'app_settings') {
-        // app_settings uses 'name' as primary key, ensure it's present
+      // Handle special case for appSettings table which uses 'name' as primary key
+      if (tableName === 'appSettings') {
+        // appSettings uses 'name' as primary key, ensure it's present
         if (!transformedData.name) {
-          throw new Error('app_settings records must have a name field');
+          throw new Error('appSettings records must have a name field');
         }
         selectField = 'name';
       } else {
@@ -382,8 +394,8 @@ class SupabaseClient {
     }
 
     try {
-      // Handle special case for app_settings table which uses 'name' as primary key
-      const keyField = tableName === 'app_settings' ? 'name' : 'id';
+      // Handle special case for appSettings table which uses 'name' as primary key
+      const keyField = tableName === 'appSettings' ? 'name' : 'id';
 
       const { data, error } = await this.client
         .from(tableName)
@@ -454,7 +466,7 @@ class SupabaseClient {
       throw new Error(`Unknown store name: ${storeName}`);
     }
 
-    const keyField = tableName === 'app_settings' ? 'name' : 'id';
+    const keyField = tableName === 'appSettings' ? 'name' : 'id';
     const keyValue = data[keyField] || data.id;
 
     if (!keyValue) {
@@ -494,8 +506,8 @@ class SupabaseClient {
     }
 
     try {
-      // Handle special case for app_settings table which uses 'name' as primary key
-      const keyField = tableName === 'app_settings' ? 'name' : 'id';
+      // Handle special case for appSettings table which uses 'name' as primary key
+      const keyField = tableName === 'appSettings' ? 'name' : 'id';
 
       const { error } = await this.client
         .from(tableName)

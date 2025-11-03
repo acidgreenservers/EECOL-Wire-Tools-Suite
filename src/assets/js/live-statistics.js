@@ -49,21 +49,24 @@ function loadChartJS() {
 // Initialize all components
 document.addEventListener('DOMContentLoaded', async function() {
 
-    // Initialize IndexedDB first
-    if (typeof EECOLIndexedDB !== 'undefined' && EECOLIndexedDB.isIndexedDBSupported()) {
-        window.eecolDB = new EECOLIndexedDB();
-        await window.eecolDB.ready;
+    // Initialize StorageAdapter first
+    if (typeof StorageAdapter !== 'undefined') {
+        window.eecolDB = new StorageAdapter();
+        await window.eecolDB.initialize();
 
-        // Run migration from localStorage if needed
-        const hasExistingData = localStorage.getItem('cutRecords') ||
-                               localStorage.getItem('inventoryItems') ||
-                               localStorage.getItem('machineMaintenanceChecklist');
+        // Run migration from localStorage if needed (only for IndexedDB mode)
+        const storageMode = window.eecolDB.getStorageMode();
+        if (storageMode === 'indexeddb') {
+            const hasExistingData = localStorage.getItem('cutRecords') ||
+                                   localStorage.getItem('inventoryItems') ||
+                                   localStorage.getItem('machineMaintenanceChecklist');
 
-        if (hasExistingData) {
-            const migratedItems = await window.eecolDB.migrateFromLocalStorage();
+            if (hasExistingData) {
+                const migratedItems = await window.eecolDB.migrateFromLocalStorage();
+            }
         }
     } else {
-        console.warn('⚠️ IndexedDB is not supported. Falling back to localStorage for live statistics.');
+        console.warn('⚠️ StorageAdapter is not available. Falling back to localStorage for live statistics.');
     }
 
 

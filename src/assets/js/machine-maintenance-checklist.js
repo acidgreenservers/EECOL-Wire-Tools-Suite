@@ -710,12 +710,14 @@ function setupPrintFunctionality() {
 // Initialize everything
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize database if not already done (important for maintenance checklist pages)
-    if (typeof EECOLIndexedDB !== 'undefined' && !window.eecolDB) {
+    if (typeof StorageAdapter !== 'undefined' && !window.eecolDB) {
         try {
-            window.eecolDB = new EECOLIndexedDB();
-            await window.eecolDB.ready;
+            console.log('🔄 Machine Maintenance Checklist: Initializing StorageAdapter...');
+            window.eecolDB = new StorageAdapter();
+            await window.eecolDB.initialize();
+            console.log('✅ StorageAdapter initialized for maintenance checklist');
         } catch (error) {
-            console.error('Failed to initialize database for maintenance checklist:', error);
+            console.error('❌ Failed to initialize StorageAdapter for maintenance checklist:', error);
         }
     }
 

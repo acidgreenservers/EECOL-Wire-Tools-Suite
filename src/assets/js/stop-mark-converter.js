@@ -404,20 +404,28 @@ document.getElementById('calculateBtn').addEventListener('click', () => {
                 };
 
                 try {
-                    // Use IndexedDB instead of localStorage
-                    if (typeof EECOLIndexedDB !== 'undefined') {
-                        const eecolDB = new EECOLIndexedDB();
-                        await eecolDB.ready;
-                        await eecolDB.saveStopMarkConverter(data);
+                    console.log('🔄 Stop Mark Converter: Starting save operation...');
 
-                        await showAlert('Marks saved for import into Cutting Records tool.');
+                    // Use StorageAdapter if available
+                    if (typeof StorageAdapter !== 'undefined') {
+                        console.log('✅ StorageAdapter is available, creating instance...');
+                        const eecolDB = new StorageAdapter();
+
+                        console.log('🔄 Initializing storage adapter...');
+                        await eecolDB.initialize();
+                        console.log('✅ Storage adapter initialized');
+
+                        console.log('💾 Saving data to stopMarkConverter store...');
+                        await eecolDB.saveStopMarkConverter(data);
+                        console.log('✅ Data saved successfully');
+
+                        await showAlert('Marks saved for import into Cutting Records tool.', 'Success');
                     } else {
-                        // Fallback to localStorage if IndexedDB not available
-                        localStorage.setItem('eecalWireMarks', JSON.stringify(data));
-                        await showAlert('Marks saved for import into Cutting Records tool.');
+                        console.error('❌ StorageAdapter is not available');
+                        throw new Error('Storage system not available');
                     }
                 } catch (error) {
-                    console.error('Error saving data:', error);
+                    console.error('❌ Error saving data:', error);
                     await showAlert('Error saving data. Please try again.', "Error");
                 }
             });

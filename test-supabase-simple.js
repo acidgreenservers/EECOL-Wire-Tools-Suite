@@ -34,7 +34,8 @@ async function testSupabaseClient() {
 
     // Test ADD - should return UUID
     console.log('➕ Testing ADD operation...');
-    const recordId = await client.add('cuttingRecords', testData);
+                const recordId = await client.add('cuttingRecords', testData);
+                console.log('Record added with UUID:', recordId);
     console.log('✅ Record added with UUID:', recordId);
 
     // Verify it's a proper UUID format

@@ -259,14 +259,14 @@ const wireMarkCalculator = {
         try {
             console.log('🔄 Wire Mark Calculator: Starting save operation...');
 
-            // Use IndexedDB class if available
-            if (typeof EECOLIndexedDB !== 'undefined') {
-                console.log('✅ EECOLIndexedDB is available, creating instance...');
-                const eecolDB = new EECOLIndexedDB();
+            // Use StorageAdapter if available
+            if (typeof StorageAdapter !== 'undefined') {
+                console.log('✅ StorageAdapter is available, creating instance...');
+                const eecolDB = new StorageAdapter();
 
-                console.log('🔄 Waiting for database to be ready...');
-                await eecolDB.ready;
-                console.log('✅ Database is ready');
+                console.log('🔄 Initializing storage adapter...');
+                await eecolDB.initialize();
+                console.log('✅ Storage adapter initialized');
 
                 console.log('💾 Saving data to markConverter store...');
                 await eecolDB.saveMarkConverter(data);
@@ -275,8 +275,8 @@ const wireMarkCalculator = {
                 // Show success alert using modal system
                 window.showAlert('Marks saved for import into Cutting Records tool.', 'Success');
             } else {
-                console.error('❌ EECOLIndexedDB is not available');
-                throw new Error('Database not available');
+                console.error('❌ StorageAdapter is not available');
+                throw new Error('Storage system not available');
             }
         } catch (error) {
             console.error('❌ Error saving data:', error);
