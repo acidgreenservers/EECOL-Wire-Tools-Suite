@@ -16,18 +16,19 @@
   - Modern DOM APIs
 
 #### Data Storage
-- **IndexedDB**: Primary persistent storage
+- **IndexedDB**: Main storage mechanism
   - Transaction-safe operations
   - Indexed queries for performance
   - Large storage capacity (unlimited quota)
   - Browser-native, no external dependencies
+- **localStorage**: Fallback for UI state if IndexedDB isn't working
 
 #### Synchronization
-- **Gun.js v0.2020.1240**: Peer-to-peer real-time sync
-  - Conflict-free replicated data types (CRDTs)
-  - Automatic peer discovery
-  - WebRTC for direct connections
-  - Gun SEA for encryption and authentication
+- **Gun.js v0.2020.1240**: P2P infrastructure implemented but non-functional sync mechanics
+  - Conflict-free replicated data types (CRDTs) - infrastructure in place
+  - Automatic peer discovery - configured but not operational
+  - WebRTC for direct connections - configured but not operational
+  - Gun SEA for encryption and authentication - available but not active
 
 #### Security
 - **Gun SEA**: Security, Encryption, Authorization
@@ -235,8 +236,8 @@ EECOL-Wire-Tools-Suite-Edge/
 - Service Worker APIs
 
 ### Storage Limits
-- **IndexedDB**: Unlimited quota (user-granted)
-- **localStorage**: 5-10MB (UI state only)
+- **IndexedDB**: Unlimited quota (user-granted) - used as main storage
+- **localStorage**: 5-10MB (fallback for UI state if IndexedDB isn't working)
 - **Service Worker Cache**: 50MB recommended limit
 
 ### Network Requirements
@@ -408,9 +409,9 @@ npm run docker:build
 ## Migration Notes
 
 ### From v0.8.0.1 to v2.0.0
-- **Storage**: localStorage → IndexedDB migration
+- **Storage**: Already using IndexedDB as main storage, with localStorage as fallback
 - **Architecture**: Single-user → Multi-user with auth
-- **Sync**: Manual → Automatic P2P
+- **Sync**: Non-functional P2P → Fully operational P2P synchronization
 - **Security**: Basic → Enterprise RBAC
 
 ### Data Migration Scripts

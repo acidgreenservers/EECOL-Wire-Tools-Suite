@@ -15,7 +15,7 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 - **IndexedDB Backend**: High-performance local database for all data persistence
 - **PWA Features**: Offline functionality, installable app, service workers
 - **Professional UI**: EECOL-branded modal dialogs, responsive design
-- **Storage Strategy**: IndexedDB-first with localStorage fallback for UI state
+- **Storage Strategy**: IndexedDB used as main storage, with localStorage as fallback if IndexedDB isn't working
 
 ---
 
@@ -41,7 +41,7 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 ### **Additional Tools**
 - **Shipping Manifest**: Generate shipping documentation
 - **Reel Labels**: Print professional wire reel labels
-- **Multi-Cut Planner**: Plan complex multi-reel cutting operations *(currently non-functional)*
+- **Multi-Cut Planner**: Multi-cut planner reverted to placeholder due to breaking changes that took place
 - **Education Center**: Learning resources and reference materials
 
 ---
@@ -62,9 +62,9 @@ const db = new EECOLIndexedDB({
 - `settings` - App configuration and preferences
 
 ### **P2P Synchronization (Gun.js)**
-**Status**: Implemented but non-functional - does not sync any tables
+**Status**: Gun.js P2P infrastructure implemented but non-functional sync mechanics
 
-The application includes Gun.js P2P infrastructure but it is currently not operational and does not synchronize any data between devices.
+The application includes Gun.js P2P infrastructure but sync mechanics are currently not operational and do not synchronize any data between devices.
 
 ### **PWA Features**
 - **Service Workers**: Background caching and offline functionality
@@ -108,15 +108,18 @@ npx http-server
 - ✅ Mobile responsive design
 
 ### **Known Issues**
-- ❌ **Multi-Cut Planner**: Currently non-functional - complex tool with integration issues
-- ⚠️ **P2P Sync**: Implemented but non-functional - does not sync any data between devices
+- ❌ **Multi-Cut Planner**: Multi-cut planner reverted to placeholder due to breaking changes that took place
+- ⚠️ **P2P Sync**: Gun.js P2P infrastructure implemented but non-functional sync mechanics
 - ⚠️ **Live Statistics**: Has localStorage fallback crash in some scenarios
 
-### **Recent Updates**
+### **Recent Updates & Roadmap**
 - **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite
 - **Console Cleanup**: Removed 400+ debug statements for production readiness
 - **Modal System**: Replaced all browser alerts with EECOL-branded dialogs
 - **Mobile Navigation**: Consistent menus across all pages
+- **Upcoming**: Saved configuration management page, multi-cut planner rebuild, v2.0.0 enterprise features
+
+For detailed roadmap and planned features, see [ai-context/memory-bank/roadmap.md](ai-context/memory-bank/roadmap.md)
 
 ---
 
@@ -133,11 +136,11 @@ src/
 ```
 
 ### **Key Technologies**
-- **Frontend**: Vanilla JavaScript, HTML5, TailwindCSS
-- **Storage**: IndexedDB (primary), localStorage (fallback)
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3
+- **Storage**: IndexedDB used as main storage, with localStorage as fallback if IndexedDB isn't working
 - **PWA**: Service Workers, Web App Manifest
 - **Charts**: Chart.js for data visualization
-- **Sync**: Gun.js (infrastructure present but non-functional)
+- **Sync**: Gun.js P2P infrastructure implemented but non-functional sync mechanics
 
 ### **Contributing**
 - Follow the established patterns in existing tools

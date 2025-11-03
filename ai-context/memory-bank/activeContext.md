@@ -194,9 +194,9 @@
 - Industry standards and product data modules
 
 #### Data Management
-- IndexedDB as primary storage (transaction-safe)
-- Gun.js overlay for P2P synchronization
-- localStorage ONLY for UI state (not application data)
+- IndexedDB used as main storage, with localStorage as fallback if IndexedDB isn't working
+- Gun.js P2P infrastructure implemented but non-functional sync mechanics
+- localStorage used for UI state fallback when IndexedDB unavailable
 - Proper error handling and fallbacks
 
 #### User Experience

@@ -105,11 +105,11 @@
 **Known Issue**: User-reported bugs need investigation
 
 #### Multi-Cut Planner
-**Status**: 🔄 REMOVED FOR REBUILD - Selective revert completed, ground-up rebuild planned
-**Location**: Removed from codebase (November 1, 2025)
+**Status**: Multi-cut planner reverted to placeholder due to breaking changes that took place
+**Location**: Placeholder in codebase (November 1, 2025)
 **Issue**: Integration approach broke reel capacity/size estimators, tool completely non-functional
 **Solution**: Selective git revert removed integration changes while preserving other improvements
-**Impact**: Reel estimators restored to working condition, multi-cut planner removed for standalone rebuild
+**Impact**: Reel estimators restored to working condition, multi-cut planner reverted to placeholder for future rebuild
 **Technical Details**:
 - ES6 exports removed from reel-capacity-estimator.js and reel-size-estimator.js
 - Tape measure integration removed from reel-capacity-estimator.html
@@ -198,7 +198,7 @@
 - Migration support
 
 #### Gun.js P2P Sync
-**Status**: Configured, ready for integration
+**Status**: Gun.js P2P infrastructure implemented but non-functional sync mechanics
 **Location**: [src/core/database/gun-sync.js](src/core/database/gun-sync.js)
 **Features**:
 - P2P relay configuration
