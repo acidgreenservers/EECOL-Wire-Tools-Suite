@@ -299,6 +299,10 @@ const StorageSettings = (function() {
             elements.syncFrequency.value = syncFrequency;
             updateSyncFrequencyDisplay();
 
+            // Load and apply saved storage mode to UI
+            const savedMode = localStorage.getItem('eecol-storage-mode') || 'indexeddb';
+            updateModeDisplay(savedMode);
+
         } catch (error) {
             console.error('Failed to load saved configuration:', error);
         }
@@ -385,7 +389,7 @@ const StorageSettings = (function() {
 
             // Test connection
             const { data, error } = await testClient
-                .from('cutting_records')
+                .from('cuttingrecords')
                 .select('count')
                 .limit(1);
 

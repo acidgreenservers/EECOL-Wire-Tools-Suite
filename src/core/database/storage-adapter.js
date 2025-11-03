@@ -894,6 +894,133 @@ class StorageAdapter {
   }
 
   /**
+   * Tool-specific convenience methods for backward compatibility
+   * These delegate to the appropriate storage backend methods
+   */
+
+  /**
+   * Save mark converter data (wire mark calculator)
+   * @param {Object} data - Mark converter data
+   * @returns {Promise<string>} ID of saved record
+   */
+  async saveMarkConverter(data) {
+    this.ensureInitialized();
+
+    switch (this.mode) {
+      case 'indexeddb':
+        return await this.indexedDB.saveMarkConverter(data);
+
+      case 'supabase':
+        // TODO: Implement Supabase version when table mapping is complete
+        throw new Error('Supabase saveMarkConverter not yet implemented');
+
+      case 'hybrid':
+        // Write to IndexedDB first for immediate response
+        const localResult = await this.indexedDB.saveMarkConverter(data);
+
+        // TODO: Queue for Supabase when implemented
+        // this.queueOfflineOperation('saveMarkConverter', 'markConverter', data);
+
+        return localResult;
+
+      default:
+        throw new Error('Invalid storage mode: ' + this.mode);
+    }
+  }
+
+  /**
+   * Save stop mark converter data (stop mark calculator)
+   * @param {Object} data - Stop mark converter data
+   * @returns {Promise<string>} ID of saved record
+   */
+  async saveStopMarkConverter(data) {
+    this.ensureInitialized();
+
+    switch (this.mode) {
+      case 'indexeddb':
+        return await this.indexedDB.saveStopMarkConverter(data);
+
+      case 'supabase':
+        // TODO: Implement Supabase version when table mapping is complete
+        throw new Error('Supabase saveStopMarkConverter not yet implemented');
+
+      case 'hybrid':
+        // Write to IndexedDB first for immediate response
+        const localResult = await this.indexedDB.saveStopMarkConverter(data);
+
+        // TODO: Queue for Supabase when implemented
+        // this.queueOfflineOperation('saveStopMarkConverter', 'stopmarkConverter', data);
+
+        return localResult;
+
+      default:
+        throw new Error('Invalid storage mode: ' + this.mode);
+    }
+  }
+
+  /**
+   * Save reel capacity estimator data (reel capacity calculator)
+   * @param {Object} data - Reel capacity estimator data
+   * @returns {Promise<string>} ID of saved record
+   */
+  async saveReelCapacityEstimator(data) {
+    this.ensureInitialized();
+
+    switch (this.mode) {
+      case 'indexeddb':
+        return await this.indexedDB.saveReelCapacityEstimator(data);
+
+      case 'supabase':
+        // TODO: Implement Supabase version when table mapping is complete
+        throw new Error('Supabase saveReelCapacityEstimator not yet implemented');
+
+      case 'hybrid':
+        // Write to IndexedDB first for immediate response
+        const localResult = await this.indexedDB.saveReelCapacityEstimator(data);
+
+        // TODO: Queue for Supabase when implemented
+        // this.queueOfflineOperation('saveReelCapacityEstimator', 'reelcapacityEstimator', data);
+
+        return localResult;
+
+      default:
+        throw new Error('Invalid storage mode: ' + this.mode);
+    }
+  }
+
+  /**
+   * Get all reel capacity estimator data
+   * @returns {Promise<Array>} Array of reel capacity estimator records
+   */
+  async getAllReelCapacityEstimator() {
+    this.ensureInitialized();
+
+    switch (this.mode) {
+      case 'indexeddb':
+        return await this.indexedDB.getAll('reelcapacityEstimator');
+
+      case 'supabase':
+        // TODO: Implement Supabase version when table mapping is complete
+        throw new Error('Supabase getAllReelCapacityEstimator not yet implemented');
+
+      case 'hybrid':
+        // Try IndexedDB first for speed
+        try {
+          const localData = await this.indexedDB.getAll('reelcapacityEstimator');
+          if (localData && localData.length > 0) return localData;
+        } catch (error) {
+          console.error('IndexedDB getAll failed in hybrid mode:', error);
+        }
+
+        // TODO: Fallback to Supabase when implemented
+        throw new Error('Supabase getAllReelCapacityEstimator not yet implemented');
+
+      default:
+        throw new Error('Invalid storage mode: ' + this.mode);
+    }
+  }
+
+  /**
    * Get detailed status information
    * @returns {Object} Status information
    */

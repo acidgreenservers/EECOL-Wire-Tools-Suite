@@ -1198,10 +1198,10 @@ async function importJSONBackup(event) {
 // Event listeners and initialization
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize database if not already done (important for pages that don't load index.js)
-    if (typeof EECOLIndexedDB !== 'undefined' && !window.eecolDB) {
+    if (typeof StorageAdapter !== 'undefined' && !window.eecolDB) {
         try {
-            window.eecolDB = new EECOLIndexedDB();
-            await window.eecolDB.ready;
+            window.eecolDB = new StorageAdapter();
+            await window.eecolDB.initialize();
         } catch (error) {
             console.error('Failed to initialize database:', error);
             await showAlert("Failed to initialize database. Please refresh the page.", "Database Error");

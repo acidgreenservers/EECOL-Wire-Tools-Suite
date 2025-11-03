@@ -181,6 +181,38 @@ document.addEventListener('DOMContentLoaded', function() {
         statusIcon.textContent = icon;
         notification.className = notification.className.replace('hidden', '').replace(/bg-[^ ]*|border-[^ ]*/g, '').trim() + ' ' + bgClass + ' border-l-4';
         notificationText.textContent = text;
+
+        // Add a small "clear" link for completed notifications
+        if (icon === '✅' || icon === '⚠️') {
+            const clearLink = document.createElement('a');
+            clearLink.href = '#';
+            clearLink.textContent = ' (clear)';
+            clearLink.style.fontSize = '0.8em';
+            clearLink.style.color = '#666';
+            clearLink.style.textDecoration = 'underline';
+            clearLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm('Clear maintenance completion data? This will reset the daily check status.')) {
+                    try {
+                        // Clear the daily_check record
+                        if (window.eecolDB) {
+                            await window.eecolDB.delete('maintenanceLogs', 'daily_check');
+                        }
+                        // Also clear localStorage fallback
+                        localStorage.removeItem('daily_check');
+                        localStorage.removeItem('machineMaintenanceChecklist');
+
+                        // Hide the notification
+                        notification.classList.add('hidden');
+
+                        console.log('✅ Maintenance data cleared');
+                    } catch (error) {
+                        console.error('❌ Failed to clear maintenance data:', error);
+                    }
+                }
+            });
+            notificationText.appendChild(clearLink);
+        }
     }
 
     function formatDate(date) {

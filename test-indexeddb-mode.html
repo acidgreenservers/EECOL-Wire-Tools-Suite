@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndexedDB Mode Testing - EECOL Wire Tools Suite</title>
+    <link rel="stylesheet" href="src/assets/css/eecol-theme.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>IndexedDB Mode Testing - EECOL Wire Tools Suite</h1>
+    <p>This page tests the StorageAdapter in IndexedDB-only mode to ensure backward compatibility is maintained.</p>
+
+    <div class="test-section">
+        <h2>Test Status</h2>
+        <div id="test-status">Initializing...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>StorageAdapter Initialization</h2>
+        <button onclick="testInitialization()">Test Initialization</button>
+        <div id="init-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Basic CRUD Operations</h2>
+        <button onclick="testCRUDOperations()">Test CRUD Operations</button>
+        <div id="crud-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Tool-Specific Methods</h2>
+        <button onclick="testToolMethods()">Test Tool Methods</button>
+        <div id="tool-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Mode Validation</h2>
+        <button onclick="testModeValidation()">Test Mode Validation</button>
+        <div id="mode-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <pre id="console-output">Console messages will appear here...</pre>
+    </div>
+
+    <!-- Load required scripts in correct order -->
+    <script src="src/core/database/indexeddb.js"></script>
+    <script src="src/core/database/storage-adapter.js"></script>
+
+    <script>
+        let storageAdapter = null;
+        let originalConsoleLog = console.log;
+        let originalConsoleError = console.error;
+        let originalConsoleWarn = console.warn;
+        let consoleMessages = [];
+
+        // Capture console output
+        function captureConsole(type, ...args) {
+            const message = `[${new Date().toLocaleTimeString()}] ${type.toUpperCase()}: ${args.join(' ')}`;
+            consoleMessages.push(message);
+            document.getElementById('console-output').textContent = consoleMessages.slice(-20).join('\n');
+            // Still call original console method
+            if (type === 'log') originalConsoleLog(...args);
+            else if (type === 'error') originalConsoleError(...args);
+            else if (type === 'warn') originalConsoleWarn(...args);
+        }
+
+        console.log = (...args) => captureConsole('log', ...args);
+        console.error = (...args) => captureConsole('error', ...args);
+        console.warn = (...args) => captureConsole('warn', ...args);
+
+        // Update test status
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('test-status');
+            statusDiv.innerHTML = `<div class="test-result ${type}">${message}</div>`;
+        }
+
+        // Test initialization
+        async function testInitialization() {
+            updateStatus('Testing StorageAdapter initialization...', 'info');
+            const resultDiv = document.getElementById('init-result');
+
+            try {
+                // Force IndexedDB mode for testing
+                localStorage.setItem('eecol-storage-mode', 'indexeddb');
+
+                storageAdapter = new StorageAdapter();
+                await storageAdapter.initialize();
+
+                const status = storageAdapter.getStatus();
+
+                resultDiv.innerHTML = `
+                    <div class="test-result success">✅ Initialization successful</div>
+                    <pre>Status: ${JSON.stringify(status, null, 2)}</pre>
+                `;
+
+                updateStatus('StorageAdapter initialized successfully in IndexedDB mode', 'success');
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">❌ Initialization failed: ${error.message}</div>
+                    <pre>Stack: ${error.stack}</pre>
+                `;
+                updateStatus('StorageAdapter initialization failed', 'error');
+                return false;
+            }
+        }
+
+        // Test CRUD operations
+        async function testCRUDOperations() {
+            const resultDiv = document.getElementById('crud-result');
+
+            if (!storageAdapter) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ StorageAdapter not initialized</div>';
+                return;
+            }
+
+            updateStatus('Testing CRUD operations...', 'info');
+
+            try {
+                // Test data
+                const testRecord = {
+                    wireType: 'Test Wire',
+                    length: 100,
+                    quantity: 5,
+                    operator: 'Test Operator',
+                    timestamp: new Date().toISOString()
+                };
+
+                // Test ADD
+                const recordId = await storageAdapter.add('cuttingRecords', testRecord);
+                console.log('Added record with ID:', recordId);
+
+                // Test GET
+                const retrievedRecord = await storageAdapter.get('cuttingRecords', recordId);
+                console.log('Retrieved record:', retrievedRecord);
+
+                // Test UPDATE
+                const updatedRecord = { ...retrievedRecord, quantity: 10 };
+                await storageAdapter.update('cuttingRecords', updatedRecord);
+                console.log('Updated record');
+
+                // Test GET ALL
+                const allRecords = await storageAdapter.getAll('cuttingRecords');
+                console.log('All records count:', allRecords.length);
+
+                // Test DELETE
+                await storageAdapter.delete('cuttingRecords', recordId);
+                console.log('Deleted record');
+
+                resultDiv.innerHTML = `
+                    <div class="test-result success">✅ All CRUD operations successful</div>
+                    <ul>
+                        <li>Added record ID: ${recordId}</li>
+                        <li>Retrieved record: ${retrievedRecord ? '✅' : '❌'}</li>
+                        <li>Updated record: ✅</li>
+                        <li>Total records: ${allRecords.length}</li>
+                        <li>Deleted record: ✅</li>
+                    </ul>
+                `;
+
+                updateStatus('CRUD operations test completed successfully', 'success');
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">❌ CRUD operations failed: ${error.message}</div>
+                    <pre>Stack: ${error.stack}</pre>
+                `;
+                updateStatus('CRUD operations test failed', 'error');
+                return false;
+            }
+        }
+
+        // Test tool-specific methods
+        async function testToolMethods() {
+            const resultDiv = document.getElementById('tool-result');
+
+            if (!storageAdapter) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ StorageAdapter not initialized</div>';
+                return;
+            }
+
+            updateStatus('Testing tool-specific methods...', 'info');
+
+            try {
+                // Test mark converter
+                const markData = { input: 'test', output: 'result', timestamp: Date.now() };
+                const markId = await storageAdapter.saveMarkConverter(markData);
+                console.log('Mark converter saved with ID:', markId);
+
+                // Test stop mark converter
+                const stopData = { input: 'test', output: 'result', timestamp: Date.now() };
+                const stopId = await storageAdapter.saveStopMarkConverter(stopData);
+                console.log('Stop mark converter saved with ID:', stopId);
+
+                // Test reel capacity estimator
+                const reelData = { input: 'test', output: 'result', timestamp: Date.now() };
+                const reelId = await storageAdapter.saveReelCapacityEstimator(reelData);
+                console.log('Reel capacity estimator saved with ID:', reelId);
+
+                // Test get all reel capacity
+                const allReelData = await storageAdapter.getAllReelCapacityEstimator();
+                console.log('Reel capacity records:', allReelData.length);
+
+                resultDiv.innerHTML = `
+                    <div class="test-result success">✅ All tool methods successful</div>
+                    <ul>
+                        <li>Mark Converter ID: ${markId}</li>
+                        <li>Stop Mark Converter ID: ${stopId}</li>
+                        <li>Reel Capacity Estimator ID: ${reelId}</li>
+                        <li>Reel Records Count: ${allReelData.length}</li>
+                    </ul>
+                `;
+
+                updateStatus('Tool-specific methods test completed successfully', 'success');
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">❌ Tool methods failed: ${error.message}</div>
+                    <pre>Stack: ${error.stack}</pre>
+                `;
+                updateStatus('Tool-specific methods test failed', 'error');
+                return false;
+            }
+        }
+
+        // Test mode validation
+        async function testModeValidation() {
+            const resultDiv = document.getElementById('mode-result');
+
+            if (!storageAdapter) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ StorageAdapter not initialized</div>';
+                return;
+            }
+
+            updateStatus('Testing mode validation...', 'info');
+
+            try {
+                const currentMode = storageAdapter.getStorageMode();
+                const status = storageAdapter.getStatus();
+
+                // Test mode switching (should work for IndexedDB)
+                await storageAdapter.setStorageMode('indexeddb');
+                const afterMode = storageAdapter.getStorageMode();
+
+                resultDiv.innerHTML = `
+                    <div class="test-result success">✅ Mode validation successful</div>
+                    <ul>
+                        <li>Current Mode: ${currentMode}</li>
+                        <li>After Mode Switch: ${afterMode}</li>
+                        <li>Is Ready: ${storageAdapter.isReady()}</li>
+                        <li>Has IndexedDB: ${status.hasIndexedDB}</li>
+                        <li>Has Supabase: ${status.hasSupabase}</li>
+                        <li>Is Online: ${status.isOnline}</li>
+                        <li>Queued Operations: ${status.queuedOperations}</li>
+                    </ul>
+                `;
+
+                updateStatus('Mode validation test completed successfully', 'success');
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="test-result error">❌ Mode validation failed: ${error.message}</div>
+                    <pre>Stack: ${error.stack}</pre>
+                `;
+                updateStatus('Mode validation test failed', 'error');
+                return false;
+            }
+        }
+
+        // Auto-initialize on page load
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, starting IndexedDB mode tests...');
+            await testInitialization();
+        });
+    </script>
+</body>
+</html>

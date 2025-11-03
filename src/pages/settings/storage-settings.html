@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" id="csp-meta" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://esm.sh; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:; connect-src 'self' https://nywkaaqumyxpqecbenyw.supabase.co wss://nywkaaqumyxpqecbenyw.supabase.co;">
+    <meta http-equiv="Content-Security-Policy" id="csp-meta" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://esm.sh; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:; connect-src 'self' https://esm.sh https://nywkaaqumyxpqecbenyw.supabase.co wss://nywkaaqumyxpqecbenyw.supabase.co;">
     <title>Storage Settings - EECOL Wire Tools Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../../assets/css/eecol-theme.css">
@@ -67,6 +67,7 @@
     <script src="../../utils/mobile-menu.js"></script>
     <script src="../../utils/modals.js"></script>
     <script src="../../core/database/indexeddb.js"></script>
+    <script src="../../core/database/supabase-client.js"></script>
     <script src="../../core/database/storage-adapter.js"></script>
 </head>
 <body class="p-3 sm:p-6 h-screen flex flex-col eecol-blue-bg">

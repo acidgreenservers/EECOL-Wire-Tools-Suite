@@ -1,39 +1,26 @@
 -- EECOL Wire Tools Suite - Supabase Table Creation Script
--- Creates tables with camelCase naming convention to match IndexedDB stores
--- Run this in Supabase SQL Editor
+-- MINIMAL VERSION: Just basic tables without RLS, policies, indexes, or triggers
+-- Run this in Supabase SQL Editor to isolate the issue
 
--- Enable Row Level Security (RLS) for all tables
 -- Enable the UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ===========================================
--- CUTTING RECORDS TABLE
+-- BASIC TABLES ONLY (minimal schema)
 -- ===========================================
+
 CREATE TABLE IF NOT EXISTS cuttingRecords (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     wire_type TEXT NOT NULL DEFAULT '',
     operator TEXT NOT NULL DEFAULT '',
     quantity INTEGER NOT NULL DEFAULT 0,
     timestamp TIMESTAMP WITH TIME ZONE,
-    date DATE, -- Legacy field for backward compatibility
+    date DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE cuttingRecords ENABLE ROW LEVEL SECURITY;
-
--- Create policies (allow all for now - adjust based on auth requirements)
-CREATE POLICY "Allow all operations on cuttingRecords" ON cuttingRecords FOR ALL USING (true);
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_cuttingRecords_timestamp ON cuttingRecords(timestamp);
-CREATE INDEX IF NOT EXISTS idx_cuttingRecords_deleted_at ON cuttingRecords(deleted_at);
-
--- ===========================================
--- INVENTORY RECORDS TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS inventoryRecords (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     wire_type TEXT NOT NULL DEFAULT '',
@@ -48,19 +35,6 @@ CREATE TABLE IF NOT EXISTS inventoryRecords (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE inventoryRecords ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on inventoryRecords" ON inventoryRecords FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_inventoryRecords_wire_type ON inventoryRecords(wire_type);
-CREATE INDEX IF NOT EXISTS idx_inventoryRecords_deleted_at ON inventoryRecords(deleted_at);
-
--- ===========================================
--- USERS TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     role TEXT DEFAULT 'user',
@@ -71,20 +45,6 @@ CREATE TABLE IF NOT EXISTS users (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on users" ON users FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-CREATE INDEX IF NOT EXISTS idx_users_active ON users(active);
-CREATE INDEX IF NOT EXISTS idx_users_last_login ON users(last_login);
-
--- ===========================================
--- NOTIFICATIONS TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     type TEXT NOT NULL DEFAULT 'info',
@@ -92,27 +52,12 @@ CREATE TABLE IF NOT EXISTS notifications (
     message TEXT NOT NULL DEFAULT '',
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     read BOOLEAN NOT NULL DEFAULT FALSE,
-    user_id UUID, -- For future multi-user support
+    user_id UUID,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on notifications" ON notifications FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
-CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(read);
-CREATE INDEX IF NOT EXISTS idx_notifications_timestamp ON notifications(timestamp);
-CREATE INDEX IF NOT EXISTS idx_notifications_deleted_at ON notifications(deleted_at);
-
--- ===========================================
--- MAINTENANCE LOGS TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS maintenanceLogs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     equipment_id TEXT NOT NULL DEFAULT '',
@@ -128,25 +73,10 @@ CREATE TABLE IF NOT EXISTS maintenanceLogs (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE maintenanceLogs ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on maintenanceLogs" ON maintenanceLogs FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_equipment_id ON maintenanceLogs(equipment_id);
-CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_date ON maintenanceLogs(date);
-CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_deleted_at ON maintenanceLogs(deleted_at);
-
--- ===========================================
--- MARK CONVERTER TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS markConverter (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tool TEXT DEFAULT 'markConverter',
     timestamp BIGINT,
-    -- Add other fields as needed for mark converter data
     input_data JSONB,
     result_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -154,25 +84,10 @@ CREATE TABLE IF NOT EXISTS markConverter (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE markConverter ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on markConverter" ON markConverter FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_markConverter_tool ON markConverter(tool);
-CREATE INDEX IF NOT EXISTS idx_markConverter_timestamp ON markConverter(timestamp);
-CREATE INDEX IF NOT EXISTS idx_markConverter_deleted_at ON markConverter(deleted_at);
-
--- ===========================================
--- STOP MARK CONVERTER TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS stopmarkConverter (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tool TEXT DEFAULT 'stopmarkConverter',
     timestamp BIGINT,
-    -- Add other fields as needed for stop mark converter data
     input_data JSONB,
     result_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -180,25 +95,10 @@ CREATE TABLE IF NOT EXISTS stopmarkConverter (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE stopmarkConverter ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on stopmarkConverter" ON stopmarkConverter FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_tool ON stopmarkConverter(tool);
-CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_timestamp ON stopmarkConverter(timestamp);
-CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_deleted_at ON stopmarkConverter(deleted_at);
-
--- ===========================================
--- REEL CAPACITY ESTIMATOR TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS reelcapacityEstimator (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tool TEXT DEFAULT 'reelcapacityEstimator',
     timestamp BIGINT,
-    -- Add other fields as needed for reel capacity estimator data
     input_data JSONB,
     result_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -206,25 +106,10 @@ CREATE TABLE IF NOT EXISTS reelcapacityEstimator (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE reelcapacityEstimator ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on reelcapacityEstimator" ON reelcapacityEstimator FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_tool ON reelcapacityEstimator(tool);
-CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_timestamp ON reelcapacityEstimator(timestamp);
-CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_deleted_at ON reelcapacityEstimator(deleted_at);
-
--- ===========================================
--- REEL SIZE ESTIMATOR TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS reelsizeEstimator (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     tool TEXT DEFAULT 'reelsizeEstimator',
     timestamp BIGINT,
-    -- Add other fields as needed for reel size estimator data
     input_data JSONB,
     result_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -232,26 +117,11 @@ CREATE TABLE IF NOT EXISTS reelsizeEstimator (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE reelsizeEstimator ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on reelsizeEstimator" ON reelsizeEstimator FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_tool ON reelsizeEstimator(tool);
-CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_timestamp ON reelsizeEstimator(timestamp);
-CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_deleted_at ON reelsizeEstimator(deleted_at);
-
--- ===========================================
--- MULTI CUT PLANNER TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS muticutPlanner (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     payload_cable_type TEXT,
     is_complete BOOLEAN DEFAULT FALSE,
     total_payload_length NUMERIC(10,2),
-    -- Add other fields as needed for multi-cut planner data
     input_data JSONB,
     result_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -259,20 +129,6 @@ CREATE TABLE IF NOT EXISTS muticutPlanner (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE muticutPlanner ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on muticutPlanner" ON muticutPlanner FOR ALL USING (true);
-
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_muticutPlanner_payload_cable_type ON muticutPlanner(payload_cable_type);
-CREATE INDEX IF NOT EXISTS idx_muticutPlanner_is_complete ON muticutPlanner(is_complete);
-CREATE INDEX IF NOT EXISTS idx_muticutPlanner_deleted_at ON muticutPlanner(deleted_at);
-
--- ===========================================
--- APP SETTINGS TABLE (camelCase for consistency)
--- ===========================================
 CREATE TABLE IF NOT EXISTS appSettings (
     name TEXT PRIMARY KEY,
     value TEXT,
@@ -282,15 +138,6 @@ CREATE TABLE IF NOT EXISTS appSettings (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
-ALTER TABLE appSettings ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow all operations on appSettings" ON appSettings FOR ALL USING (true);
-
--- ===========================================
--- SESSIONS TABLE
--- ===========================================
 CREATE TABLE IF NOT EXISTS sessions (
     session_id TEXT PRIMARY KEY,
     user_id UUID,
@@ -301,13 +148,83 @@ CREATE TABLE IF NOT EXISTS sessions (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Enable RLS
+-- ===========================================
+-- ENABLE ROW LEVEL SECURITY (RLS)
+-- ===========================================
+
+ALTER TABLE cuttingRecords ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inventoryRecords ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE maintenanceLogs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE markConverter ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stopmarkConverter ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reelcapacityEstimator ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reelsizeEstimator ENABLE ROW LEVEL SECURITY;
+ALTER TABLE muticutPlanner ENABLE ROW LEVEL SECURITY;
+ALTER TABLE appSettings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 
--- Create policies
+-- ===========================================
+-- CREATE POLICIES (allow all for now)
+-- ===========================================
+
+CREATE POLICY "Allow all operations on cuttingRecords" ON cuttingRecords FOR ALL USING (true);
+CREATE POLICY "Allow all operations on inventoryRecords" ON inventoryRecords FOR ALL USING (true);
+CREATE POLICY "Allow all operations on users" ON users FOR ALL USING (true);
+CREATE POLICY "Allow all operations on notifications" ON notifications FOR ALL USING (true);
+CREATE POLICY "Allow all operations on maintenanceLogs" ON maintenanceLogs FOR ALL USING (true);
+CREATE POLICY "Allow all operations on markConverter" ON markConverter FOR ALL USING (true);
+CREATE POLICY "Allow all operations on stopmarkConverter" ON stopmarkConverter FOR ALL USING (true);
+CREATE POLICY "Allow all operations on reelcapacityEstimator" ON reelcapacityEstimator FOR ALL USING (true);
+CREATE POLICY "Allow all operations on reelsizeEstimator" ON reelsizeEstimator FOR ALL USING (true);
+CREATE POLICY "Allow all operations on muticutPlanner" ON muticutPlanner FOR ALL USING (true);
+CREATE POLICY "Allow all operations on appSettings" ON appSettings FOR ALL USING (true);
 CREATE POLICY "Allow all operations on sessions" ON sessions FOR ALL USING (true);
 
--- Create indexes
+-- ===========================================
+-- CREATE INDEXES
+-- ===========================================
+
+CREATE INDEX IF NOT EXISTS idx_cuttingRecords_timestamp ON cuttingRecords(timestamp);
+CREATE INDEX IF NOT EXISTS idx_cuttingRecords_deleted_at ON cuttingRecords(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_inventoryRecords_wire_type ON inventoryRecords(wire_type);
+CREATE INDEX IF NOT EXISTS idx_inventoryRecords_deleted_at ON inventoryRecords(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_active ON users(active);
+CREATE INDEX IF NOT EXISTS idx_users_last_login ON users(last_login);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(read);
+CREATE INDEX IF NOT EXISTS idx_notifications_timestamp ON notifications(timestamp);
+CREATE INDEX IF NOT EXISTS idx_notifications_deleted_at ON notifications(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_equipment_id ON maintenanceLogs(equipment_id);
+CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_date ON maintenanceLogs(date);
+CREATE INDEX IF NOT EXISTS idx_maintenanceLogs_deleted_at ON maintenanceLogs(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_markConverter_tool ON markConverter(tool);
+CREATE INDEX IF NOT EXISTS idx_markConverter_timestamp ON markConverter(timestamp);
+CREATE INDEX IF NOT EXISTS idx_markConverter_deleted_at ON markConverter(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_tool ON stopmarkConverter(tool);
+CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_timestamp ON stopmarkConverter(timestamp);
+CREATE INDEX IF NOT EXISTS idx_stopmarkConverter_deleted_at ON stopmarkConverter(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_tool ON reelcapacityEstimator(tool);
+CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_timestamp ON reelcapacityEstimator(timestamp);
+CREATE INDEX IF NOT EXISTS idx_reelcapacityEstimator_deleted_at ON reelcapacityEstimator(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_tool ON reelsizeEstimator(tool);
+CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_timestamp ON reelsizeEstimator(timestamp);
+CREATE INDEX IF NOT EXISTS idx_reelsizeEstimator_deleted_at ON reelsizeEstimator(deleted_at);
+
+CREATE INDEX IF NOT EXISTS idx_muticutPlanner_payload_cable_type ON muticutPlanner(payload_cable_type);
+CREATE INDEX IF NOT EXISTS idx_muticutPlanner_is_complete ON muticutPlanner(is_complete);
+CREATE INDEX IF NOT EXISTS idx_muticutPlanner_deleted_at ON muticutPlanner(deleted_at);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_sessions_active ON sessions(active);
@@ -325,7 +242,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create triggers for each table individually
+-- Create all remaining triggers
 CREATE TRIGGER update_cuttingRecords_updated_at BEFORE UPDATE ON cuttingRecords FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_inventoryRecords_updated_at BEFORE UPDATE ON inventoryRecords FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -336,7 +253,6 @@ CREATE TRIGGER update_stopmarkConverter_updated_at BEFORE UPDATE ON stopmarkConv
 CREATE TRIGGER update_reelcapacityEstimator_updated_at BEFORE UPDATE ON reelcapacityEstimator FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_reelsizeEstimator_updated_at BEFORE UPDATE ON reelsizeEstimator FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_muticutPlanner_updated_at BEFORE UPDATE ON muticutPlanner FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_appSettings_updated_at BEFORE UPDATE ON appSettings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_sessions_updated_at BEFORE UPDATE ON sessions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ===========================================

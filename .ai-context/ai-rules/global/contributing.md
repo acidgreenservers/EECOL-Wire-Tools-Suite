@@ -23,17 +23,17 @@ Before writing any code, I **must** perform the following analysis and gain user
 *   **Clarify Ambiguities:** If the request is unclear, ask clarifying questions to ensure complete understanding before proceeding.
 
 ### 1.2. Align with Project Standards
-*   **Project Style Guide Review:** Explicitly reference the project's style guide (e.g., `STYLE.md`, `EECOL-Style.md`).
-    *   Which existing component, file, or module is the best style reference?
-    *   Which shared components, classes, or utilities can and **must** be used?
-    *   Does this require a new shared component/utility? If so, a proposal must be generated as per the project's guidelines.
-*   **Technical Context Review:** Check for relevant technical constraints, dependencies, or established patterns (e.g., data storage patterns, framework conventions, architectural rules).
+*   **Holistic Project Analysis:** Before proposing a plan, I must perform a comprehensive analysis of the entire project codebase to deduce its core architecture and conventions. This includes:
+    *   **Architecture & Framework:** Is it a monolith or microservices? Is it a PWA, a static site, or a server-rendered app? What framework (e.g., React, Vue, Vanilla JS) is used?
+    *   **Code Structure & Patterns:** How are files and folders organized (e.g., feature-based, type-based)? What design patterns are prevalent (e.g., MVC, modular, component-based)?
+    *   **Shared Components & Utilities:** Identify the location and purpose of shared code (e.g., `utils/`, `shared/`, `components/`). Determine which existing utilities **must** be leveraged for the current task.
+    *   **Styling Strategy:** How is styling handled (e.g., CSS-in-JS, TailwindCSS, SASS modules, global stylesheets)?
 
 ### 1.3. Formulate & Propose an Action Plan
 *   Present a clear, structured plan to the user for approval. This plan **must** include:
     *   **Action:** A summary of the goal.
     *   **Files to be Modified/Created:** A list of all files that will be touched.
-    *   **Utils to be Used:** An explicit list of existing utils that will be leveraged.
+    *   **Shared Code to be Used:** An explicit list of existing utilities, components, or services that will be leveraged.
     *   **Reasoning:** A brief justification for the approach.
     *   **Expected Outcome:** A description of the final result.
 
@@ -46,7 +46,7 @@ Before writing any code, I **must** perform the following analysis and gain user
 - `src/commands/config/set.js` (new)
 - `src/services/config-manager.js` (modified)
 - `docs/commands.md` (modified)
-**Utils to be Used:**
+**Shared Code to be Used:**
 - `src/utils/file-system.js` for reading/writing the config file.
 - `src/utils/logger.js` for console output.
 **Reasoning:** This command will allow users to update configuration values directly from the command line, improving usability and scriptability.
@@ -63,12 +63,12 @@ Once the user approves the action plan, proceed with code generation.
 
 ### 2.1. Generate Code
 *   Implement the changes exactly as described in the approved plan.
-*   Adhere strictly to the `EECOL-Style.md` checklist regarding visual and code consistency.
-*   Ensure all new code follows the project's technical patterns (e.g., Vanilla JS, IndexedDB for storage, no `console.log` spam).
+*   Adhere strictly to the project's deduced conventions and styling for visual and code consistency.
+*   Ensure all new code follows the project's established technical patterns (e.g., adhering to the chosen framework, data storage patterns, logging standards).
 
 ### 2.2. Self-Correction and Verification
-*   After generation, review the code against the action plan and the `EECOL-Style.md` checklist.
-*   Verify that no utility functions were unnecessarily rewritten.
+*   After generation, review the code against the action plan and the project's deduced conventions.
+*   Verify that no shared utility functions or components were unnecessarily rewritten.
 *   Confirm that all new UI elements match the established theme.
 *   Ensure no debugging artifacts (`console.log`, commented-out code) remain.
 
@@ -104,8 +104,8 @@ The log entry **must** contain the following sections:
 *   **`Key_Decisions`**:
     *   Document critical choices made during implementation.
     *   *Example:* "Decided against adding a new util for date formatting as the existing `toLocaleDateString()` was sufficient for the display requirements, preventing unnecessary code."
-*   **`EECOL_Style_Checklist_Verification`**:
-    *   A confirmation statement: "Verified that the implementation adheres to all relevant sections of `EECOL-Style.md`. Visuals match the reference page `[page_name].html`, and shared utils were used for modals and printing."
+*   **`Project_Convention_Verification`**:
+    *   A confirmation statement: "Verified that the implementation adheres to the project's deduced conventions. The code structure matches the reference file `[reference_file]`, and shared utilities were used for `[specific_functionality]`."
 *   **`Improvements_Identified_For_Consolidation`**:
     *   Identify any generalizable patterns or critical insights from this task that should be moved to `memory-bank/consolidated_learnings.md` in the future.
 
@@ -142,5 +142,4 @@ Improvements_Identified_For_Consolidation:
 
 ## Phase 4: Completion
 
-Only after all previous phases, especially the documentation in Phase 3, are complete,
-and i have output to the file "contributing.md" in the "memory-bank" folder can I signal task completion to the user. i need to search for where the "memory-bank" folder is if i dont already know, so i dont create a new file, if one already exsists in the "memory-bank" folder.
+Only after all previous phases, especially the documentation in Phase 3, are complete, can I signal task completion to the user.

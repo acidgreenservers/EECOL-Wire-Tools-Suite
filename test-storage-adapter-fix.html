@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StorageAdapter Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #007bff; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>StorageAdapter Fix Test</h1>
+    <p>This page tests the fix for missing tool-specific methods in StorageAdapter.</p>
+
+    <div class="test-results">
+        <h2>Test Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <!-- Load required scripts in correct order -->
+    <script src="src/core/database/indexeddb.js"></script>
+    <script src="src/core/database/storage-adapter.js"></script>
+    <script src="test-storage-adapter-fix.js"></script>
+
+    <script>
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const resultsDiv = document.getElementById('results');
+        let output = '';
+
+        function appendOutput(text, className = '') {
+            output += `<div class="${className}">${text}</div>`;
+            resultsDiv.innerHTML = output;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            appendOutput(message, message.includes('✅') ? 'success' :
+                               message.includes('❌') ? 'error' : 'info');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const message = args.map(arg =>
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            appendOutput(message, 'error');
+        };
+
+        // Start test when page loads
+        window.addEventListener('load', function() {
+            appendOutput('Starting StorageAdapter fix test...', 'info');
+        });
+    </script>
+</body>
+</html>

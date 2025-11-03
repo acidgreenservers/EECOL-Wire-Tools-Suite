@@ -1,10 +1,3 @@
----
-description: Defines Cline's mandatory protocol for self-reflection, persistent knowledge capture using dedicated logs, and continuous improvement of its operational knowledge before task completion.
-author: https://github.com/jeanibarz
-version: 1.0
-tags: ["protocol", "meta", "learning", "reflection", "knowledge-management", "core-behavior"]
-globs: ["*"] # This core protocol is always active and applies to all Cline operations.
----
 # Cline Continuous Improvement Protocol
 
 **Objective:** Ensure Cline proactively learns from tasks, captures knowledge in a structured way, **distills fundamental insights,** refines understanding, and improves efficiency and reliability. This protocol maintains two key files: `memory-bank/raw_reflection_log.md` for initial detailed logging, and `memory-bank/consolidated_learnings.md` for pruned, actionable, long-term knowledge. This is vital for optimal performance and avoiding redundant effort.
@@ -26,6 +19,7 @@ Before signaling task completion (e.g., via `attempt_completion`), Cline **must*
 * **Identify Learnings:** What new information, techniques, **underlying patterns,** API behaviors, project-specific commands (e.g., test, build, run flags), environment variables, setup quirks, or successful outcomes were discovered? **What core principles can be extracted?**
 * **Identify Difficulties & Mistakes (as Learning Opportunities):** What challenges were faced? Were there any errors, misunderstandings, or inefficiencies? **How can these experiences refine future approaches (resilience & adaptation)?** Did user feedback indicate a misstep?
 * **Identify Successes:** What went particularly well? What strategies or tools were notably effective? **What were the key contributing factors?**
+* **USER FEEDBACK INTEGRATION:** When user feedback contradicts technical success claims, prioritize user experience over technical metrics. Include analysis of user-reported issues that emerge after completion. Consider adding "state management" and "data reset" capabilities as standard UX patterns. Track patterns where users need to clear/reset application state due to incorrect data persistence.
 
 ### 1.2. Logging to `memory-bank/raw_reflection_log.md`:
 * Based on Task Review & Analysis (1.1), create a timestamped, task-referenced entry in `memory-bank/raw_reflection_log.md` detailing all learnings, difficulties (and their resolutions/learnings), and successes (and contributing factors).

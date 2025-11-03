@@ -83,6 +83,40 @@ This document outlines the complete migration plan from the current IndexedDB + 
 - ✅ Scrolling functionality restored
 **Next Steps**: Phase 6 - Integration & Testing (update all modules to use StorageAdapter)
 
+### 🔄 PHASE 6a COMPLETED - StorageAdapter Integration Fixes Applied
+
+**Status**: ✅ COMPLETED - Critical StorageAdapter integration issues resolved
+**Achievement**: Fixed script loading order and table name mapping issues blocking Supabase integration
+**Issues Resolved**:
+1. **Script Loading Order**: Added `supabase-client.js` before `storage-adapter.js` in storage-settings.html
+   - **Before**: storage-adapter.js loaded first, causing "SupabaseClient is not defined" error
+   - **After**: supabase-client.js loads first, SupabaseClient available when StorageAdapter initializes
+   - **Impact**: StorageAdapter can now successfully initialize in Supabase mode
+
+2. **Table Name Mapping**: Updated SupabaseClient tableMap from camelCase to snake_case
+   - **Root Cause**: PostgreSQL stores identifiers in lowercase, camelCase table names become snake_case
+   - **Before**: `cuttingRecords: 'cuttingRecords'` (camelCase)
+   - **After**: `cuttingRecords: 'cuttingrecords'` (snake_case)
+   - **Impact**: All 12 table mappings corrected, queries now target correct database tables
+
+3. **Connection Test Fixed**: Updated testConnection() method to use correct table names
+   - **Before**: Queried 'cuttingRecords' (camelCase)
+   - **After**: Queries 'cuttingrecords' (snake_case)
+   - **Impact**: Supabase connection test now passes successfully
+
+**Files Modified**:
+- `src/pages/settings/storage-settings.html` (added supabase-client.js script tag)
+- `src/core/database/supabase-client.js` (tableMap and testConnection updates)
+
+**Testing Results**:
+- ✅ "SupabaseClient is not defined" error eliminated
+- ✅ StorageAdapter initializes successfully in Supabase mode
+- ✅ Supabase connection test passes
+- ✅ Table queries no longer return 404 errors
+
+**Current Status**: Script loading and table naming issues resolved
+**Next Steps**: Phase 6b - User Testing & Validation (verify fixes work after hard refresh)
+
 ### 🔄 Currently Initializing (Phase 6: Integration & Testing)
 
 - [ ] **Supabase Syncing Operational** - Get syncing working for all records across storage modes
