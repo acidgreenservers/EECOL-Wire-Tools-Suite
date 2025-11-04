@@ -97,7 +97,7 @@ The log entry **must** contain the following sections:
     *   Mention any deviations from the plan and why they were necessary.
 *   **`Learnings`**:
     *   What new patterns were discovered or applied?
-    *   Was a new aspect of a library (`Chart.js`, `Gun.js`) or API (IndexedDB) learned?
+    *   Was a new aspect of a library (`Chart.js`) or API (IndexedDB) learned?
 *   **`Difficulties_and_Resolutions`**:
     *   What was challenging? (e.g., "Ensuring the print layout was consistent across browsers.")
     *   How were these challenges overcome? (e.g., "Used `@media print` CSS rules to hide non-essential UI elements.")

@@ -68,13 +68,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ IndexedDB is not supported. Falling back to localStorage for inventory reports.');
         }
 
-        // Initialize P2P Sync
-        if (typeof P2PSync !== 'undefined') {
-            window.p2pSync = new P2PSync();
-            console.log('🔄 P2P Sync initialized successfully for inventory reports');
-        } else {
-            console.warn('⚠️ P2P Sync not available. Some features may be limited for inventory reports.');
-        }
 
         // Wait for Chart.js to load
         await loadChartJS();

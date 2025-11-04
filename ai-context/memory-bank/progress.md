@@ -126,7 +126,6 @@
 ## Recent Milestones
 
 ### November 3, 2025
--   ✅ **Gun-Sync Removal**: Completely removed `gun-sync` and all P2P functionality.
 -   ✅ **Local Data Management**: Added a new "Database Config" page with tools to export, import, and delete the local database, and manage individual records.
 -   ✅ **Documentation Update**: Updated all relevant documentation to reflect the new architecture.
 
@@ -155,7 +154,6 @@
 ## Version History
 
 ### v0.8.0.2 (Current - Edge Branch)
--   Removed `gun-sync` and P2P functionality.
 -   Added local data management tools.
 
 ### v0.8.0.1
@@ -164,7 +162,6 @@
 -   Navigation consistency.
 
 ### v0.8.0.0
--   P2P sync infrastructure (now removed).
 -   IndexedDB migration complete.
 
 ### v0.7.x and Earlier
