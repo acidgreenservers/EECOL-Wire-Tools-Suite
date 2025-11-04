@@ -5,7 +5,7 @@
 
 > ⚠️ **You are on the `edge` branch.** This branch contains the latest features and upcoming releases. It is used for testing and may contain experimental or unstable code. For the stable, production-ready version, please use the `main` branch.
 
-**Current Version**: `v0.8.0.1`
+**Current Version**: `v0.8.0.2`
 
 ## 🎯 **Overview**
 
@@ -17,12 +17,13 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 - **Professional Code**: Clean, production-ready with proper error handling
 - **Mobile Responsive**: Optimized for all screen sizes and devices
 - **PWA Installable**: Can be installed as a native app on desktop and mobile
+- **Local Data Management**: Tools to export, import, and manage your local data.
 
 ### **Architecture**
 - **IndexedDB Backend**: High-performance local database for all data persistence
 - **PWA Features**: Offline functionality, installable app, service workers
 - **Professional UI**: EECOL-branded modal dialogs, responsive design
-- **Storage Strategy**: IndexedDB-first with localStorage fallback for UI state
+- **Storage Strategy**: IndexedDB for all application data.
 
 ---
 
@@ -32,6 +33,7 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 - **Cutting Records**: Track wire cutting operations and history
 - **Inventory Records**: Material inventory management and tracking
 - **Maintenance Checklists**: Equipment maintenance logging and scheduling
+- **Database Config**: Manage your local application data.
 
 ### **Calculators**
 - **Wire Weight Estimator**: Calculate wire weight by dimensions
@@ -58,7 +60,7 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 ### **Storage Layer (IndexedDB)**
 ```javascript
 const db = new EECOLIndexedDB({
-  stores: ['cuttingRecords', 'inventoryRecords', 'maintenanceLogs', 'settings']
+  stores: ['cuttingRecords', 'inventoryRecords', 'maintenanceLogs', 'settings', 'markConverter', 'stopmarkConverter', 'reelcapacityEstimator']
 });
 ```
 
@@ -67,38 +69,22 @@ const db = new EECOLIndexedDB({
 - `inventoryRecords` - Material inventory tracking
 - `maintenanceLogs` - Equipment maintenance records
 - `settings` - App configuration and preferences
+- `markConverter` - Saved calculations from the Mark Calculator
+- `stopmarkConverter` - Saved calculations from the Stop Mark Calculator
+- `reelcapacityEstimator` - Saved configurations from the Reel Capacity Estimator
 
-### **P2P Synchronization (Gun.js)**
-**Status**: Partially implemented and functional.
-
-The application includes Gun.js for peer-to-peer data synchronization. This functionality is actively being developed and is currently operational for the **Cutting Records** tool, allowing real-time data sharing between connected users on the same local network. Other tools will be integrated in future updates.
 
 ### **PWA Features**
 - **Service Workers**: Background caching and offline functionality
 - **Web App Manifest**: Installable on desktop and mobile devices
 - **Offline Support**: Full functionality without internet connection
-- **Background Sync**: Queues operations for when connectivity returns
 
 ---
 
 ## 🚀 **Getting Started**
 
 ### **Running the Application**
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Or serve static files
-npx http-server
-```
-
-### **Access the Application**
-- Open `http://localhost:8080` (or your server port)
-- The app works completely offline once loaded
-- Install as PWA from browser menu for native app experience
+To run this application, you can simply open the `index.html` file in your web browser. No special build steps or servers are required.
 
 ---
 
@@ -113,13 +99,14 @@ npx http-server
 - ✅ Education center and learning resources
 - ✅ PWA offline functionality
 - ✅ Mobile responsive design
+- ✅ Local data management tools
 
 ### **Known Issues**
 - ❌ **Multi-Cut Planner**: Currently non-functional - complex tool with integration issues
-- ⚠️ **P2P Sync**: Only functional for the `Cutting Records` tool. Other tools do not yet sync.
 - ⚠️ **Live Statistics Dashboard**: Has a known issue where it can crash when falling back to `localStorage` in some scenarios.
 
 ### **Recent Updates**
+- **v0.8.0.2**: Removed `gun-sync` and added local data management tools.
 - **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite
 - **Console Cleanup**: Removed 400+ debug `console.log` statements for production readiness
 - **Modal System**: Replaced all browser alerts with EECOL-branded dialogs
@@ -132,7 +119,7 @@ npx http-server
 ### **Project Structure**
 ```
 src/
-├── core/database/          # IndexedDB and Gun.js sync
+├── core/database/          # IndexedDB implementation
 ├── pages/                  # HTML pages and JavaScript
 ├── assets/                 # CSS, icons, shared resources
 ├── utils/                  # Helper utilities
@@ -141,17 +128,16 @@ src/
 
 ### **Key Technologies**
 - **Frontend**: Vanilla JavaScript, HTML5, TailwindCSS
-- **Storage**: IndexedDB (primary), localStorage (fallback)
+- **Storage**: IndexedDB
 - **PWA**: Service Workers, Web App Manifest
 - **Charts**: `Chart.js` for data visualization
-- **Sync**: Gun.js (infrastructure present but non-functional)
 
 ### **Contributing**
 - Follow the established patterns in existing tools
 - Use EECOL-branded modal system for user feedback
 - Maintain mobile-responsive design
 - Test offline functionality
-- Document changes in CONTEXT.md before implementation
+- Document changes in `ai-context/` before implementation
 
 ---
 
