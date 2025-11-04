@@ -843,7 +843,6 @@ if (typeof initMobileMenu === 'function') {
             { text: 'Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
             { text: '📊 Live Statistics', href: '../live-statistics/live-statistics.html', class: 'bg-teal-600 hover:bg-teal-700' }
         ],
-        version: 'v0.8.0.1',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Cutting Reports'
     });

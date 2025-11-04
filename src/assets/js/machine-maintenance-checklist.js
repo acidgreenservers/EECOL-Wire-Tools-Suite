@@ -740,7 +740,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '🖨️ Print Checklist', action: 'click', selector: '#printBtn', class: 'bg-blue-700 hover:bg-blue-800' },
             { text: '✅ Complete', action: 'click', selector: '#completeBtn', class: 'bg-green-600 hover:bg-green-700' }
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Machine Maintenance Checklist'
     });

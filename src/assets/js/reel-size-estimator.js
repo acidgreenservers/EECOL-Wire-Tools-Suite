@@ -621,7 +621,7 @@ if (typeof initMobileMenu === 'function') {
             { text: 'Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
             { text: '📏 Capacity Estimator', href: '../reel-capacity-estimator/reel-capacity-estimator.html', class: 'bg-emerald-600 hover:bg-emerald-700' }
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Reel Size Estimator'
     });

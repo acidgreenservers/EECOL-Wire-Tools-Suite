@@ -201,7 +201,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '🛠️ Maintenance', href: '../maintenance/maintenance.html', class: 'bg-purple-600 hover:bg-purple-700' },
             { text: '📋 Changelog', href: '../changelog/changelog.html', class: 'bg-amber-500 hover:bg-amber-600' }
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'EECOL Wire Tools'
     });

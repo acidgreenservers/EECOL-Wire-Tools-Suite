@@ -951,7 +951,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '📦 Inventory Records', href: '../inventory-records/inventory-records.html', class: 'bg-purple-600 hover:bg-purple-700' }
 
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Live Statistics'
     });

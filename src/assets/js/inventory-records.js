@@ -1743,7 +1743,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '💾 Backup Guide', href: '../backup/backup.html', class: 'bg-green-500 hover:bg-green-600' },
             { text: '📈 Reports', href: '../inventory-reports/inventory-reports.html', class: 'bg-purple-600 hover:bg-purple-700' }
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Wire Inventory Records'
     });
