@@ -1,6 +1,6 @@
 {
   "name": "new-eecol-wire-tools",
-  "version": "2.0.0",
+  "version": "0.8.0.2",
   "description": "Enterprise-grade EECOL Wire Tools Suite with local data management.",
   "main": "src/pages/index/index.html",
   "scripts": {

@@ -84,7 +84,18 @@ const db = new EECOLIndexedDB({
 ## 🚀 **Getting Started**
 
 ### **Running the Application**
-To run this application, you can simply open the `index.html` file in your web browser. No special build steps or servers are required.
+To run this application, you will need to have Node.js and npm installed.
+
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+This will start a local server, and you can access the application in your web browser at the provided URL (usually `http://localhost:3000`).
 
 ---
 

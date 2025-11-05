@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
     // Initialize DB
     if (typeof EECOLIndexedDB === 'undefined') {
-        console.error('EECOLIndexedDB is not loaded.');
+        console.error('❌ EECOLIndexedDB class not found');
         return;
     }
-    const db = new EECOLIndexedDB();
+
+    if (!window.eecolDB) {
+        window.eecolDB = new EECOLIndexedDB();
+    }
+
+    const db = window.eecolDB;
     await db.isReady();
 
     initModalSystem();
@@ -128,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const confirmed = await showConfirm(`Are you sure you want to delete ${selectedIds.length} records?`);
         if (confirmed) {
             for (const id of selectedIds) {
-                await db.delete(storeName, isNaN(parseInt(id)) ? id : parseInt(id));
+                await db.delete(storeName, id);
             }
             await renderRecords(storeName, listElement);
             await showAlert(`${selectedIds.length} records deleted successfully!`);
@@ -145,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const storeName = e.target.closest('.overflow-y-auto').id.replace('List', '');
             const confirmed = await showConfirm('Are you sure you want to delete this record?');
             if (confirmed) {
-                await db.delete(storeName, isNaN(parseInt(id)) ? id : parseInt(id));
+                await db.delete(storeName, id);
                 await renderRecords(storeName, e.target.closest('.overflow-y-auto'));
                 await showAlert('Record deleted successfully!');
             }

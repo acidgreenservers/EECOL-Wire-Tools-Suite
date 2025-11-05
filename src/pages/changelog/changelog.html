@@ -76,18 +76,17 @@ Complete Backend Overhaul - P2P Sync & PWA - EECOL Wire Tools
                         </div>
                     </div>
 
-                <!-- Version 0.8.0.2 - Local Data Management -->
+                <!-- Version 0.8.0.2 - Database Config Page Remake -->
                 <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
                     <div class="flex items-center mb-4">
                         <div class="text-4xl mr-3">🗃️</div>
-                        <h2 class="text-xl font-bold text-[#0058B3]">Version 0.8.0.2 - Local Data Management</h2>
+                        <h2 class="text-xl font-bold text-[#0058B3]">Version 0.8.0.2 - Database Config Page Remake</h2>
                     </div>
                     <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
-                        <li><strong>New Database Config Page:</strong> Added a new page for managing the local IndexedDB database.</li>
-                        <li><strong>Data Management Tools:</strong> Implemented features to export the entire database to JSON, import from a JSON file, and delete the entire database.</li>
-                        <li><strong>Record Management:</strong> Added UI to view and delete individual records for the Mark Calculator, Stop Mark Calculator, and Reel Capacity Estimator.</li>
-                        <li><strong>Updated Documentation:</strong> All relevant documentation, including the README, backup guide, and AI memory bank, have been updated to reflect these changes.</li>
-                        <li><strong>New Security Policy:</strong> Created a `SECURITY.md` file to document the application's security state.</li>
+                        <li><strong>Database Config Page Remake:</strong> Overhauled the Database Config page to align with the project's standard architecture and styling.</li>
+                        <li><strong>UI and Styling Fixes:</strong> Added the standard footer and navigation buttons, and linked the shared `style.css` stylesheet to ensure a consistent user experience.</li>
+                        <li><strong>Database Functionality Fixes:</strong> Refactored the page's JavaScript to use the global `window.eecolDB` instance and corrected the delete functionality, which was previously broken due to incorrect ID parsing.</li>
+                        <li><strong>Version Harmonization:</strong> Updated the version number in `package.json` from `2.0.0` to `0.8.0.2` to match the rest of the application.</li>
                     </ul>
                 </div>
 
