@@ -236,22 +236,22 @@
 - Attempt 1: Fixed CSP policy inconsistency between HTML files
 - Attempt 2: Corrected table naming from camelCase to snake_case in SupabaseClient
 - Attempt 3: Updated testConnection() method to query correct table names
-- Result: Same errors persist - "Could not find the table 'public.cutting_records'" and CSP violations
-**Root Cause Analysis**: Multiple simultaneous issues exist beyond initially identified CSP and table naming problems
-**Additional Investigation Required**:
-- Verify SQL script execution status and table creation
-- Check Supabase credentials and project configuration
-- Investigate network connectivity and domain access
-- Examine client initialization and import patterns
-- Validate all integration components systematically
-**Current Status**: Supabase integration blocked, requires comprehensive debugging of all connection components
-**Next Steps**: Systematic investigation of all potential root causes (credentials, network, schema, client code)
+- Attempt 4: Fixed CSP connect-src directive missing from all HTML files (November 5, 2025)
+- Attempt 5: Fixed modal system compatibility (showConfirmModal vs showConfirm) (November 5, 2025)
+- Result: CSP violations resolved, modal system fixed, but new database schema errors discovered
+**Root Cause Analysis**: Database schema mismatch - Supabase tables don't match expected column structure
+**New Errors Discovered (November 5, 2025)**:
+- `column appsettings.id does not exist` - appsettings table missing 'id' column
+- `Could not find the 'chargeable' column of 'cuttingrecords' in the schema cache` - cuttingrecords table missing 'chargeable' column
+**Current Status**: Supabase integration blocked by database schema mismatch
+**Next Steps**: Investigate and fix Supabase table schema to match application expectations
 **Bug Fixes Applied**:
 - Fixed testCRUD() and testStorageAdapter() to capture and reuse returned UUIDs from add() operations
 - Resolved "invalid input syntax for type uuid" errors by using proper database-generated UUIDs
 - Verified UUID format validation (proper UUID v4 generation confirmed)
-- Fixed Content Security Policy to allow Supabase domain connections
-**Integration**: BLOCKED - Requires resolution of persistent connection issues
+- Fixed Content Security Policy to allow Supabase domain connections across all HTML files
+- Fixed modal system compatibility by adding showConfirmModal function to modals.js
+**Integration**: BLOCKED - Requires database schema correction
 **See**: `ai-context/memory-bank/roadmap.md` Phase 3 for implementation details
 
 #### Industry Standards Module

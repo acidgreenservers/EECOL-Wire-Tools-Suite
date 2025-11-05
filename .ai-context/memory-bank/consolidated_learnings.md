@@ -297,6 +297,26 @@ This document contains curated, summarized, and actionable insights derived from
 - **Implementation**: Establish working integration in settings page before addressing page-specific script loading issues
 - **Benefits**: Maintains testing momentum and prevents cascading failures across multiple pages
 
+### Content Security Policy Configuration
+- **Pattern**: Always include connect-src directive when using external APIs for database connections
+- **Implementation**: Add `connect-src 'self' https://domain.com wss://domain.com;` to CSP meta tags
+- **Benefits**: Prevents "Refused to connect" CSP violations for Supabase fetch requests
+
+### Modal System Compatibility
+- **Pattern**: Provide backward-compatible function names when updating modal systems
+- **Implementation**: Add alias functions (showConfirmModal → showConfirm) with correct parameter mapping
+- **Benefits**: Maintains existing code functionality while supporting updated modal systems
+
+### Database Schema Validation
+- **Pattern**: Ensure Supabase table structures match application data models before integration testing
+- **Implementation**: Verify column names and data types match expected application schemas
+- **Benefits**: Prevents "column does not exist" errors during data operations
+
+### Progressive Debugging Approach
+- **Pattern**: Fix infrastructure issues (CSP, loading, UI) before addressing data layer problems
+- **Implementation**: Resolve connection and compatibility issues before database schema validation
+- **Benefits**: Systematic elimination of root causes in complex integration scenarios
+
 ## Complex Integration Problem-Solving
 
 ### Multi-Layer Issue Recognition

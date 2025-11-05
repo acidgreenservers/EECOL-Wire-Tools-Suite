@@ -84,6 +84,11 @@ function showConfirm(message, title = "Confirmation") {
     });
 }
 
+// Alias for compatibility with storage-settings.js
+function showConfirmModal(title, message, isDangerous = false) {
+    return showConfirm(message, title);
+}
+
 function hideModal() {
     const modal = document.getElementById('customModal');
     const modalContent = document.getElementById('modalContent');
@@ -113,6 +118,7 @@ function initModalSystem() {
 if (typeof window !== 'undefined') {
     window.showAlert = showAlert;
     window.showConfirm = showConfirm;
+    window.showConfirmModal = showConfirmModal;
     window.hideModal = hideModal;
     window.initModalSystem = initModalSystem;
 }

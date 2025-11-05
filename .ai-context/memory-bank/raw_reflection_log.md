@@ -1,4 +1,43 @@
 ---
+Date: 2025-11-05
+TaskRef: "Supabase Integration Testing - CSP & Modal System Fixes"
+
+Learnings:
+- Content Security Policy (CSP) connect-src directive is essential for Supabase fetch requests, preventing "Refused to connect" errors
+- Modal system compatibility requires exact function name matching between storage-settings.js expectations and modals.js implementations
+- Database schema mismatches manifest as column not found errors when application expects different table structures than what exists in Supabase
+- Progressive debugging approach (fix one layer at a time) is effective for complex integration issues
+
+Difficulties_and_Resolutions:
+- CSP violations resolved by adding connect-src directive to all HTML files that were missing it (cutting-records.html, inventory-records.html, machine-maintenance-checklist files, shipping-manifest.html)
+- Modal system incompatibility fixed by adding showConfirmModal function to modals.js that properly calls the existing showConfirm function with correct parameter order
+- Database schema errors identified: appsettings table missing 'id' column, cuttingrecords table missing 'chargeable' column - these indicate Supabase tables don't match application expectations
+
+Successes:
+- CSP violations eliminated - no more "Refused to connect" errors in console
+- Modal system now uses custom EECOL-themed dialogs instead of browser alerts
+- Supabase client loads successfully without CSP blocks
+- Connection test passes and StorageAdapter initializes in Supabase mode
+- Clear identification of next issue layer: database schema mismatch
+
+Key_Decisions:
+- Added connect-src directive to all affected HTML files to enable Supabase API calls
+- Implemented showConfirmModal compatibility function to maintain existing modal system while supporting storage-settings.js requirements
+- Documented database schema issues for next resolution phase
+- Maintained progressive debugging approach: fix infrastructure issues before addressing data layer problems
+
+Project_Convention_Verification:
+- Verified CSP policies now include connect-src for Supabase domains across all HTML files
+- Confirmed modal system provides both showConfirm and showConfirmModal functions for compatibility
+- Validated that Supabase connection works at infrastructure level (CSP, modal, client loading)
+- Identified that database schema is the next blocking issue
+
+Improvements_Identified_For_Consolidation:
+- CSP configuration: Always include connect-src directive when using external APIs, especially for database connections
+- Modal system compatibility: Provide backward-compatible function names when updating modal systems
+- Database schema validation: Ensure Supabase table structures match application data models before integration testing
+- Progressive debugging: Fix infrastructure (CSP, loading, UI) before addressing data layer issues
+---
 Date: 2025-11-04
 TaskRef: "Supabase Integration Completion - Table Naming Fix & Memory Bank Updates"
 
