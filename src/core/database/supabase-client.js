@@ -114,7 +114,7 @@ class SupabaseClient {
       // If cuttingRecords table exists, test it; otherwise just verify client works
       try {
         const { data, error } = await this.client
-          .from('cuttingRecords')
+          .from(this.tableMap['cuttingRecords'])
           .select('id')
           .limit(1);
 
@@ -158,20 +158,21 @@ class SupabaseClient {
 
   /**
    * Create table name mapping from IndexedDB stores to Supabase tables
+   * PostgreSQL stores identifiers in lowercase, so camelCase becomes snake_case
    */
   createTableMap() {
     this.tableMap = {
-      cuttingRecords: 'cuttingRecords',
-      inventoryRecords: 'inventoryRecords',
+      cuttingRecords: 'cuttingrecords',
+      inventoryRecords: 'inventoryrecords',
       users: 'users',
       notifications: 'notifications',
-      maintenanceLogs: 'maintenanceLogs',
-      markConverter: 'markConverter',
-      stopmarkConverter: 'stopmarkConverter',
-      reelcapacityEstimator: 'reelcapacityEstimator',
-      reelsizeEstimator: 'reelsizeEstimator',
-      muticutPlanner: 'muticutPlanner',
-      settings: 'appSettings',
+      maintenanceLogs: 'maintenancelogs',
+      markConverter: 'markconverter',
+      stopmarkConverter: 'stopmarkconverter',
+      reelcapacityEstimator: 'reelcapacityestimator',
+      reelsizeEstimator: 'reelsizeestimator',
+      muticutPlanner: 'muticutplanner',
+      settings: 'appsettings',
       sessions: 'sessions'
     };
   }

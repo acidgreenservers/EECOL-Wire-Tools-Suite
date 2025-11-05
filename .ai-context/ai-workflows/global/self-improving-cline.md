@@ -5,6 +5,7 @@ version: 1.0
 tags: ["meta", "self-improvement", "clinerules", "reflection", "core-behavior"]
 globs: ["*"]
 ---
+
 # Self-Improving Cline Reflection
 
 **Objective:** Offer opportunities to continuously improve `.clinerules` based on user interactions and feedback.

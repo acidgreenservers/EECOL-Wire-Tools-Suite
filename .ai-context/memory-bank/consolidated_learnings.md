@@ -282,6 +282,21 @@ This document contains curated, summarized, and actionable insights derived from
 - **Implementation**: Eliminate potential causes systematically until finding the actual root issue
 - **Benefits**: Avoids over-engineering solutions for problems with straightforward fixes
 
+### Settings Page Testing Environment
+- **Pattern**: Use settings page as primary test environment for storage integration features
+- **Implementation**: Settings page has correct script loading order and serves as reliable integration test
+- **Benefits**: Provides consistent testing environment for core storage functionality
+
+### UI Status Indicator Lag
+- **Pattern**: UI status indicators may not reflect real-time connection state despite successful backend connections
+- **Implementation**: Verify connection status with console output rather than relying solely on UI indicators
+- **Benefits**: Prevents false assumptions about connection state based on UI display
+
+### Incremental Integration Testing
+- **Pattern**: Fix core issues first, then expand to individual pages systematically
+- **Implementation**: Establish working integration in settings page before addressing page-specific script loading issues
+- **Benefits**: Maintains testing momentum and prevents cascading failures across multiple pages
+
 ## Complex Integration Problem-Solving
 
 ### Multi-Layer Issue Recognition

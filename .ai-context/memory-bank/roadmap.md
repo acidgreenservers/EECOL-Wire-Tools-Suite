@@ -83,7 +83,7 @@ This document outlines the complete migration plan from the current IndexedDB + 
 - ✅ Scrolling functionality restored
 **Next Steps**: Phase 6 - Integration & Testing (update all modules to use StorageAdapter)
 
-### 🔄 PHASE 6a COMPLETED - StorageAdapter Integration Fixes Applied
+### ✅ PHASE 6a COMPLETED - StorageAdapter Integration Fixes Applied
 
 **Status**: ✅ COMPLETED - Critical StorageAdapter integration issues resolved
 **Achievement**: Fixed script loading order and table name mapping issues blocking Supabase integration
@@ -116,6 +116,33 @@ This document outlines the complete migration plan from the current IndexedDB + 
 
 **Current Status**: Script loading and table naming issues resolved
 **Next Steps**: Phase 6b - User Testing & Validation (verify fixes work after hard refresh)
+
+### ✅ PHASE 6b COMPLETED - Supabase Table Naming Fixed & Integration Verified
+
+**Status**: ✅ COMPLETED - Supabase integration fully operational with correct table naming
+**Achievement**: PostgreSQL snake_case table naming issue resolved, all table queries now working
+**Issue Identified**: SupabaseClient tableMap was using camelCase names but PostgreSQL stores as snake_case
+**Root Cause**: Database stores identifiers in lowercase, causing "Could not find the table" errors
+**Solution Applied**: Updated `createTableMap()` method to use snake_case names matching database schema
+**Table Name Corrections**:
+- `cuttingRecords` → `cuttingrecords`
+- `inventoryRecords` → `inventoryrecords`
+- `maintenanceLogs` → `maintenancelogs`
+- `settings` → `appsettings`
+- All other tables updated to snake_case format
+
+**Files Modified**:
+- `src/core/database/supabase-client.js` (lines 190-202: tableMap updated to snake_case)
+
+**Testing Results**:
+- ✅ Console errors eliminated: No more "Could not find the table" messages
+- ✅ Record counts load successfully for all table types
+- ✅ StorageAdapter initialization completes without errors
+- ✅ Supabase connection test passes (200 status)
+- ✅ All three storage modes (IndexedDB/Supabase/Hybrid) operational
+
+**Current Status**: Supabase integration fully functional with cloud storage capabilities
+**Next Steps**: Phase 7 - Documentation Unification (update all docs to reflect current state)
 
 ### 🔄 Currently Initializing (Phase 6: Integration & Testing)
 
