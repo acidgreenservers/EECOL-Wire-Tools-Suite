@@ -33,22 +33,24 @@
 - Clean production code
 
 #### Cutting Reports
-**Status**: Fully functional
+**Status**: Fully functional (Chart.js loading fixed)
 **Location**: [src/pages/cutting-reports/cutting-reports.html](src/pages/cutting-reports/cutting-reports.html)
 **Features**:
 - Analytics and reporting
 - Historical data analysis
 - Export capabilities
 - Professional modal system
+- Charts load without 404 errors
 
 #### Inventory Reports
-**Status**: Fully functional
+**Status**: Fully functional (Chart.js loading fixed)
 **Location**: [src/pages/inventory-reports/inventory-reports.html](src/pages/inventory-reports/inventory-reports.html)
 **Features**:
 - Inventory analytics
 - Usage tracking
 - Trend analysis
 - Clean UI feedback
+- Charts load without 404 errors
 
 #### Live Statistics Dashboard
 **Status**: Functional with known issue (localStorage fallback)

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const db = window.eecolDB;
-    await db.isReady();
+    await db.ready;
 
     initModalSystem();
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 'stopmarkConverter':
                 return `Start: ${record.startMark}, Length: ${record.cutLength}, Unit: ${record.unit} (${timestamp})`;
             case 'reelcapacityEstimator':
-                return `Flange: ${record.flangeDiameter.value} ${record.flangeDiameter.unit}, Barrel: ${record.barrelDiameter.value} ${record.barrelDiameter.unit}, Traverse: ${record.traverse.value} ${record.traverse.unit} (${timestamp})`;
+                return `Flange: ${record.flangeDiameter.value} ${record.flangeDiameter.unit}, Core: ${record.coreDiameter.value} ${record.coreDiameter.unit}, Traverse: ${record.traverseWidth.value} ${record.traverseWidth.unit} (${timestamp})`;
             default:
                 return JSON.stringify(record);
         }

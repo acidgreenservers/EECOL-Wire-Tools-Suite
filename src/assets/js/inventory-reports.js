@@ -14,7 +14,7 @@ function loadChartJS() {
     return new Promise((resolve, reject) => {
         // Try local Chart.js first (offline support)
         const localScript = document.createElement('script');
-        localScript.src = '../assets/charts/chart.js';
+        localScript.src = '../../utils/chart.js';
         localScript.onload = () => {
             console.log('Chart.js loaded from local file');
             resolve('local');

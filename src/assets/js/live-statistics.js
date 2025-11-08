@@ -394,15 +394,15 @@ function updateAllCharts() {
     const valueTimestampEl = document.getElementById('valueChartTimestamp');
     if (valueTimestampEl) valueTimestampEl.textContent = timestamp;
 
-    // These elements don't exist on live-statistics page - skip safely
-    // const topCustomersTimestampEl = document.getElementById('topCustomersChartTimestamp');
-    // if (topCustomersTimestampEl) topCustomersTimestampEl.textContent = timestamp;
+    // Update new chart timestamps - safe null checks
+    const topCustomersTimestampEl = document.getElementById('topCustomersChartTimestamp');
+    if (topCustomersTimestampEl) topCustomersTimestampEl.textContent = timestamp;
 
-    // const wireTypeTimestampEl = document.getElementById('wireTypeChartTimestamp');
-    // if (wireTypeTimestampEl) wireTypeTimestampEl.textContent = timestamp;
+    const wireTypeTimestampEl = document.getElementById('wireTypeChartTimestamp');
+    if (wireTypeTimestampEl) wireTypeTimestampEl.textContent = timestamp;
 
-    // const cuttingPerformanceTimestampEl = document.getElementById('cuttingPerformanceTimestamp');
-    // if (cuttingPerformanceTimestampEl) cuttingPerformanceTimestampEl.textContent = timestamp;
+    const cuttingPerformanceTimestampEl = document.getElementById('cuttingPerformanceChartTimestamp');
+    if (cuttingPerformanceTimestampEl) cuttingPerformanceTimestampEl.textContent = timestamp;
 
     // const inaTimestampEl = document.getElementById('inaChartTimestamp');
     // if (inaTimestampEl) inaTimestampEl.textContent = timestamp;

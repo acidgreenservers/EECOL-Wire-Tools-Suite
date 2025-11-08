@@ -182,6 +182,65 @@
 - Professional Appearance: Consistent styling across recent changelog entries
 - Mobile Responsive: Pillboxes work perfectly on all device sizes
 
+#### ✅ DATABASE CONFIG: Reel Configurations Loading Fix (November 8, 2025)
+**Status**: ✅ COMPLETED - Fixed data structure mismatch preventing reel configurations from displaying
+**Issue**: Database config page reel configurations box showed error "Cannot read properties of undefined (reading 'value')" despite having saved records
+**Solution**: Fixed formatRecord function to match actual data structure saved by reel capacity estimator
+**Impact**: Reel configurations now properly display in database config page with correct formatting
+**Technical Details**:
+- Root Cause: formatRecord function was accessing wrong property names (`barrelDiameter` instead of `coreDiameter`, `traverse` instead of `traverseWidth`)
+- Data Structure: Reel capacity estimator saves nested objects like `{flangeDiameter: {value: X, unit: Y}}`
+- Fix: Updated formatRecord to access correct properties: `coreDiameter` and `traverseWidth`
+- Display: Changed "Barrel" to "Core" for clarity and accuracy
+
+**Implementation Details**:
+- Location: formatRecord function in src/assets/js/database-config.js
+- Changes:
+  - `record.barrelDiameter.value` → `record.coreDiameter.value`
+  - `record.barrelDiameter.unit` → `record.coreDiameter.unit`
+  - `record.traverse.value` → `record.traverseWidth.value`
+  - `record.traverse.unit` → `record.traverseWidth.unit`
+  - "Barrel:" → "Core:" (for better terminology)
+- Verification: Console showed 1 reel configuration saved but formatRecord couldn't access properties
+
+**Files Modified**:
+- `src/assets/js/database-config.js` (fixed formatRecord function property access)
+- `ai-context/memory-bank/activeContext.md` (documented the data structure fix)
+
+**Results**:
+- Functionality: Reel configurations now display properly with format: "Flange: X in, Core: Y in, Traverse: Z in (timestamp)"
+- User Experience: Database config page shows all saved reel configurations with readable formatting
+- Data Integrity: All existing saved reel configurations are now accessible and manageable
+- Consistency: Matches the data structure actually saved by the reel capacity estimator tool
+
+#### ✅ CHART.JS LOADING PATH FIXES (November 8, 2025)
+**Status**: ✅ COMPLETED - Fixed Chart.js loading paths in cutting-reports and inventory-reports pages
+**Issue**: Console errors showing "GET .../src/pages/assets/charts/chart.js net::ERR_ABORTED 404 (File not found)" on cutting-reports and inventory-reports pages
+**Solution**: Corrected Chart.js local loading paths from incorrect `../assets/charts/chart.js` to correct `../../utils/chart.js`
+**Impact**: Charts now load properly without 404 errors on both report pages
+**Technical Details**:
+- Root Cause: Chart.js loading logic was using wrong relative path `../assets/charts/chart.js` which resolves to non-existent `src/pages/assets/charts/chart.js`
+- Correct Path: Chart.js is actually located at `src/utils/chart.js`, so correct relative path is `../../utils/chart.js`
+- CSP Warning: Also noted CSP violation for Chart.js source map, but this is non-critical (just console warning)
+
+**Implementation Details**:
+- Location: Chart.js loading functions in both report JavaScript files
+- Changes Made:
+  - `localScript.src = '../assets/charts/chart.js';` → `localScript.src = '../../utils/chart.js';`
+- Files Affected: Both cutting-reports.js and inventory-reports.js had identical incorrect paths
+- Verification: Console errors eliminated, charts load successfully with local fallback
+
+**Files Modified**:
+- `src/assets/js/cutting-reports.js` (line ~12: corrected Chart.js path)
+- `src/assets/js/inventory-reports.js` (line ~12: corrected Chart.js path)
+- `ai-context/memory-bank/activeContext.md` (documented the Chart.js path fixes)
+
+**Results**:
+- Functionality: Both cutting-reports and inventory-reports pages now load Chart.js successfully
+- User Experience: No more 404 errors in console, charts render properly
+- Performance: Local Chart.js loading works as intended for offline functionality
+- Consistency: All JavaScript files now use correct Chart.js loading paths
+
 ## Next Steps
 
 ### Immediate Priorities

@@ -80,6 +80,13 @@ Two specialized files for operational learning and self-improvement:
    - Actionable patterns and learnings for future tasks
    - Organized by topic for easy retrieval
 
+### Rules & Guidelines
+9. `rules/the-conscious-coder.md`
+   - Comprehensive framework for professional software development
+   - Self-awareness, temporal continuity, and systems thinking principles
+   - Mandatory reading for understanding development philosophy and best practices
+   - Core principles: DRY, KISS, separation of concerns, forethought, and quality attributes
+
 ## Core Workflows
 
 ### Plan Mode
@@ -125,4 +132,4 @@ flowchart TD
 
 Note: When triggered by **update memory bank**, I MUST review every memory bank file, even if some don't require updates. Focus particularly on activeContext.md and progress.md as they track current state. i need to always update these 2 files with the current progress i just made, and active context i currently have.
 
-REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only contextual link to previous work i rely on the active context file. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy. 
+REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only contextual link to previous work i rely on the active context file. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.
