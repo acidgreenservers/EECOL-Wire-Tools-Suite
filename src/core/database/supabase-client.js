@@ -51,12 +51,8 @@ class SupabaseClient {
         throw new Error('Supabase configuration missing. Please configure Supabase URL and key in settings.');
       }
 
-      // Dynamically import Supabase client
-      console.log('Importing Supabase client...');
-      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-      console.log('Supabase client imported successfully');
-
       // Initialize Supabase client
+      const { createClient } = require('@supabase/supabase-js');
       this.client = createClient(supabaseUrl, supabaseKey, {
         auth: {
           persistSession: true,
@@ -162,17 +158,17 @@ class SupabaseClient {
    */
   createTableMap() {
     this.tableMap = {
-      cuttingRecords: 'cuttingrecords',
-      inventoryRecords: 'inventoryrecords',
+      cuttingRecords: 'cuttingRecords',
+      inventoryRecords: 'inventoryRecords',
       users: 'users',
       notifications: 'notifications',
-      maintenanceLogs: 'maintenancelogs',
-      markConverter: 'markconverter',
-      stopmarkConverter: 'stopmarkconverter',
-      reelcapacityEstimator: 'reelcapacityestimator',
-      reelsizeEstimator: 'reelsizeestimator',
-      muticutPlanner: 'muticutplanner',
-      settings: 'appsettings',
+      maintenanceLogs: 'maintenanceLogs',
+      markConverter: 'markConverter',
+      stopmarkConverter: 'stopmarkConverter',
+      reelcapacityEstimator: 'reelcapacityEstimator',
+      reelsizeEstimator: 'reelsizeEstimator',
+      muticutPlanner: 'muticutPlanner',
+      settings: 'appSettings',
       sessions: 'sessions'
     };
   }

@@ -17,8 +17,7 @@
     "docker:run": "docker run -p 3000:80 eecol-tools"
   },
   "dependencies": {
-    "@supabase/auth-helpers-shared": "^0.7.0",
-    "@supabase/supabase-js": "^2.78.0",
+    "@supabase/supabase-js": "^2.80.0",
     "crypto-js": "^4.1.1",
     "uuid": "^9.0.0"
   },
