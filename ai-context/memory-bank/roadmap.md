@@ -12,7 +12,7 @@
 ### Architecture Overview
 - **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
 - **Storage**: IndexedDB as primary storage, with localStorage as fallback for UI state only
-- **Sync**: Gun.js P2P infrastructure implemented but non-functional sync mechanics
+- **Sync**: Local-only operation (P2P infrastructure removed)
 - **PWA**: Offline-first with service workers and web app manifest
 - **Deployment**: Static files served via HTTP server
 
@@ -405,7 +405,6 @@ Currently, records from mark calculators and stop mark calculators pile up over 
 
 ### Phase 5.1: Core Infrastructure (Weeks 1-4)
 - [ ] Design unified IndexedDB schema v2
-- [ ] Implement Gun.js security wrapper
 - [ ] Design authentication framework architecture
 - [ ] Set up notification systems (SMTP + Gotify)
 - [ ] Establish build pipeline and CI/CD
@@ -429,7 +428,7 @@ Currently, records from mark calculators and stop mark calculators pile up over 
   - WIRE_OPS: Cutting operations
 - [ ] Implement secure route guarding
 - [ ] Build user management interface
-- [ ] Implement password encryption (Gun SEA)
+- [ ] Implement password encryption (bcrypt/WebCrypto)
 - [ ] Create login/logout flows
 - [ ] Add session management
 - [ ] Implement audit trail logging
@@ -710,13 +709,13 @@ Currently, records from mark calculators and stop mark calculators pile up over 
 - Temporary form data
 
 ### Sync Strategy
-**Gun.js P2P** infrastructure is implemented but currently has non-functional sync mechanics:
-- Gun.js overlay configured
-- Relay servers set up
-- Data replication not operational
-- Sync status monitoring in place but not syncing data between devices
+**Local-only operation** - P2P infrastructure completely removed:
+- No external synchronization capabilities
+- All data stored locally in IndexedDB
+- No device-to-device data sharing
+- Focus on individual user workflows
 
-**Future**: v2.0.0 will include fully functional P2P synchronization with conflict-free replication.
+**Future**: v2.0.0 may include alternative synchronization approaches if needed.
 
 ---
 
