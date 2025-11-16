@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initialize IndexedDB first
     if (typeof EECOLIndexedDB !== 'undefined' && EECOLIndexedDB.isIndexedDBSupported()) {
-        window.eecolDB = new EECOLIndexedDB();
+        window.eecolDB = EECOLIndexedDB.getInstance();
         await window.eecolDB.ready;
 
         // Run migration from localStorage if needed
@@ -64,13 +64,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     } else {
         console.warn('⚠️ IndexedDB is not supported. Falling back to localStorage for live statistics.');
-    }
-
-    // Initialize P2P Sync
-    if (typeof P2PSync !== 'undefined') {
-        window.p2pSync = new P2PSync();
-    } else {
-        console.warn('⚠️ P2P Sync not available. Some features may be limited for live statistics.');
     }
 
     try {
@@ -401,15 +394,15 @@ function updateAllCharts() {
     const valueTimestampEl = document.getElementById('valueChartTimestamp');
     if (valueTimestampEl) valueTimestampEl.textContent = timestamp;
 
-    // These elements don't exist on live-statistics page - skip safely
-    // const topCustomersTimestampEl = document.getElementById('topCustomersChartTimestamp');
-    // if (topCustomersTimestampEl) topCustomersTimestampEl.textContent = timestamp;
+    // Update new chart timestamps - safe null checks
+    const topCustomersTimestampEl = document.getElementById('topCustomersChartTimestamp');
+    if (topCustomersTimestampEl) topCustomersTimestampEl.textContent = timestamp;
 
-    // const wireTypeTimestampEl = document.getElementById('wireTypeChartTimestamp');
-    // if (wireTypeTimestampEl) wireTypeTimestampEl.textContent = timestamp;
+    const wireTypeTimestampEl = document.getElementById('wireTypeChartTimestamp');
+    if (wireTypeTimestampEl) wireTypeTimestampEl.textContent = timestamp;
 
-    // const cuttingPerformanceTimestampEl = document.getElementById('cuttingPerformanceTimestamp');
-    // if (cuttingPerformanceTimestampEl) cuttingPerformanceTimestampEl.textContent = timestamp;
+    const cuttingPerformanceTimestampEl = document.getElementById('cuttingPerformanceChartTimestamp');
+    if (cuttingPerformanceTimestampEl) cuttingPerformanceTimestampEl.textContent = timestamp;
 
     // const inaTimestampEl = document.getElementById('inaChartTimestamp');
     // if (inaTimestampEl) inaTimestampEl.textContent = timestamp;
@@ -943,7 +936,7 @@ if (typeof window !== 'undefined') {
 // Initialize mobile menu for this page
 if (typeof initMobileMenu === 'function') {
     initMobileMenu({
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         menuItems: [
             { text: '🏠 Home', href: '../index/index.html', class: 'bg-blue-600 hover:bg-blue-700' },
             { text: 'Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
@@ -951,7 +944,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '📦 Inventory Records', href: '../inventory-records/inventory-records.html', class: 'bg-purple-600 hover:bg-purple-700' }
 
         ],
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Live Statistics'
     });

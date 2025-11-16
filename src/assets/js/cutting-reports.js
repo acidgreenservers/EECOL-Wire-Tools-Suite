@@ -14,7 +14,7 @@ function loadChartJS() {
     return new Promise((resolve, reject) => {
         // Try local Chart.js first (offline support)
         const localScript = document.createElement('script');
-        localScript.src = '../assets/charts/chart.js';
+        localScript.src = '../../utils/chart.js';
         localScript.onload = () => {
             console.log('Chart.js loaded from local file');
             resolve('local');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Initialize IndexedDB first
         if (typeof EECOLIndexedDB !== 'undefined' && EECOLIndexedDB.isIndexedDBSupported()) {
             console.log('📦 Initializing IndexedDB for cutting reports...');
-            window.eecolDB = new EECOLIndexedDB();
+            window.eecolDB = EECOLIndexedDB.getInstance();
             await window.eecolDB.ready;
             console.log('✅ IndexedDB initialized successfully for cutting reports');
 
@@ -68,13 +68,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ IndexedDB is not supported. Falling back to localStorage for cutting reports.');
         }
 
-        // Initialize P2P Sync
-        if (typeof P2PSync !== 'undefined') {
-            window.p2pSync = new P2PSync();
-            console.log('🔄 P2P Sync initialized successfully for cutting reports');
-        } else {
-            console.warn('⚠️ P2P Sync not available. Some features may be limited for cutting reports.');
-        }
 
         // Now initialize charts and data loading
         console.log('📊 Initializing charts and data loading...');
@@ -837,13 +830,12 @@ if (typeof window !== 'undefined') {
 // Initialize mobile menu for this page
 if (typeof initMobileMenu === 'function') {
     initMobileMenu({
-        version: 'v0.8.0.1',
+        version: 'v0.8.0.2',
         menuItems: [
             { text: '✂️ Cutting Records', href: '../cutting-records/cutting-records.html', class: 'bg-blue-600 hover:bg-blue-700' },
             { text: 'Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
             { text: '📊 Live Statistics', href: '../live-statistics/live-statistics.html', class: 'bg-teal-600 hover:bg-teal-700' }
         ],
-        version: 'v0.8.0.1',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'Cutting Reports'
     });
