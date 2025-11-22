@@ -1,7 +1,7 @@
 .aicontext
-/featurelist-test1
-node_modules1
-/wire-refrences
+featurelist-test
+node_modules
+wire-refrences
 
 # Environment variables
 .env.local
