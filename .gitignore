@@ -1,4 +1,7 @@
-/.clinerules
+.aicontext
+/featurelist-test1
+node_modules1
+/wire-refrences
 
 # Environment variables
 .env.local
