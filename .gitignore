@@ -1,7 +1,7 @@
-.aicontext
+.ai-context
 featurelist-test
 node_modules
-wire-refrences
+wire-refrences1
 
 # Environment variables
 .env.local
