@@ -5,7 +5,7 @@
 
 > ⚠️ **You are on the `edge` branch.** This branch contains the latest features and upcoming releases. It is used for testing and may contain experimental or unstable code. For the stable, production-ready version, please use the `main` branch.
 
-**Current Version**: `v0.8.0.1`
+**Current Version**: `v0.8.0.2`
 
 ## 🎯 **Overview**
 
@@ -22,7 +22,7 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 - **IndexedDB Backend**: High-performance local database for all data persistence
 - **PWA Features**: Offline functionality, installable app, service workers
 - **Professional UI**: EECOL-branded modal dialogs, responsive design
-- **Storage Strategy**: IndexedDB-first with localStorage fallback for UI state
+- **Storage Strategy**: IndexedDB used as main storage, with localStorage as fallback if IndexedDB isn't working
 
 ---
 
@@ -43,12 +43,12 @@ A comprehensive Progressive Web Application (PWA) for industrial wire processing
 ### **Reports & Analytics**
 - **Cutting Reports**: Analytics and reporting for cutting operations
 - **Inventory Reports**: Inventory analytics and usage tracking
-- **Live Statistics Dashboard**: Real-time metrics and combined data views for inventory and cutting
+- **Live Statistics Dashboard**: Real-time metrics and combined data views
 
 ### **Additional Tools**
-- **Shipping Manifest**: Generate professional shipping documentation
+- **Shipping Manifest**: Generate shipping documentation
 - **Reel Labels**: Print professional wire reel labels
-- **Multi-Cut Planner**: Plan complex multi-reel cutting operations *(currently non-functional)*
+- **Multi-Cut Planner**: Multi-cut planner reverted to placeholder due to breaking changes that took place
 - **Education Center**: Learning resources and reference materials
 
 ---
@@ -68,10 +68,7 @@ const db = new EECOLIndexedDB({
 - `maintenanceLogs` - Equipment maintenance records
 - `settings` - App configuration and preferences
 
-### **P2P Synchronization (Gun.js)**
-**Status**: Partially implemented and functional.
 
-The application includes Gun.js for peer-to-peer data synchronization. This functionality is actively being developed and is currently operational for the **Cutting Records** tool, allowing real-time data sharing between connected users on the same local network. Other tools will be integrated in future updates.
 
 ### **PWA Features**
 - **Service Workers**: Background caching and offline functionality
@@ -95,6 +92,28 @@ npm start
 npx http-server
 ```
 
+### **Docker (In Progress)**
+The project includes Docker support for containerized deployment.
+```bash
+# Build the image
+npm run docker:build
+
+# Run the container
+npm run docker:run
+```
+
+### **Development Commands**
+```bash
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+
+# Run type checking
+npm run type-check
+```
+
 ### **Access the Application**
 - Open `http://localhost:8080` (or your server port)
 - The app works completely offline once loaded
@@ -115,15 +134,25 @@ npx http-server
 - ✅ Mobile responsive design
 
 ### **Known Issues**
-- ❌ **Multi-Cut Planner**: Currently non-functional - complex tool with integration issues
-- ⚠️ **P2P Sync**: Only functional for the `Cutting Records` tool. Other tools do not yet sync.
-- ⚠️ **Live Statistics Dashboard**: Has a known issue where it can crash when falling back to `localStorage` in some scenarios.
+- ❌ **Multi-Cut Planner**: Multi-cut planner reverted to placeholder due to breaking changes that took place
 
-### **Recent Updates**
+- ⚠️ **Live Statistics**: Has localStorage fallback crash in some scenarios
+
+### **Recent Updates & Roadmap**
+- **v0.8.0.2**: Database configuration page remake with modern design patterns
+- **Architectural Alignment**: Complete page reconstruction following project standards
+- **UI Standardization**: Integrated standard footer, navigation buttons, and shared stylesheet
+- **Database Integration**: Refactored JavaScript to use global window.eecolDB instance
+- **Version Synchronization**: Harmonized package.json version for application consistency
+- **Upcoming**: Saved configuration management page, multi-cut planner rebuild, v2.0.0 enterprise features
+
+### **Version History**
+- **v0.8.0.2** (Current): Database configuration page remake with modern design patterns and UI standardization
 - **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite
-- **Console Cleanup**: Removed 400+ debug `console.log` statements for production readiness
-- **Modal System**: Replaced all browser alerts with EECOL-branded dialogs
-- **Mobile Navigation**: Consistent menus across all pages
+- **v0.8.0.0**: Complete backend overhaul with IndexedDB and PWA support
+- **v0.7.x**: Initial IndexedDB implementation and calculator tools suite
+
+For detailed roadmap and planned features, see [ai-context/memory-bank/roadmap.md](ai-context/memory-bank/roadmap.md)
 
 ---
 
@@ -132,7 +161,7 @@ npx http-server
 ### **Project Structure**
 ```
 src/
-├── core/database/          # IndexedDB and Gun.js sync
+├── core/database/          # IndexedDB storage
 ├── pages/                  # HTML pages and JavaScript
 ├── assets/                 # CSS, icons, shared resources
 ├── utils/                  # Helper utilities
@@ -140,11 +169,12 @@ src/
 ```
 
 ### **Key Technologies**
-- **Frontend**: Vanilla JavaScript, HTML5, TailwindCSS
-- **Storage**: IndexedDB (primary), localStorage (fallback)
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3, Tailwind CSS
+- **Build**: Webpack
+- **Storage**: IndexedDB used as main storage, with localStorage as fallback if IndexedDB isn't working
 - **PWA**: Service Workers, Web App Manifest
-- **Charts**: `Chart.js` for data visualization
-- **Sync**: Gun.js (infrastructure present but non-functional)
+- **Charts**: Chart.js for data visualization
+
 
 ### **Contributing**
 - Follow the established patterns in existing tools
@@ -157,4 +187,4 @@ src/
 
 ## 📄 **License**
 
-This project is proprietary software for EECOL Wire Tools operations.
+This project is licensed under the [MIT License](LICENSE).
