@@ -1,11 +1,4 @@
-<div align="center">
-  <h1 align="center">EECOL Wire Tools Suite</h1>
-  <p align="center"><strong>Edge Development Branch</strong></p>
-</div>
-
-> ⚠️ **You are on the `edge` branch.** This branch contains the latest features and upcoming releases. It is used for testing and may contain experimental or unstable code. For the stable, production-ready version, please use the `main` branch.
-
-**Current Version**: `v0.8.0.2`
+# EECOL Wire Tools Suite v0.8.0.2
 
 ## 🎯 **Overview**
 
