@@ -1,4 +1,4 @@
 /node_modules
 /cline
 /wire-refrences
-*.log
+server.log
