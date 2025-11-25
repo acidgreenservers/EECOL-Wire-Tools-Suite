@@ -116,10 +116,12 @@
 }
 
 /* ===== GLOBAL EECOL STYLES ===== */
-html, body {
+html,
+body {
     height: 100%;
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 body {
@@ -131,8 +133,62 @@ body {
 }
 
 /* Smooth Transition for all major elements */
-div, section, article, header, footer, main, aside, nav, button, input, select, textarea, span, p, h1, h2, h3, h4, h5, h6, table, tr, td, th {
+div,
+section,
+article,
+header,
+footer,
+main,
+aside,
+nav,
+button,
+input,
+select,
+textarea,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+table,
+tr,
+td,
+th {
     transition: var(--eecol-transition);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html,
+    body,
+    div,
+    section,
+    article,
+    header,
+    footer,
+    main,
+    aside,
+    nav,
+    button,
+    input,
+    select,
+    textarea,
+    span,
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    table,
+    tr,
+    td,
+    th {
+        transition: none;
+    }
 }
 
 /* Dark Mode Overrides for Specific Elements */
