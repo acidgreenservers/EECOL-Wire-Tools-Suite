@@ -11,7 +11,7 @@
     --eecol-blue: #0058B3;
     --eecol-blue-light: #004a99;
     --eecol-blue-bg: linear-gradient(to bottom, var(--eecol-blue) 20%, white 80%);
-    --eecol-transition: all 200ms ease-in-out;
+    --eecol-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
     --eecol-shadow: 0 10px 25px rgba(0, 88, 179, 0.3);
     --eecol-border-radius: 12px;
     --eecol-border-radius-lg: 16px;
@@ -24,6 +24,24 @@
     --input-border: #e2e8f0;
     --input-text: #2d3748;
     --heading-color: #0058B3;
+    --info-box-green-bg: #f0fdf4; /* green-50 */
+    --info-box-green-border: #bbf7d0; /* green-200 */
+    --info-box-green-text: #166534; /* green-800 */
+    --info-box-blue-bg: #eff6ff; /* blue-50 */
+    --info-box-blue-border: #bfdbfe; /* blue-200 */
+    --info-box-blue-text: #1e40af; /* blue-800 */
+    --info-box-amber-bg: #fffbeb; /* amber-50 */
+    --info-box-amber-border: #fde68a; /* amber-200 */
+    --info-box-amber-text: #92400e; /* amber-800 */
+    --info-box-red-bg: #fef2f2; /* red-50 */
+    --info-box-red-border: #fecaca; /* red-200 */
+    --info-box-red-text: #991b1b; /* red-800 */
+    --info-box-gray-bg: #f9fafb; /* gray-50 */
+    --info-box-gray-border: #e5e7eb; /* gray-200 */
+    --info-box-gray-text: #374151; /* gray-700 */
+    --info-box-purple-bg: #faf5ff; /* purple-50 */
+    --info-box-purple-border: #e9d5ff; /* purple-200 */
+    --info-box-purple-text: #6b21a8; /* purple-800 */
 }
 
 /* ===== DARK MODE VARIABLES ===== */
@@ -36,6 +54,26 @@
     --input-text: #f1f5f9;
     --heading-color: #60a5fa; /* Lighter blue for dark mode */
     --eecol-blue-bg: #0f172a; /* Override gradient with solid color */
+
+    /* Info Box Dark Mode Colors - Low Saturation, Comfortable Contrast */
+    --info-box-green-bg: rgba(20, 83, 45, 0.3);
+    --info-box-green-border: #14532d;
+    --info-box-green-text: #86efac; /* green-300 */
+    --info-box-blue-bg: rgba(30, 58, 138, 0.3);
+    --info-box-blue-border: #1e3a8a;
+    --info-box-blue-text: #93c5fd; /* blue-300 */
+    --info-box-amber-bg: rgba(120, 53, 15, 0.3);
+    --info-box-amber-border: #78350f;
+    --info-box-amber-text: #fcd34d; /* amber-300 */
+    --info-box-red-bg: rgba(127, 29, 29, 0.3);
+    --info-box-red-border: #7f1d1d;
+    --info-box-red-text: #fca5a5; /* red-300 */
+    --info-box-gray-bg: rgba(55, 65, 81, 0.4);
+    --info-box-gray-border: #374151;
+    --info-box-gray-text: #d1d5db; /* gray-300 */
+    --info-box-purple-bg: rgba(88, 28, 135, 0.3);
+    --info-box-purple-border: #581c87;
+    --info-box-purple-text: #d8b4fe; /* purple-300 */
 }
 
 /* ===== GLOBAL EECOL STYLES ===== */
@@ -50,7 +88,12 @@ body {
     background: var(--eecol-blue-bg);
     color: var(--text-color);
     line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: var(--eecol-transition);
+}
+
+/* Smooth Transition for all major elements */
+div, section, article, header, footer, main, aside, nav, button, input, select, textarea, span, p, h1, h2, h3, h4, h5, h6, table, tr, td, th {
+    transition: var(--eecol-transition);
 }
 
 /* Dark Mode Overrides for Specific Elements */
@@ -71,20 +114,38 @@ body {
     border-color: var(--heading-color) !important;
 }
 
-.dark-mode .bg-gray-100,
-.dark-mode .bg-gray-50,
-.dark-mode .bg-blue-50 {
-    background-color: #334155 !important;
-    color: var(--text-color);
-    border-color: #475569;
-}
+/* Info Box / Colored Background Overrides using variables */
+.dark-mode .bg-green-50 { background-color: var(--info-box-green-bg) !important; border-color: var(--info-box-green-border) !important; }
+.dark-mode .text-green-800, .dark-mode .text-green-700, .dark-mode .text-green-600 { color: var(--info-box-green-text) !important; }
+.dark-mode .border-green-200, .dark-mode .border-green-600 { border-color: var(--info-box-green-border) !important; }
 
-.dark-mode .text-gray-700,
-.dark-mode .text-gray-600,
-.dark-mode .text-gray-500,
-.dark-mode .text-gray-800 {
-    color: #cbd5e1 !important;
-}
+.dark-mode .bg-blue-50, .dark-mode .bg-blue-100 { background-color: var(--info-box-blue-bg) !important; border-color: var(--info-box-blue-border) !important; }
+.dark-mode .text-blue-800, .dark-mode .text-blue-700, .dark-mode .text-blue-600 { color: var(--info-box-blue-text) !important; }
+.dark-mode .border-blue-200 { border-color: var(--info-box-blue-border) !important; }
+
+.dark-mode .bg-amber-50 { background-color: var(--info-box-amber-bg) !important; border-color: var(--info-box-amber-border) !important; }
+.dark-mode .text-amber-800, .dark-mode .text-amber-700, .dark-mode .text-amber-600 { color: var(--info-box-amber-text) !important; }
+.dark-mode .border-amber-200, .dark-mode .border-amber-600 { border-color: var(--info-box-amber-border) !important; }
+
+.dark-mode .bg-red-50, .dark-mode .bg-red-100 { background-color: var(--info-box-red-bg) !important; border-color: var(--info-box-red-border) !important; }
+.dark-mode .text-red-800, .dark-mode .text-red-700 { color: var(--info-box-red-text) !important; }
+.dark-mode .border-red-200, .dark-mode .border-red-500 { border-color: var(--info-box-red-border) !important; }
+
+.dark-mode .bg-gray-50, .dark-mode .bg-gray-100 { background-color: var(--info-box-gray-bg) !important; border-color: var(--info-box-gray-border) !important; }
+.dark-mode .text-gray-700, .dark-mode .text-gray-600, .dark-mode .text-gray-500, .dark-mode .text-gray-800 { color: var(--info-box-gray-text) !important; }
+.dark-mode .border-gray-200, .dark-mode .border-gray-300 { border-color: var(--info-box-gray-border) !important; }
+
+.dark-mode .bg-purple-50 { background-color: var(--info-box-purple-bg) !important; border-color: var(--info-box-purple-border) !important; }
+.dark-mode .text-purple-800, .dark-mode .text-purple-600 { color: var(--info-box-purple-text) !important; }
+.dark-mode .border-purple-200 { border-color: var(--info-box-purple-border) !important; }
+
+/* Gradient Overrides for Database Config Page */
+.dark-mode .bg-gradient-to-br.from-blue-50.to-blue-100 { background: var(--info-box-blue-bg) !important; }
+.dark-mode .bg-gradient-to-br.from-green-50.to-green-100 { background: var(--info-box-green-bg) !important; }
+.dark-mode .bg-gradient-to-br.from-purple-50.to-purple-100 { background: var(--info-box-purple-bg) !important; }
+.dark-mode .bg-gradient-to-br.from-orange-50.to-orange-100 { background: var(--info-box-amber-bg) !important; } /* Mapping orange to amber variables */
+.dark-mode .text-orange-600, .dark-mode .text-orange-800, .dark-mode .text-orange-500 { color: var(--info-box-amber-text) !important; }
+.dark-mode .border-orange-200 { border-color: var(--info-box-amber-border) !important; }
 
 .dark-mode input,
 .dark-mode select,
