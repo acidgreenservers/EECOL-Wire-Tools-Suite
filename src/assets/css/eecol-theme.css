@@ -42,6 +42,25 @@
     --info-box-purple-bg: #faf5ff; /* purple-50 */
     --info-box-purple-border: #e9d5ff; /* purple-200 */
     --info-box-purple-text: #6b21a8; /* purple-800 */
+    /* New mappings for extended palette */
+    --info-box-indigo-bg: #eef2ff; /* indigo-50 */
+    --info-box-indigo-border: #c7d2fe; /* indigo-200 */
+    --info-box-indigo-text: #3730a3; /* indigo-800 */
+    --info-box-yellow-bg: #fefce8; /* yellow-50 */
+    --info-box-yellow-border: #fef08a; /* yellow-200 */
+    --info-box-yellow-text: #854d0e; /* yellow-800 */
+    --info-box-orange-bg: #fff7ed; /* orange-50 */
+    --info-box-orange-border: #fed7aa; /* orange-200 */
+    --info-box-orange-text: #9a3412; /* orange-800 */
+    --info-box-teal-bg: #f0fdfa; /* teal-50 */
+    --info-box-teal-border: #99f6e4; /* teal-200 */
+    --info-box-teal-text: #115e59; /* teal-800 */
+    --info-box-emerald-bg: #ecfdf5; /* emerald-50 */
+    --info-box-emerald-border: #a7f3d0; /* emerald-200 */
+    --info-box-emerald-text: #065f46; /* emerald-800 */
+    --info-box-cyan-bg: #ecfeff; /* cyan-50 */
+    --info-box-cyan-border: #a5f3fc; /* cyan-200 */
+    --info-box-cyan-text: #155f75; /* cyan-800 */
 }
 
 /* ===== DARK MODE VARIABLES ===== */
@@ -74,6 +93,26 @@
     --info-box-purple-bg: rgba(88, 28, 135, 0.3);
     --info-box-purple-border: #581c87;
     --info-box-purple-text: #d8b4fe; /* purple-300 */
+
+    /* Extended Palette Mappings to Main Colors or Similar */
+    --info-box-indigo-bg: rgba(49, 46, 129, 0.3); /* indigo-900 with opacity */
+    --info-box-indigo-border: #312e81;
+    --info-box-indigo-text: #a5b4fc; /* indigo-300 */
+    --info-box-yellow-bg: rgba(113, 63, 18, 0.3); /* yellow-900 like amber */
+    --info-box-yellow-border: #713f12;
+    --info-box-yellow-text: #fde047; /* yellow-300 */
+    --info-box-orange-bg: rgba(124, 45, 18, 0.3); /* orange-900 */
+    --info-box-orange-border: #7c2d12;
+    --info-box-orange-text: #fdba74; /* orange-300 */
+    --info-box-teal-bg: rgba(19, 78, 74, 0.3); /* teal-900 */
+    --info-box-teal-border: #134e4a;
+    --info-box-teal-text: #5eead4; /* teal-300 */
+    --info-box-emerald-bg: rgba(6, 78, 59, 0.3); /* emerald-900 */
+    --info-box-emerald-border: #064e3b;
+    --info-box-emerald-text: #6ee7b7; /* emerald-300 */
+    --info-box-cyan-bg: rgba(22, 78, 99, 0.3); /* cyan-900 */
+    --info-box-cyan-border: #164e63;
+    --info-box-cyan-text: #67e8f9; /* cyan-300 */
 }
 
 /* ===== GLOBAL EECOL STYLES ===== */
@@ -139,13 +178,84 @@ div, section, article, header, footer, main, aside, nav, button, input, select, 
 .dark-mode .text-purple-800, .dark-mode .text-purple-600 { color: var(--info-box-purple-text) !important; }
 .dark-mode .border-purple-200 { border-color: var(--info-box-purple-border) !important; }
 
-/* Gradient Overrides for Database Config Page */
+/* Extended Palette Overrides */
+.dark-mode .bg-indigo-50, .dark-mode .bg-indigo-100 { background-color: var(--info-box-indigo-bg) !important; border-color: var(--info-box-indigo-border) !important; }
+.dark-mode .text-indigo-800, .dark-mode .text-indigo-700, .dark-mode .text-indigo-600 { color: var(--info-box-indigo-text) !important; }
+.dark-mode .border-indigo-200 { border-color: var(--info-box-indigo-border) !important; }
+
+.dark-mode .bg-yellow-50, .dark-mode .bg-yellow-100 { background-color: var(--info-box-yellow-bg) !important; border-color: var(--info-box-yellow-border) !important; }
+.dark-mode .text-yellow-800, .dark-mode .text-yellow-700 { color: var(--info-box-yellow-text) !important; }
+.dark-mode .border-yellow-200 { border-color: var(--info-box-yellow-border) !important; }
+
+.dark-mode .bg-orange-50, .dark-mode .bg-orange-100 { background-color: var(--info-box-orange-bg) !important; border-color: var(--info-box-orange-border) !important; }
+.dark-mode .text-orange-800, .dark-mode .text-orange-700 { color: var(--info-box-orange-text) !important; }
+.dark-mode .border-orange-200 { border-color: var(--info-box-orange-border) !important; }
+
+.dark-mode .bg-teal-50, .dark-mode .bg-teal-100 { background-color: var(--info-box-teal-bg) !important; border-color: var(--info-box-teal-border) !important; }
+.dark-mode .text-teal-800, .dark-mode .text-teal-700 { color: var(--info-box-teal-text) !important; }
+.dark-mode .border-teal-200 { border-color: var(--info-box-teal-border) !important; }
+
+.dark-mode .bg-emerald-50, .dark-mode .bg-emerald-100 { background-color: var(--info-box-emerald-bg) !important; border-color: var(--info-box-emerald-border) !important; }
+.dark-mode .text-emerald-800, .dark-mode .text-emerald-700 { color: var(--info-box-emerald-text) !important; }
+.dark-mode .border-emerald-200 { border-color: var(--info-box-emerald-border) !important; }
+
+.dark-mode .bg-cyan-50, .dark-mode .bg-cyan-100 { background-color: var(--info-box-cyan-bg) !important; border-color: var(--info-box-cyan-border) !important; }
+.dark-mode .text-cyan-800, .dark-mode .text-cyan-700 { color: var(--info-box-cyan-text) !important; }
+.dark-mode .border-cyan-200 { border-color: var(--info-box-cyan-border) !important; }
+
+
+/* Gradient Overrides for Database Config Page & Changelogs */
+/* Map existing gradients to solid dark mode backgrounds for readability */
 .dark-mode .bg-gradient-to-br.from-blue-50.to-blue-100 { background: var(--info-box-blue-bg) !important; }
 .dark-mode .bg-gradient-to-br.from-green-50.to-green-100 { background: var(--info-box-green-bg) !important; }
 .dark-mode .bg-gradient-to-br.from-purple-50.to-purple-100 { background: var(--info-box-purple-bg) !important; }
-.dark-mode .bg-gradient-to-br.from-orange-50.to-orange-100 { background: var(--info-box-amber-bg) !important; } /* Mapping orange to amber variables */
-.dark-mode .text-orange-600, .dark-mode .text-orange-800, .dark-mode .text-orange-500 { color: var(--info-box-amber-text) !important; }
-.dark-mode .border-orange-200 { border-color: var(--info-box-amber-border) !important; }
+.dark-mode .bg-gradient-to-br.from-orange-50.to-orange-100 { background: var(--info-box-orange-bg) !important; }
+
+/* Changelog Gradients */
+.dark-mode .bg-gradient-to-r {
+    background-image: none !important;
+    background-color: var(--card-bg) !important; /* Default fallback */
+    border-color: var(--heading-color) !important;
+}
+
+/* Specific overrides for changelog banners to keep color identity but low contrast */
+.dark-mode .bg-gradient-to-r.from-green-100,
+.dark-mode .bg-gradient-to-r.from-emerald-50 {
+    background-color: var(--info-box-emerald-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-purple-100 {
+    background-color: var(--info-box-purple-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-orange-100 {
+    background-color: var(--info-box-orange-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-cyan-100 {
+    background-color: var(--info-box-cyan-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-teal-100 {
+    background-color: var(--info-box-teal-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-indigo-100 {
+    background-color: var(--info-box-indigo-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-red-50 {
+    background-color: var(--info-box-red-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-yellow-50 {
+    background-color: var(--info-box-yellow-bg) !important;
+}
+
+.dark-mode .bg-gradient-to-r.from-blue-50 {
+    background-color: var(--info-box-blue-bg) !important;
+}
+
 
 .dark-mode input,
 .dark-mode select,
