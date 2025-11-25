@@ -612,3 +612,22 @@ th {
         page-break-before: always;
     }
 }
+
+/* ===== SVG DIMENSION STYLES ===== */
+.svg-dimension-stroke {
+    stroke: black;
+    transition: stroke 0.3s ease;
+}
+
+.svg-dimension-text {
+    fill: black;
+    transition: fill 0.3s ease;
+}
+
+.dark-mode .svg-dimension-stroke {
+    stroke: white;
+}
+
+.dark-mode .svg-dimension-text {
+    fill: white;
+}
