@@ -15,6 +15,27 @@
     --eecol-shadow: 0 10px 25px rgba(0, 88, 179, 0.3);
     --eecol-border-radius: 12px;
     --eecol-border-radius-lg: 16px;
+
+    /* Dark Mode Defaults (overridden by .dark-mode) */
+    --bg-color: #F0F8FF;
+    --text-color: #2d3748;
+    --card-bg: white;
+    --input-bg: white;
+    --input-border: #e2e8f0;
+    --input-text: #2d3748;
+    --heading-color: #0058B3;
+}
+
+/* ===== DARK MODE VARIABLES ===== */
+.dark-mode {
+    --bg-color: #0f172a;
+    --text-color: #e2e8f0;
+    --card-bg: #1e293b;
+    --input-bg: #334155;
+    --input-border: #475569;
+    --input-text: #f1f5f9;
+    --heading-color: #60a5fa; /* Lighter blue for dark mode */
+    --eecol-blue-bg: #0f172a; /* Override gradient with solid color */
 }
 
 /* ===== GLOBAL EECOL STYLES ===== */
@@ -27,8 +48,82 @@ html, body {
 body {
     /* Use CSS variable for background */
     background: var(--eecol-blue-bg);
-    color: #2d3748;
+    color: var(--text-color);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode Overrides for Specific Elements */
+.dark-mode .bg-\[\#F0F8FF\] {
+    background-color: var(--bg-color) !important;
+}
+
+.dark-mode .bg-white {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color);
+}
+
+.dark-mode .text-\[\#0058B3\] {
+    color: var(--heading-color) !important;
+}
+
+.dark-mode .border-\[\#0058B3\] {
+    border-color: var(--heading-color) !important;
+}
+
+.dark-mode .bg-gray-100,
+.dark-mode .bg-gray-50,
+.dark-mode .bg-blue-50 {
+    background-color: #334155 !important;
+    color: var(--text-color);
+    border-color: #475569;
+}
+
+.dark-mode .text-gray-700,
+.dark-mode .text-gray-600,
+.dark-mode .text-gray-500,
+.dark-mode .text-gray-800 {
+    color: #cbd5e1 !important;
+}
+
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+    background-color: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+}
+
+.dark-mode .shadow-lg,
+.dark-mode .shadow-2xl,
+.dark-mode .shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Update SVG fills in dark mode */
+.dark-mode svg.text-\[\#0058B3\] {
+    color: var(--heading-color) !important;
+}
+
+/* Modal dark mode */
+.dark-mode .modal-content {
+    background-color: var(--card-bg);
+    border-color: var(--heading-color);
+    color: var(--text-color);
+}
+
+/* Mobile Menu Dark Mode */
+.dark-mode #mobileMenuOverlay .bg-\[\#F0F8FF\] {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+.dark-mode #mobileMenuOverlay .text-\[\#0058B3\] {
+    color: var(--heading-color) !important;
+}
+
+.dark-mode #mobileMenuOverlay .border-blue-200 {
+    border-color: #334155 !important;
 }
 
 /* ===== EECOL BACKGROUND GRADIENT ===== */
@@ -46,6 +141,14 @@ body {
     font-weight: 900;
 }
 
+.dark-mode .header-gradient {
+    background: linear-gradient(90deg, #60a5fa, #93c5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
 /* ===== EECOL BRAND COLORS ===== */
 .text-eecol-blue {
     color: var(--eecol-blue);
@@ -57,6 +160,10 @@ body {
     border-color: var(--eecol-blue);
 }
 
+.dark-mode .text-eecol-blue { color: var(--heading-color); }
+.dark-mode .bg-eecol-blue { background-color: var(--heading-color); }
+.dark-mode .border-eecol-blue { border-color: var(--heading-color); }
+
 /* ===== EECOL LOGO STYLES ===== */
 .eecol-logo-tilt {
     transform: rotate(-20deg);
@@ -66,6 +173,9 @@ body {
 /* ===== EECOL CARD BORDERS ===== */
 .card-border-blue {
     border-left-color: var(--eecol-blue);
+}
+.dark-mode .card-border-blue {
+    border-left-color: var(--heading-color);
 }
 
 /* ===== EECOL BUTTON STYLES ===== */
@@ -85,6 +195,14 @@ body {
     background-color: var(--eecol-blue-light);
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 88, 179, 0.4);
+}
+
+.dark-mode .btn-eecol {
+    background-color: #2563eb; /* Slightly brighter blue for dark mode */
+    border-color: #2563eb;
+}
+.dark-mode .btn-eecol:hover {
+    background-color: #3b82f6;
 }
 
 .btn-eecol:active {
@@ -133,6 +251,11 @@ body {
     padding: 20px;
     box-shadow: var(--eecol-shadow);
     text-align: center;
+}
+
+.dark-mode .result-box {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-color: var(--heading-color);
 }
 
 /* ===== EECOL PWA ICON ===== */
