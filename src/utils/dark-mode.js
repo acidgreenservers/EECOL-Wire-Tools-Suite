@@ -29,9 +29,9 @@ const DarkMode = {
     applyTheme() {
         const isDark = this.isDark();
         if (isDark) {
-            document.body.classList.add(this.config.darkClass);
+            document.documentElement.classList.add(this.config.darkClass);
         } else {
-            document.body.classList.remove(this.config.darkClass);
+            document.documentElement.classList.remove(this.config.darkClass);
         }
         this.updateToggleIcons();
     },
