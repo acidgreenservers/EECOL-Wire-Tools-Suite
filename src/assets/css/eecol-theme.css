@@ -121,7 +121,7 @@ body {
     height: 100%;
     min-height: 100vh;
     font-family: 'Roboto', sans-serif;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
@@ -130,6 +130,10 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     transition: var(--eecol-transition);
+}
+
+.dark-mode body {
+    background: var(--bg-color) !important;
 }
 
 /* Smooth Transition for all major elements */
