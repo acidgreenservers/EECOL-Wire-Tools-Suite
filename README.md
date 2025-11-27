@@ -1,4 +1,4 @@
-# EECOL Wire Tools Suite v0.8.0.2
+# EECOL Wire Tools Suite v0.8.0.3
 
 ## 🎯 **Overview**
 
@@ -132,6 +132,7 @@ npm run type-check
 - ⚠️ **Live Statistics**: Has localStorage fallback crash in some scenarios
 
 ### **Recent Updates & Roadmap**
+- **v0.8.0.3**: Dark mode feature with smooth theme transitions
 - **v0.8.0.2**: Database configuration page remake with modern design patterns
 - **Architectural Alignment**: Complete page reconstruction following project standards
 - **UI Standardization**: Integrated standard footer, navigation buttons, and shared stylesheet
@@ -140,7 +141,8 @@ npm run type-check
 - **Upcoming**: Saved configuration management page, multi-cut planner rebuild, v2.0.0 enterprise features
 
 ### **Version History**
-- **v0.8.0.2** (Current): Database configuration page remake with modern design patterns and UI standardization
+- **v0.8.0.3** (Current): Dark mode feature with smooth theme transitions and full application coverage
+- **v0.8.0.2**: Database configuration page remake with modern design patterns and UI standardization
 - **v0.8.0.1**: Code modernization, professional UI, comprehensive tool suite
 - **v0.8.0.0**: Complete backend overhaul with IndexedDB and PWA support
 - **v0.7.x**: Initial IndexedDB implementation and calculator tools suite

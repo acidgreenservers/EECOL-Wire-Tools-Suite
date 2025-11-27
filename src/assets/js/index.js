@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize mobile menu for this page
 if (typeof initMobileMenu === 'function') {
     initMobileMenu({
-        version: 'v0.8.0.2',
+        version: 'v0.8.0.3',
         menuItems: [
             { text: '💡 Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
             { text: '🔒 Privacy Policy', href: '../privacy/privacy.html', class: 'bg-purple-500 hover:bg-purple-600' },
@@ -213,7 +213,7 @@ if (typeof initMobileMenu === 'function') {
             { text: '🛠️ Maintenance', href: '../maintenance/maintenance.html', class: 'bg-purple-600 hover:bg-purple-700' },
             { text: '📋 Changelog', href: '../changelog/changelog.html', class: 'bg-amber-500 hover:bg-amber-600' }
         ],
-        version: 'v0.8.0.2',
+        version: 'v0.8.0.3',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
         title: 'EECOL Wire Tools'
     });
