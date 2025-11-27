@@ -219,7 +219,7 @@ if (typeof initMobileMenu === 'function') {
     });
 }
 
-// IndexedDB and P2P Sync initialization
+// IndexedDB initialization
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         // Initialize IndexedDB (new system) - using singleton pattern
