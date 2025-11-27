@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:;">
     <title>EECOL Reel Size Estimator</title>
+    <script src="../../utils/theme-loader.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Core Dependencies -->
     <script src="../../utils/theme-loader.js"></script>
@@ -76,26 +77,26 @@
 
                                 <!-- Core/Barrel Diameter (A) -->
                                 <g class="svg-dimension-line highlight-A">
-                                    <line x1="35" y1="70" x2="35" y2="130" stroke="#000" stroke-width="1" stroke-dasharray="3,3"/>
-                                    <line x1="30" y1="70" x2="40" y2="70" stroke="#000" stroke-width="1"/>
-                                    <line x1="30" y1="130" x2="40" y2="130" stroke="#000" stroke-width="1"/>
-                                    <text x="40" y="100" font-size="14" font-weight="bold" fill="#000">A</text>
+                                    <line x1="35" y1="70" x2="35" y2="130" class="svg-dimension-stroke" stroke-width="1" stroke-dasharray="3,3"/>
+                                    <line x1="30" y1="70" x2="40" y2="70" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <line x1="30" y1="130" x2="40" y2="130" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <text x="40" y="100" font-size="14" font-weight="bold" class="svg-dimension-text">A</text>
                                 </g>
 
                                 <!-- Flange Diameter (B) -->
                                 <g class="svg-dimension-line highlight-B">
-                                    <line x1="20" y1="20" x2="20" y2="180" stroke="#000" stroke-width="1" stroke-dasharray="3,3"/>
-                                    <line x1="15" y1="20" x2="25" y2="20" stroke="#000" stroke-width="1"/>
-                                    <line x1="15" y1="180" x2="25" y2="180" stroke="#000" stroke-width="1"/>
-                                    <text x="5" y="100" font-size="14" font-weight="bold" fill="#000">B</text>
+                                    <line x1="20" y1="20" x2="20" y2="180" class="svg-dimension-stroke" stroke-width="1" stroke-dasharray="3,3"/>
+                                    <line x1="15" y1="20" x2="25" y2="20" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <line x1="15" y1="180" x2="25" y2="180" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <text x="5" y="100" font-size="14" font-weight="bold" class="svg-dimension-text">B</text>
                                 </g>
 
                                 <!-- Drum Length / Traverse Width (C) -->
                                 <g class="svg-dimension-line highlight-C">
-                                    <line x1="50" y1="185" x2="250" y2="185" stroke="#000" stroke-width="1" stroke-dasharray="3,3"/>
-                                    <line x1="50" y1="180" x2="50" y2="190" stroke="#000" stroke-width="1"/>
-                                    <line x1="250" y1="180" x2="250" y2="190" stroke="#000" stroke-width="1"/>
-                                    <text x="145" y="198" font-size="14" font-weight="bold" fill="#000">C</text>
+                                    <line x1="50" y1="185" x2="250" y2="185" class="svg-dimension-stroke" stroke-width="1" stroke-dasharray="3,3"/>
+                                    <line x1="50" y1="180" x2="50" y2="190" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <line x1="250" y1="180" x2="250" y2="190" class="svg-dimension-stroke" stroke-width="1"/>
+                                    <text x="145" y="198" font-size="14" font-weight="bold" class="svg-dimension-text">C</text>
                                 </g>
 
                                 <!-- Freeboard (Safety Margin) (D) -->
