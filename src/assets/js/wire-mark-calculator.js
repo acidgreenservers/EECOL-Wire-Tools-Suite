@@ -288,7 +288,7 @@ const wireMarkCalculator = {
 
 // ===== INITIALIZATION =====
 // Initialize calculator when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     wireMarkCalculator.init();
 });
 

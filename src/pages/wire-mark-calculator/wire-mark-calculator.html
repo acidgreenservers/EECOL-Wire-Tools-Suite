@@ -98,15 +98,27 @@ Wire Mark Calculator - EECOL Wire Tools Enterprise Edition
                 </div>
 
                 <!-- Result Display -->
-                <div id="resultContainer"
-                    class="bg-white p-6 rounded-xl shadow-lg border-l-8 card-border-blue text-center hidden">
-                    <h3 class="text-lg font-bold mb-3 text-[#0058B3] text-center">Calculation Results</h3>
-                    <div class="result-box">
-                        <p id="resultTextPrimary" class="text-md font-semibold mb-2 text-[#0058B3]">Length Between Marks
+                <div id="resultContainer" class="p-4 bg-white border-l-8 card-border-blue rounded-xl shadow-xl hidden">
+                    <h3 class="text-lg font-bold mb-4 text-[#0058B3] text-center">Wire Mark Analysis</h3>
+
+                    <!-- Primary Result: Length Between Marks -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-center">
+                        <p id="resultTextPrimary" class="text-sm font-bold text-gray-600 mb-1">Length Between Marks</p>
+                        <p id="resultText" class="text-3xl font-black text-[#0058B3]">0.00 m</p>
+                        <p id="resultTextSecondary" class="text-sm font-medium text-gray-500 mt-1"></p>
+                    </div>
+
+                    <!-- Mechanism Explanation -->
+                    <div id="mechanismExplanation" class="mt-2 p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
+                        <h4 class="text-xs font-bold text-[#0058B3] mb-1 flex items-center">
+                            <span class="mr-1">⚙️</span> Calculation Method
+                        </h4>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            <strong>Difference Calculation:</strong> The absolute difference between the Start Mark and
+                            End Mark.<br>
+                            This represents the total length of wire that passed through the counter between these two
+                            points.
                         </p>
-                        <p id="resultText" class="text-3xl font-extrabold mb-1 text-[#0058B3]">0.00 m</p>
-                        <p id="resultTextSecondary" class="text-md font-semibold mb-3 text-[#0058B3]"></p>
-                        <p class="text-xs text-gray-700 mt-2">Calculation based on mark difference</p>
                     </div>
 
                     <!-- Action Buttons -->
