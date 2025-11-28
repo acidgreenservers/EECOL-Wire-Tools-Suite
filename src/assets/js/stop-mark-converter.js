@@ -229,9 +229,15 @@ function calculateConversion(showErrors = false) {
     const referenceList = document.getElementById('referenceMarksList');
     if (referenceList) {
         referenceList.innerHTML = `
-                        <p class="text-xs font-medium text-green-600">✅ Mark at Counter: ${markAtCounter.toFixed(3)} ${stoppingMarkUnit}</p>
-                        <p class="text-xs font-medium text-blue-600">📍 Mark 1 Unit Upstream (Behind Counter): ${markBehind.toFixed(3)} ${stoppingMarkUnit}</p>
-                    `;
+            <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-100">
+                <span class="text-xs font-bold text-gray-700 flex items-center"><span class="mr-1">✅</span> Mark at Counter</span>
+                <span class="text-sm font-bold text-green-600">${markAtCounter.toFixed(3)} ${stoppingMarkUnit}</span>
+            </div>
+            <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-100">
+                <span class="text-xs font-bold text-gray-700 flex items-center"><span class="mr-1">📍</span> Mark 1 Unit Upstream</span>
+                <span class="text-sm font-bold text-blue-600">${markBehind.toFixed(3)} ${stoppingMarkUnit}</span>
+            </div>
+        `;
     }
 
     const explanation = document.getElementById('mechanismExplanation');

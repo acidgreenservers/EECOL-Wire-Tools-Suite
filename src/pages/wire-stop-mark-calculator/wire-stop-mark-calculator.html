@@ -175,39 +175,54 @@ Merged full-featured cut record tool with search, filtering, statistics, enhance
                             </button>
                         </div>
 
+                        <!-- Result Display -->
                         <div id="wireCutResultContainer"
-                            class="p-4 bg-white border-l-8 card-border-blue rounded-xl shadow-xl text-center">
-                            <h3 class="text-lg font-bold mb-3 text-[#0058B3] text-center">Calculation Results</h3>
-                            <div class="result-box">
-                                <p id="resultTextPrimary" class="text-md font-semibold mb-2 text-[#0058B3]">Stopping
-                                    Mark (in Feet)</p>
-                                <p id="stoppingMarkPrimary" class="text-3xl font-extrabold mb-1 text-[#0058B3]">0.000 ft
-                                </p>
-                                <p id="stoppingMarkSecondary" class="text-md font-semibold mb-3 text-[#0058B3]"></p>
-                                <p id="visualReferenceMarkText" class="text-sm font-semibold mb-1 text-gray-700">Visual
-                                    Reference Mark (at Reel)</p>
-                                <p id="visualMarkValue" class="text-2xl font-extrabold text-[#0058B3]">0.000 ft</p>
-                                <p id="visualMarkValueConverted" class="text-xs font-semibold mb-1 text-[#0058B3]"></p>
-                                <p class="text-xs text-gray-700 mt-2">Conversion Factor Used: 1 m ≈ 3.28084 ft</p>
+                            class="p-4 bg-white border-l-8 card-border-blue rounded-xl shadow-xl hidden">
+                            <h3 class="text-lg font-bold mb-4 text-[#0058B3] text-center">Stop Mark Analysis</h3>
 
-                                <h4 class="text-xs font-bold text-[#0058B3] mt-4 mb-1 text-left">Additional Reference
-                                    Marks</h4>
-                                <div id="referenceMarksList" class="space-y-0.5 text-left">
+                            <!-- Primary Result: Stopping Mark -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-center">
+                                <p id="resultTextPrimary" class="text-sm font-bold text-gray-600 mb-1">Stopping Mark</p>
+                                <p id="stoppingMarkPrimary" class="text-3xl font-black text-[#0058B3]">0.000 ft</p>
+                                <p id="stoppingMarkSecondary" class="text-sm font-medium text-gray-500 mt-1"></p>
+                            </div>
+
+                            <!-- Visual Reference Mark -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-3 mb-4 shadow-sm">
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Visual Reference
+                                    (At Reel)</p>
+                                <div class="flex items-baseline justify-between">
+                                    <span class="text-sm font-semibold text-gray-700">Mark Location:</span>
+                                    <span id="visualMarkValue" class="text-xl font-bold text-[#0058B3]">0.000 ft</span>
+                                </div>
+                                <p id="visualMarkValueConverted" class="text-xs text-right text-gray-500 mt-1"></p>
+                            </div>
+
+                            <!-- Additional Reference Marks -->
+                            <div class="bg-white border border-gray-200 rounded-lg p-3 mb-4 shadow-sm">
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Additional
+                                    Reference Marks</p>
+                                <div id="referenceMarksList" class="space-y-2">
                                     <!-- Dynamic content will be inserted here -->
                                 </div>
-
-                                <div id="mechanismExplanation"
-                                    class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-left hidden">
-                                    <h4 class="text-xs font-bold text-[#0058B3] mb-1">⚙️ Mechanism Explanation</h4>
-                                    <p class="text-xs text-gray-700 leading-relaxed">
-                                        <strong>Mark at Counter:</strong> The exact point on the wire currently at the
-                                        counter sensor.<br>
-                                        <strong>Mark 1 Unit Upstream:</strong> The point on the wire 1 unit (ft/m)
-                                        upstream (towards the reel) from the counter. This value represents the "next"
-                                        mark coming towards the counter if pulling continues.
-                                    </p>
-                                </div>
                             </div>
+
+                            <!-- Mechanism Explanation -->
+                            <div id="mechanismExplanation"
+                                class="mt-2 p-3 bg-blue-50/50 border border-blue-100 rounded-lg hidden">
+                                <h4 class="text-xs font-bold text-[#0058B3] mb-1 flex items-center">
+                                    <span class="mr-1">⚙️</span> Mechanism Explanation
+                                </h4>
+                                <p class="text-xs text-gray-600 leading-relaxed">
+                                    <strong>Mark at Counter:</strong> The exact point on the wire currently at the
+                                    counter sensor.<br>
+                                    <strong>Mark 1 Unit Upstream:</strong> The point on the wire 1 unit (ft/m) upstream
+                                    (towards the reel) from the counter. This value represents the "next" mark coming
+                                    towards the counter if pulling continues.
+                                </p>
+                            </div>
+                            <p class="text-xs text-gray-700 mt-2 text-center">Conversion Factor Used: 1 m ≈ 3.28084 ft
+                            </p>
 
                             <div class="mt-4 flex justify-center space-x-2">
                                 <button id="printResultsBtn"
