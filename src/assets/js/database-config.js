@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const confirmed = await showConfirm('Are you sure you want to import this data? This will overwrite existing data.');
             if (confirmed) {
                 for (const storeName of Object.keys(data)) {
-                    if(db.stores[storeName]){
+                    if (db.stores[storeName]) {
                         await db.clear(storeName);
                         for (const record of data[storeName]) {
                             await db.add(storeName, record);
@@ -744,10 +744,7 @@ if (typeof initMobileMenu === 'function') {
         menuItems: [
             { text: '🏠 Home', href: '../index/index.html', class: 'bg-blue-600 hover:bg-blue-700' },
             { text: '💡 Is This Tool Useful?', href: '../useful-tool/useful-tool.html', class: 'bg-sky-500 hover:bg-sky-600' },
-            { text: '🔒 Privacy Policy', href: '../privacy/privacy.html', class: 'bg-purple-500 hover:bg-purple-600' },
             { text: '💾 Backup Guide', href: '../backup/backup.html', class: 'bg-green-500 hover:bg-green-600' },
-            { text: '🛠️ Maintenance', href: '../maintenance/maintenance.html', class: 'bg-purple-600 hover:bg-purple-700' },
-            { text: '📋 Changelog', href: '../changelog/changelog.html', class: 'bg-amber-500 hover:bg-amber-600' }
         ],
         version: 'v0.8.0.3',
         credits: 'Made With ❤️ By: Lucas and Cline 🤖',
