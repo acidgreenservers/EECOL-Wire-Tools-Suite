@@ -69,7 +69,13 @@
     }
     .machine-section {
         break-inside: avoid;
+        break-after: page;
+        page-break-after: always;
         margin-bottom: 15px;
+    }
+    .machine-section:last-child {
+        break-after: auto;
+        page-break-after: auto;
     }
     .checklist-table {
         font-size: 12px;
