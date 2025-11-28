@@ -50,6 +50,10 @@
     font-weight: 600;
     text-align: left;
 }
+
+.dark-mode .checklist-table th {
+    color: black;
+}
 .checkbox-cell {
     width: 40px;
     text-align: center;
@@ -61,7 +65,7 @@
 /* Print styles */
 @media print {
     @page {
-        size: A4 portrait;
+        size: auto;
         margin: 0.2cm;
     }
     body * {
