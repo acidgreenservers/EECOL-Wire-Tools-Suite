@@ -73,7 +73,7 @@ const DarkMode = {
         // Common pattern in these pages:
         // <div class="flex-1 w-full max-w... relative ...">
 
-        const mainContainer = document.querySelector('.max-w-md, .max-w-xl, .max-w-7xl, .max-w-9xl');
+        const mainContainer = document.getElementById('printableContent') || document.querySelector('.max-w-md, .max-w-xl, .max-w-7xl, .max-w-9xl');
 
         if (mainContainer && !document.getElementById(this.config.toggleId)) {
             const btn = document.createElement('button');
