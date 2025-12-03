@@ -34,6 +34,24 @@ const DarkMode = {
             document.documentElement.classList.remove(this.config.darkClass);
         }
         this.updateToggleIcons();
+        this.updateToggleStyling();
+    },
+
+    // Update button styling based on current theme
+    updateToggleStyling() {
+        const isDark = this.isDark();
+        const desktopBtn = document.getElementById(this.config.toggleId);
+        if (desktopBtn) {
+            if (isDark) {
+                desktopBtn.style.backgroundColor = 'rgb(51, 65, 85)'; // slate-700
+                desktopBtn.style.borderColor = 'rgb(71, 85, 105)'; // slate-600
+                desktopBtn.style.color = '#fde047'; // yellow-300
+            } else {
+                desktopBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'; // light mode
+                desktopBtn.style.borderColor = '#d1d5db'; // gray-300
+                desktopBtn.style.color = '#374151'; // gray-700
+            }
+        }
     },
 
     // Toggle the theme
@@ -78,9 +96,8 @@ const DarkMode = {
         if (mainContainer && !document.getElementById(this.config.toggleId)) {
             const btn = document.createElement('button');
             btn.id = this.config.toggleId;
-            btn.className = 'absolute top-4 right-4 z-30 p-2 rounded-full bg-white/80 hover:bg-white shadow-md transition-all duration-200 text-xl leading-none border border-gray-200 dark:bg-slate-700 dark:border-slate-600 dark:text-yellow-300';
-            // Note: Classes above assume Tailwind. "dark:" classes work if "darkMode: 'class'" is enabled in tailwind config,
-            // but we are using custom CSS. We will style this button in CSS too.
+            btn.className = 'absolute top-4 right-4 z-30 p-2 rounded-full shadow-md transition-all duration-200 text-xl leading-none';
+            btn.style.cssText = 'position: absolute; top: 16px; right: 16px; z-index: 30; padding: 8px; border-radius: 50%; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; font-size: 20px; background-color: rgba(255, 255, 255, 0.2); color: #374151; border: 1px solid #d1d5db;';
 
             btn.onclick = () => this.toggle();
 

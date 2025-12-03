@@ -793,6 +793,10 @@ function printMachineMaintenanceChecklistMultiPage() {
                     margin-bottom: 15px;
                     page-break-inside: avoid;
                 }
+                .machine-section:not(:first-child) {
+                    page-break-before: always;
+                    break-before: page;
+                }
                 .machine-header {
                     font-weight: bold;
                     font-size: 10px;
