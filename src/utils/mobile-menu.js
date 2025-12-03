@@ -154,9 +154,9 @@ function createMobileMenu(menuItems, version, credits, title) {
     // Setup listener for mobile dark mode toggle if script is ready
     const mobileToggle = document.getElementById('mobileDarkModeToggle');
     if (mobileToggle) {
-        mobileToggle.addEventListener('click', () => {
+        mobileToggle.addEventListener('click', (e) => {
             if (window.DarkMode) {
-                window.DarkMode.toggle();
+                window.DarkMode.toggle(e);
             } else {
                 console.warn('Dark Mode script not loaded yet');
             }
