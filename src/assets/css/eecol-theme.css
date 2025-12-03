@@ -635,3 +635,15 @@ th {
 .dark-mode .svg-dimension-text {
     fill: white;
 }
+
+/* View Transition Customization for Ripple Effect */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Ensure the new view is on top for the ripple to reveal it */
+::view-transition-new(root) {
+  z-index: 9999;
+}
