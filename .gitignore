@@ -1,4 +1,6 @@
 .clinerules
+memory-bank
+my-journal
 node_modules
 wire-refrences
 server.log
