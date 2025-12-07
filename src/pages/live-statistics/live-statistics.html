@@ -26,7 +26,7 @@
 
     <!-- Main Container -->
     <div
-        class="flex-1 w-full max-w-md md:max-w-xl lg:max-w-7xl xl:max-w-9xl bg-white p-4 sm:p-6 rounded-xl shadow-2xl mx-auto border-2 border-solid border-[#0058B3] overflow-hidden flex flex-col mb-16 relative">
+        class="flex-1 w-full max-w-md md:max-w-xl lg:max-w-7xl xl:max-w-9xl bg-white p-4 sm:p-6 rounded-xl shadow-2xl mx-auto border-2 border-solid border-[#0058B3] overflow-hidden flex flex-col mb-16 relative animate-entrance">
 
         <!-- Header -->
         <div class="flex justify-center mb-1">
@@ -49,10 +49,10 @@
             </svg>
         </div>
 
-        <h1 class="text-3xl font-black mb-3 text-center">
+        <h1 class="text-3xl font-black mb-3 text-center animate-entrance delay-100">
             <span>📊</span> <span class="header-gradient">Live Statistics Dashboard</span>
         </h1>
-        <p class="mb-5 text-center text-sm font-medium header-gradient">
+        <p class="mb-5 text-center text-sm font-medium header-gradient animate-entrance delay-200">
             Real-time analytics combining inventory records and cutting activities.
         </p>
 
@@ -61,7 +61,8 @@
                 <div class="space-y-6">
 
                     <!-- Auth Status -->
-                    <div class="p-2 bg-yellow-50/70 border-l-4 border-yellow-500 rounded-lg shadow-md">
+                    <div
+                        class="p-2 bg-yellow-50/70 border-l-4 border-yellow-500 rounded-lg shadow-md animate-entrance delay-300">
                         <p class="text-xs font-semibold text-yellow-800">IndexedDB Mode - Enhanced Data Persistence</p>
                         <p class="text-xs font-mono text-gray-700 break-all">
                             User ID: <span class="font-bold">LocalUser</span>
@@ -74,36 +75,42 @@
                     <!-- Key Metrics Dashboard -->
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                         <!-- Row 1 -->
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-blue-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-blue-500 animate-entrance delay-400">
                             <div class="text-2xl font-bold text-blue-600" id="dashboardTotalItems">0</div>
                             <div class="text-xs font-semibold text-gray-600">Total Items</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardTotalItemsChange">+0 activities today
                             </div>
                         </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-green-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-green-500 animate-entrance delay-400">
                             <div class="text-2xl font-bold text-green-600" id="dashboardApprovalRate">0%</div>
                             <div class="text-xs font-semibold text-gray-600">Approval Rate</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardApprovalRateChange">+0% vs last week
                             </div>
                         </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-purple-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-purple-500 animate-entrance delay-400">
                             <div class="text-2xl font-bold text-purple-600" id="dashboardTotalValue">$0.00</div>
                             <div class="text-xs font-semibold text-gray-600">Total Value</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardAvgValue">$0.00 avg</div>
                         </div>
 
                         <!-- Row 2 -->
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-orange-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-orange-500 animate-entrance delay-500">
                             <div class="text-2xl font-bold text-orange-600" id="dashboardTopCustomer">-</div>
                             <div class="text-xs font-semibold text-gray-600">Top Customer</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardTopCustomerOrders">-</div>
                         </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-indigo-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-indigo-500 animate-entrance delay-500">
                             <div class="text-2xl font-bold text-indigo-600" id="dashboardTotalCuts">0</div>
                             <div class="text-xs font-semibold text-gray-600">Total Cuts</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardCutsToday">+0 this week</div>
                         </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-yellow-500">
+                        <div
+                            class="bg-white p-4 rounded-lg shadow-md text-center border-l-4 border-yellow-500 animate-entrance delay-500">
                             <div class="text-2xl font-bold text-yellow-600" id="dashboardTopProduct">-</div>
                             <div class="text-xs font-semibold text-gray-600">Top Product</div>
                             <div class="text-xs text-gray-500 mt-1" id="dashboardActivityToday">0 added today</div>
@@ -114,7 +121,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                         <!-- Approval Status Distribution -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-600">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>✅</span> <span
                                     class="header-gradient">Approval Status Distribution</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="approvalChartTimestamp">Updated:
@@ -139,7 +146,7 @@
                         </div>
 
                         <!-- Product Usage -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-700">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>📦</span> <span
                                     class="header-gradient">Top Product Usage</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="productChartTimestamp">Updated: Just
@@ -153,7 +160,7 @@
                         </div>
 
                         <!-- Activity Timeline -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg lg:col-span-2">
+                        <div class="bg-white p-4 rounded-xl shadow-lg lg:col-span-2 animate-entrance delay-800">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>📈</span> <span
                                     class="header-gradient">Recent Activity (Last 7 Days)</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="activityChartTimestamp">Updated:
@@ -164,7 +171,7 @@
                         </div>
 
                         <!-- Damage vs Normal Items -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-900">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>🔧</span> <span
                                     class="header-gradient">Quality Overview</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="qualityChartTimestamp">Updated: Just
@@ -189,7 +196,7 @@
                         </div>
 
                         <!-- Value Distribution -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-900">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>💰</span> <span
                                     class="header-gradient">Value Distribution</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="valueChartTimestamp">Updated: Just
@@ -210,7 +217,7 @@
                         </div>
 
                         <!-- Top Customers Chart -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-1000">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>👥</span> <span
                                     class="header-gradient">Top Customers</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="topCustomersChartTimestamp">Updated:
@@ -224,7 +231,7 @@
                         </div>
 
                         <!-- Wire Type Usage -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-1000">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>🔌</span> <span
                                     class="header-gradient">Wire Type Usage</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="wireTypeChartTimestamp">Updated:
@@ -238,7 +245,7 @@
                         </div>
 
                         <!-- Cutting Performance -->
-                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <div class="bg-white p-4 rounded-xl shadow-lg animate-entrance delay-1000">
                             <h3 class="text-lg font-bold mb-3 text-center"><span>⚡</span> <span
                                     class="header-gradient">Cutting Performance</span></h3>
                             <div class="text-center text-xs text-gray-600 mb-1" id="cuttingPerformanceChartTimestamp">
