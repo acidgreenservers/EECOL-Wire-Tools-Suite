@@ -62,7 +62,7 @@
                             Length</label>
                         <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-1 sm:space-y-0">
                             <input type="number" id="knownLength" placeholder="e.g., 500" value="500"
-                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition duration-150 shadow-inner text-sm">
+                                class="w-full p-2 rounded-lg input-premium text-sm">
                             <select id="lengthUnit"
                                 class="w-full sm:w-auto p-2 border border-gray-300 rounded-lg bg-white shadow-sm font-medium text-[#0058B3] text-sm">
                                 <option value="m">Meters (m)</option>
@@ -102,7 +102,7 @@
                             Weight (Empty Weight)</label>
                         <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-1 sm:space-y-0">
                             <input type="number" id="tareWeight" placeholder="e.g., 250" value="0"
-                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition duration-150 shadow-inner text-sm">
+                                class="w-full p-2 rounded-lg input-premium text-sm">
                             <select id="tareWeightUnit"
                                 class="w-full sm:w-auto p-2 border border-gray-300 rounded-lg bg-white shadow-sm font-medium text-[#0058B3] text-sm">
                                 <option value="lbs">lbs</option>
@@ -119,7 +119,7 @@
                             Weight (Empty Weight)</label>
                         <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-1 sm:space-y-0">
                             <input type="number" id="skidTareWeight" placeholder="e.g., 50" value="0"
-                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition duration-150 shadow-inner text-sm">
+                                class="w-full p-2 rounded-lg input-premium text-sm">
                             <select id="skidTareWeightUnit"
                                 class="w-full sm:w-auto p-2 border border-gray-300 rounded-lg bg-white shadow-sm font-medium text-[#0058B3] text-sm">
                                 <option value="lbs">lbs</option>
@@ -134,13 +134,13 @@
                     <div class="pt-2 pb-3 px-4 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                         <!-- Calculate Button -->
                         <button id="calculateWeightBtn" onclick="calculateWeight(true)"
-                            class="sm:flex-1 bg-[#0058B3] hover:bg-[#004a99] text-white font-bold p-3 rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-[#0058B3] focus:ring-opacity-50 text-sm">
+                            class="sm:flex-1 bg-[#0058B3] hover:bg-[#004a99] text-white font-bold p-3 rounded-xl shadow-lg btn-tactile focus:outline-none focus:ring-4 focus:ring-[#0058B3] focus:ring-opacity-50 text-sm">
                             CALCULATE TOTAL WEIGHTS
                         </button>
 
                         <!-- Clear Button (New) -->
                         <button id="clearBtn" onclick="clearForm()"
-                            class="sm:flex-none sm:w-1/3 bg-gray-200 hover:bg-gray-300 text-[#0058B3] font-bold p-3 rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 text-sm">
+                            class="sm:flex-none sm:w-1/3 bg-gray-200 hover:bg-gray-300 text-[#0058B3] font-bold p-3 rounded-xl shadow-lg btn-tactile focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-50 text-sm">
                             CLEAR
                         </button>
                     </div>
@@ -318,10 +318,10 @@
             <div class="flex justify-between items-center mb-2">
                 <div class="flex space-x-3">
                     <a href="../index/index.html"
-                        class="px-3 py-1.5 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 text-xs no-underline">🏠
+                        class="px-3 py-1.5 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg btn-tactile focus:outline-none focus:ring-4 focus:ring-blue-600 focus:ring-opacity-50 text-xs no-underline">🏠
                         Home</a>
                     <a id="usefulBtnInside" href="../useful-tool/useful-tool.html"
-                        class="px-3 py-1.5 bg-sky-500 border-2 border-sky-500 text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-sky-600 active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-sky-500 focus:ring-opacity-50 text-xs no-underline">
+                        class="px-3 py-1.5 bg-sky-500 border-2 border-sky-500 text-white font-bold rounded-xl shadow-lg btn-tactile focus:outline-none focus:ring-4 focus:ring-sky-500 focus:ring-opacity-50 text-xs no-underline">
                         Is This Tool Useful?
                     </a>
                 </div>
@@ -360,7 +360,7 @@
 
             <div class="pt-4">
                 <button id="backToToolBtn"
-                    class="px-4 py-2 bg-[#0058B3] text-white font-bold rounded-xl shadow-lg transition duration-200 ease-in-out transform hover:bg-[#004a99] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-[#0058B3] focus:ring-opacity-50 text-sm">
+                    class="px-4 py-2 bg-[#0058B3] text-white font-bold rounded-xl shadow-lg btn-tactile focus:outline-none focus:ring-4 focus:ring-[#0058B3] focus:ring-opacity-50 text-sm">
                     Back to Tool
                 </button>
             </div>
