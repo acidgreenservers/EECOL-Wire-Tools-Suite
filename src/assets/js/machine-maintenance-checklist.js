@@ -307,6 +307,7 @@ function restoreCurrentSession() {
         window.eecolDB.get('maintenanceLogs', 'current_session').then(data => {
             if (data && data.savedAt) {
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } else {
                 // No session data, try to load shared data instead
                 loadSharedDataIntoForm();
@@ -318,6 +319,7 @@ function restoreCurrentSession() {
                 try {
                     const data = JSON.parse(state);
                     loadDataIntoForm(data);
+                    setTodaysDate(); // Force date to today
                 } catch (e) {
                     console.error('Error loading current session from localStorage:', e);
                     // Try shared data fallback
@@ -335,6 +337,7 @@ function restoreCurrentSession() {
             try {
                 const data = JSON.parse(state);
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } catch (e) {
                 console.error('Error loading current session from localStorage:', e);
                 // Try shared data fallback
@@ -532,6 +535,9 @@ function loadSharedDataIntoForm() {
             document.getElementById('globalInspectedBy').value = sharedData.inspectorName || '';
             document.getElementById('globalInspectionDate').value = sharedData.inspectionDate || '';
             document.getElementById('comments').value = sharedData.comments || '';
+
+            // Force date to today
+            setTodaysDate();
         }
     }).catch(error => {
         console.error('Error loading shared data into form:', error);
@@ -652,7 +658,7 @@ async function returnToCurrentSession() {
 function setTodaysDate() {
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('globalInspectionDate');
-    if (!dateInput.value) {
+    if (dateInput) {
         dateInput.value = today;
     }
 }

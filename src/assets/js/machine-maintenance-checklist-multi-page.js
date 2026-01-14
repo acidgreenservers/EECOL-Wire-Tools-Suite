@@ -315,6 +315,7 @@ function restoreCurrentSession() {
         window.eecolDB.get('maintenanceLogs', 'current_session').then(data => {
             if (data && data.savedAt) {
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             }
         }).catch(() => {
             // Fallback to localStorage
@@ -323,6 +324,7 @@ function restoreCurrentSession() {
                 try {
                     const data = JSON.parse(state);
                     loadDataIntoForm(data);
+                    setTodaysDate(); // Force date to today
                 } catch (e) {
                     console.error('Error loading current session from localStorage:', e);
                 }
@@ -335,6 +337,7 @@ function restoreCurrentSession() {
             try {
                 const data = JSON.parse(state);
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } catch (e) {
                 console.error('Error loading current session from localStorage:', e);
             }
@@ -550,6 +553,9 @@ function loadSharedDataIntoMultiPageForm() {
                     document.getElementById(`comments-${i}`).value = sharedData.comments || '';
                 }
             }
+
+            // Force date to today
+            setTodaysDate();
         }
     }).catch(error => {
         console.error('Error loading shared data into multi-page form:', error);
@@ -716,7 +722,7 @@ function setTodaysDate() {
     const today = new Date().toISOString().split('T')[0];
     for (let i = 1; i <= 6; i++) {
         const dateInput = document.getElementById(`inspectionDate-${i}`);
-        if (!dateInput.value) {
+        if (dateInput) {
             dateInput.value = today;
         }
     }
