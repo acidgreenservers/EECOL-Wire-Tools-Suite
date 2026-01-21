@@ -50,6 +50,11 @@
     font-weight: 600;
     text-align: left;
 }
+/* Dark Mode Override for Table Header Text */
+.dark-mode .checklist-table th {
+    color: black;
+}
+
 .checkbox-cell {
     width: 40px;
     text-align: center;

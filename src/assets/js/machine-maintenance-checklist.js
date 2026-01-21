@@ -208,6 +208,9 @@ function handleCheckboxChange(event) {
     if (otherCheckbox) {
         otherCheckbox.checked = false;
     }
+
+    // Auto-save on change
+    saveCurrentSession();
 }
 
 // Validate checklist completion
@@ -304,6 +307,7 @@ function restoreCurrentSession() {
         window.eecolDB.get('maintenanceLogs', 'current_session').then(data => {
             if (data && data.savedAt) {
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } else {
                 // No session data, try to load shared data instead
                 loadSharedDataIntoForm();
@@ -315,6 +319,7 @@ function restoreCurrentSession() {
                 try {
                     const data = JSON.parse(state);
                     loadDataIntoForm(data);
+                    setTodaysDate(); // Force date to today
                 } catch (e) {
                     console.error('Error loading current session from localStorage:', e);
                     // Try shared data fallback
@@ -332,6 +337,7 @@ function restoreCurrentSession() {
             try {
                 const data = JSON.parse(state);
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } catch (e) {
                 console.error('Error loading current session from localStorage:', e);
                 // Try shared data fallback
@@ -529,6 +535,9 @@ function loadSharedDataIntoForm() {
             document.getElementById('globalInspectedBy').value = sharedData.inspectorName || '';
             document.getElementById('globalInspectionDate').value = sharedData.inspectionDate || '';
             document.getElementById('comments').value = sharedData.comments || '';
+
+            // Force date to today
+            setTodaysDate();
         }
     }).catch(error => {
         console.error('Error loading shared data into form:', error);
@@ -649,7 +658,7 @@ async function returnToCurrentSession() {
 function setTodaysDate() {
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('globalInspectionDate');
-    if (!dateInput.value) {
+    if (dateInput) {
         dateInput.value = today;
     }
 }
@@ -707,6 +716,31 @@ function setupPrintFunctionality() {
     });
 }
 
+// Setup auto-save for text inputs
+function setupAutoSave() {
+    const inputs = [
+        'globalInspectedBy',
+        'globalInspectionDate',
+        'comments'
+    ];
+
+    // Simple debounce to prevent excessive writes
+    let timeout;
+    const debouncedSave = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            saveCurrentSession();
+        }, 500);
+    };
+
+    inputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', debouncedSave);
+        }
+    });
+}
+
 // Initialize everything
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize database if not already done (important for maintenance checklist pages)
@@ -720,6 +754,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     initializeChecklists();
+    setupAutoSave(); // Initialize auto-save listeners
     loadChecklistState();
     restoreCurrentSession(); // Restore any saved current work session
     setTodaysDate();

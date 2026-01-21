@@ -209,6 +209,9 @@ function handleCheckboxChange(event) {
     if (otherCheckbox) {
         otherCheckbox.checked = false;
     }
+
+    // Auto-save on change
+    saveCurrentSession();
 }
 
 // Validate checklist completion - all machines must have their data filled
@@ -312,6 +315,7 @@ function restoreCurrentSession() {
         window.eecolDB.get('maintenanceLogs', 'current_session').then(data => {
             if (data && data.savedAt) {
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             }
         }).catch(() => {
             // Fallback to localStorage
@@ -320,6 +324,7 @@ function restoreCurrentSession() {
                 try {
                     const data = JSON.parse(state);
                     loadDataIntoForm(data);
+                    setTodaysDate(); // Force date to today
                 } catch (e) {
                     console.error('Error loading current session from localStorage:', e);
                 }
@@ -332,6 +337,7 @@ function restoreCurrentSession() {
             try {
                 const data = JSON.parse(state);
                 loadDataIntoForm(data);
+                setTodaysDate(); // Force date to today
             } catch (e) {
                 console.error('Error loading current session from localStorage:', e);
             }
@@ -547,6 +553,9 @@ function loadSharedDataIntoMultiPageForm() {
                     document.getElementById(`comments-${i}`).value = sharedData.comments || '';
                 }
             }
+
+            // Force date to today
+            setTodaysDate();
         }
     }).catch(error => {
         console.error('Error loading shared data into multi-page form:', error);
@@ -713,7 +722,7 @@ function setTodaysDate() {
     const today = new Date().toISOString().split('T')[0];
     for (let i = 1; i <= 6; i++) {
         const dateInput = document.getElementById(`inspectionDate-${i}`);
-        if (!dateInput.value) {
+        if (dateInput) {
             dateInput.value = today;
         }
     }
@@ -772,6 +781,33 @@ function setupPrintFunctionality() {
     });
 }
 
+// Setup auto-save for text inputs
+function setupAutoSave() {
+    // Simple debounce to prevent excessive writes
+    let timeout;
+    const debouncedSave = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            saveCurrentSession();
+        }, 500);
+    };
+
+    for (let i = 1; i <= 6; i++) {
+        const inputs = [
+            `inspectedBy-${i}`,
+            `inspectionDate-${i}`,
+            `comments-${i}`
+        ];
+
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', debouncedSave);
+            }
+        });
+    }
+}
+
 // Initialize everything
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize database if not already done (important for maintenance checklist pages)
@@ -785,6 +821,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     initializeChecklists();
+    setupAutoSave(); // Initialize auto-save listeners
     loadChecklistState();
     restoreCurrentSession(); // Restore any saved current work session
 
