@@ -13,17 +13,16 @@ Wire Mark Calculator - EECOL Wire Tools Enterprise Edition
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; font-src https://fonts.googleapis.com; img-src 'self' data:;">
     <title>EECOL Wire Mark Calculator</title>
-    <!-- Shared CSS Theme -->
-    <link rel="stylesheet" href="../../assets/css/eecol-theme.css">
-
+    <!-- Load Tailwind CSS first for modern, responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Core Dependencies -->
     <script src="../../utils/theme-loader.js"></script>
-    <script src="../../core/database/indexeddb.js"></script>
+    <script src="../../utils/print.js"></script>
     <script src="../../utils/modals.js"></script>
     <script src="../../utils/mobile-menu.js"></script>
-    <script src="../../utils/print.js"></script>
+    <script src="../../core/database/indexeddb.js"></script>
+    <!-- Shared CSS Theme - loaded AFTER Tailwind so it can override -->
+    <link rel="stylesheet" href="../../assets/css/eecol-theme.css">
 
     <!-- PWA Core removed - install prompts only on index pages -->
 </head>
